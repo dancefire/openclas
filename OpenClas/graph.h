@@ -207,101 +207,94 @@ namespace ictclas{
 
 namespace openclas {
 	//	Definition of class Edge
-	template <typename T>
+	template <typename EdgeValueType>
 	class Edge{
 	public:
-		typedef int index_type;
-		typedef T value_type;
+		typedef size_t index_type;
+		typedef EdgeValueType value_type;
 	public:
 		index_type begin;
 		index_type end;
 		value_type value;
 	public:
-		Edge(index_type begin, index_type end, value_type value = value_type());
-		bool operator==(const Edge& rhs);
-		static shared_ptr<Edge> create(index_type begin, index_type end, value_type value = value_type());
+		Edge(index_type begin, index_type end, value_type value = value_type())
+			: begin(begin), end(end), value(value)
+		{
+		}
+		bool operator==(const Edge& rhs) const
+		{
+			return ((this->begin == rhs.begin) && (this->end == rhs.end));	//	position same
+		}
 	};
 
-	template <typename T>
+	template <typename EdgeValueType, typename NodeValueType>
 	class Node{
 	public:
-		std::vector< shared_ptr< Edge<T> > > in;
-		std::vector< shared_ptr< Edge<T> > > out;
-		string_type symbol;
+		std::vector< shared_ptr< Edge<EdgeValueType> > > in;
+		std::vector< shared_ptr< Edge<EdgeValueType> > > out;
+		NodeValueType value;
+	public:
+		Node()
+		{
+		}
+
+		Node(NodeValueType value)
+			: value(value)
+		{
+		}
 	};
 
 	//	Definition of class Graph
-	template <typename T>
+	template <typename EdgeValueType = int, typename NodeValueType = int>
 	class Graph{
 	public:
-		typedef Node<T> node_type;
-		typedef Edge<T> edge_type;
-		typedef typename Edge<T>::index_type index_type;
-		typedef typename Edge<T>::value_type value_type;
+		typedef EdgeValueType edge_value_type;
+		typedef NodeValueType node_value_type;
+		typedef Node<EdgeValueType, NodeValueType> node_type;
+		typedef Edge<EdgeValueType> edge_type;
+		typedef typename Edge<EdgeValueType>::index_type index_type;
+		typedef typename Edge<EdgeValueType>::value_type value_type;
 	public:
-		Graph(size_t number_of_node);
+		Graph()
+		{
+		}
 
-		const std::vector<node_type>& nodes() const;
-		const std::vector< shared_ptr<edge_type> >& edges() const;
-		const node_type& node(index_type index) const;
-		void add(index_type begin, index_type end, value_type value = value_type());
-		bool is_valid(index_type index) const;
+		Graph(size_t number_of_node)
+			: m_nodes(number_of_node)
+		{
+		}
+
+		const std::vector<node_type>& nodes() const
+		{
+			return m_node;
+		}
+
+		const std::vector< shared_ptr<edge_type> >& edges() const
+		{
+			return m_edges;
+		}
+
+		const node_type& node(index_type index) const
+		{
+			return m_nodes.at(index);
+		}
+
+		void add_node(const node_value_type& value)
+		{
+			m_nodes.push_back(node_type(value));
+			if (m_nodes.size() > 1) {
+				add_edge(m_nodes.size() - 2, m_nodes.size() - 1);
+			}
+		}
+
+		void add_edge(index_type begin, index_type end, value_type value = value_type())
+		{
+			shared_ptr<edge_type> edge(new edge_type(begin, end, value));
+			m_nodes.at(begin).out.push_back(edge);
+			m_nodes.at(end).in.push_back(edge);
+		}
 	protected:
 		std::vector<node_type> m_nodes;
 		std::vector< shared_ptr<edge_type> > m_edges;
 	};
-
-	//	Implementation of class Edge
-	template <typename T>
-	Edge<T>::Edge(index_type begin, index_type end, value_type value)
-		: begin(begin), end(end), value(value)
-	{
-	}
-
-	template <typename T>
-	bool Edge<T>::operator==(const Edge<T>& rhs)
-	{
-		return (
-			(this->begin == rhs.begin) && (this->end == rhs.end)	//	position same
-			);
-	}
-
-	template <typename T>
-	shared_ptr< Edge<T> > Edge<T>::create(index_type begin, index_type end, value_type value)
-	{
-		return shared_ptr< Edge<T> >(new Edge<T>(begin, end, value));
-	}
-
-	//	Implementation of class Graph
-	template <typename T>
-	Graph<T>::Graph(size_t number_of_node)
-		: m_nodes(number_of_node)
-	{
-	}
-
-	template <typename T>
-	const std::vector<typename Graph<T>::node_type>& Graph<T>::nodes() const
-	{
-		return m_nodes;
-	}
-
-	template <typename T>
-	const std::vector< shared_ptr<typename Graph<T>::edge_type> >& Graph<T>::edges() const
-	{
-		return m_edges;
-	}
-
-	template <typename T>
-	const typename Graph<T>::node_type& Graph<T>::node(index_type index) const
-	{
-		return m_nodes.at(index);
-	}
-
-	template <typename T>
-	void Graph<T>::add(index_type begin, index_type end, value_type value)
-	{
-		shared_ptr<edge_type> edge(new edge_type(begin, end, value));
-		m_nodes.at(begin).out.push_back(edge);
-		m_nodes.at(end).in.push_back(edge);
-	}
 }
