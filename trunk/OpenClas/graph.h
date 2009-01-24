@@ -1,49 +1,49 @@
 /*********************************************************************************
-	Copyright 2007 Dancefire (dancefire@gmail.com).
-	All rights reserved.
+Copyright 2007 Dancefire (dancefire@gmail.com).
+All rights reserved.
 
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions
-	are met:
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
 
-	1. Redistributions of source code must retain the above copyright
-	   notice, this list of conditions and the following disclaimer.
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
+1. Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright
+notice, this list of conditions and the following disclaimer in the
+documentation and/or other materials provided with the distribution.
 
-	THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
-	ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-	ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
-	FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-	DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
-	OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-	LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-	OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-	SUCH DAMAGE.
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+SUCH DAMAGE.
 
 
-	版权所有 2007 Dancefire (dancefire@gmail.com)。
-	保留所有权利。
+版权所有 2007 Dancefire (dancefire@gmail.com)。
+保留所有权利。
 
-	在满足下列条件的前提下，允许重新分发修改过或未经修改的，以源代码或已编译形式
-	存在的本软件：
+在满足下列条件的前提下，允许重新分发修改过或未经修改的，以源代码或已编译形式
+存在的本软件：
 
-	1. 以源代码形式重新发布必须保留未经修改的上述版权声明、本许可条件以及其后的免
-	   责声明。
-	2. 以已编译形式重新发布必须在发布版本的文档和/或其它同时发布的资料中重述上述
-	   版权声明、本许可条件以及其后的免责声明。
+1. 以源代码形式重新发布必须保留未经修改的上述版权声明、本许可条件以及其后的免
+责声明。
+2. 以已编译形式重新发布必须在发布版本的文档和/或其它同时发布的资料中重述上述
+版权声明、本许可条件以及其后的免责声明。
 
-	此软件由作者及贡献者 “按现状形式”(AS-IS) 提供。在此明示不提供任何包括但不限于
-	关于特定目的的适销性、实用性的明示或暗示的担保。在任何情况下，作者及贡献者或其
-	他参与者皆不对由于使用此软件造成的直接、间接、连带、特别、惩戒的或因而造成的的
-	损害(包括但不限定于获得替代物及服务、无法使用、数据丢失、损失盈利或商务中断)承
-	担义务，无论任何在软件使用时产生损害是如何造成的、基于何种责任推断、是否属于合
-	同范畴、严格赔偿责任或民事侵权行为(包括疏忽和其它原因)，即使预先被告知此类损害
-	发生的可能性。
-	
+此软件由作者及贡献者 “按现状形式”(AS-IS) 提供。在此明示不提供任何包括但不限于
+关于特定目的的适销性、实用性的明示或暗示的担保。在任何情况下，作者及贡献者或其
+他参与者皆不对由于使用此软件造成的直接、间接、连带、特别、惩戒的或因而造成的的
+损害(包括但不限定于获得替代物及服务、无法使用、数据丢失、损失盈利或商务中断)承
+担义务，无论任何在软件使用时产生损害是如何造成的、基于何种责任推断、是否属于合
+同范畴、严格赔偿责任或民事侵权行为(包括疏忽和其它原因)，即使预先被告知此类损害
+发生的可能性。
+
 **********************************************************************************/
 /*
 *	$Date$
@@ -52,6 +52,8 @@
 *	$Id$
 */
 #pragma once
+
+#include "common.h"
 
 #include <vector>
 #include <algorithm>
@@ -158,9 +160,9 @@ namespace ictclas{
 			return equal_range(edges.begin(), edges.end(), edge_t(0, node), less_end_node<T>());
 		}
 		/*
-			begin_order = 
-				true:	sort by begin node first order. Good for find income edges
-				false:	sort by end node first order. Good for find outgoing edges
+		begin_order = 
+		true:	sort by begin node first order. Good for find income edges
+		false:	sort by end node first order. Good for find outgoing edges
 		*/
 		void sort(bool begin_order = false)
 		{
@@ -201,4 +203,105 @@ namespace ictclas{
 		}
 	};
 
+}
+
+namespace openclas {
+	//	Definition of class Edge
+	template <typename T>
+	class Edge{
+	public:
+		typedef int index_type;
+		typedef T value_type;
+	public:
+		index_type begin;
+		index_type end;
+		value_type value;
+	public:
+		Edge(index_type begin, index_type end, value_type value = value_type());
+		bool operator==(const Edge& rhs);
+		static shared_ptr<Edge> create(index_type begin, index_type end, value_type value = value_type());
+	};
+
+	template <typename T>
+	class Node{
+	public:
+		std::vector< shared_ptr< Edge<T> > > in;
+		std::vector< shared_ptr< Edge<T> > > out;
+		string_type symbol;
+	};
+
+	//	Definition of class Graph
+	template <typename T>
+	class Graph{
+	public:
+		typedef Node<T> node_type;
+		typedef Edge<T> edge_type;
+		typedef typename Edge<T>::index_type index_type;
+		typedef typename Edge<T>::value_type value_type;
+	public:
+		Graph(size_t number_of_node);
+
+		const std::vector<node_type>& nodes() const;
+		const std::vector< shared_ptr<edge_type> >& edges() const;
+		const node_type& node(index_type index) const;
+		void add(index_type begin, index_type end, value_type value = value_type());
+		bool is_valid(index_type index) const;
+	protected:
+		std::vector<node_type> m_nodes;
+		std::vector< shared_ptr<edge_type> > m_edges;
+	};
+
+	//	Implementation of class Edge
+	template <typename T>
+	Edge<T>::Edge(index_type begin, index_type end, value_type value)
+		: begin(begin), end(end), value(value)
+	{
+	}
+
+	template <typename T>
+	bool Edge<T>::operator==(const Edge<T>& rhs)
+	{
+		return (
+			(this->begin == rhs.begin) && (this->end == rhs.end)	//	position same
+			);
+	}
+
+	template <typename T>
+	shared_ptr< Edge<T> > Edge<T>::create(index_type begin, index_type end, value_type value)
+	{
+		return shared_ptr< Edge<T> >(new Edge<T>(begin, end, value));
+	}
+
+	//	Implementation of class Graph
+	template <typename T>
+	Graph<T>::Graph(size_t number_of_node)
+		: m_nodes(number_of_node)
+	{
+	}
+
+	template <typename T>
+	const std::vector<typename Graph<T>::node_type>& Graph<T>::nodes() const
+	{
+		return m_nodes;
+	}
+
+	template <typename T>
+	const std::vector< shared_ptr<typename Graph<T>::edge_type> >& Graph<T>::edges() const
+	{
+		return m_edges;
+	}
+
+	template <typename T>
+	const typename Graph<T>::node_type& Graph<T>::node(index_type index) const
+	{
+		return m_nodes.at(index);
+	}
+
+	template <typename T>
+	void Graph<T>::add(index_type begin, index_type end, value_type value)
+	{
+		shared_ptr<edge_type> edge(new edge_type(begin, end, value));
+		m_nodes.at(begin).out.push_back(edge);
+		m_nodes.at(end).in.push_back(edge);
+	}
 }
