@@ -180,6 +180,14 @@
 				RelativePath=".\main.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\Segment.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\utility.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"

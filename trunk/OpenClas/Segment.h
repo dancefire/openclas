@@ -54,15 +54,19 @@
 
 #pragma once
 
+#include <map>
 #include <string>
 #include <cmath>
+#include <utility>
 
 #include "graph.h"
 #include "utility.h"
+#include "dictionary.h"
 
-using namespace std;
 
 namespace ictclas{
+
+	using namespace std;
 
 	struct Atom{
 		wstring word;
@@ -90,7 +94,7 @@ namespace ictclas{
 		typedef typename vector<Atom> atom_list_t;
 		typedef typename TagEdge<T> word_t;
 		typedef typename AdjacencyList<T, typename word_t> word_graph_t;
-		typedef typename map<pair<int,int>, int> word_index_t;	//	map<pair<begin, end>, id>
+		typedef typename std::map<typename std::pair<int,int>, int> word_index_t;	//	map<pair<begin, end>, id>
 	public:
 		void AtomSegment(const wstring& sentence, atom_list_t& atom_list)
 		{
@@ -132,9 +136,9 @@ namespace ictclas{
 						case CT_NUMBER:
 						case CT_SINGLE:
 							if (atom.type == ct_next)
-								continue;
+								continue;	//	continue for-loop
 							else
-								break;
+								break;	//	break switch
 					}
 				}
 
@@ -352,5 +356,40 @@ namespace ictclas{
 			//	generate word connection by dict
 			Connect(atom_list, edge_list, dict);
 		}
+	};
+}
+
+namespace openclas {
+
+	typedef int SymbolEdgeValueType;
+	class SymbolNodeValueType {
+	public:
+		enum SymbolType type;
+		int offset;
+		int length;
+	public:
+		SymbolNodeValueType()
+		{
+		}
+		SymbolNodeValueType(enum SymbolType type, int offset = 0, int length = 0)
+			: type(type), offset(offset), length(length)
+		{
+		}
+	};
+
+	typedef Graph<int, SymbolNodeValueType> SymbolSegmentGraph;
+
+	class Segment{
+	public:
+		Segment(const wstring& sentence);
+
+		void construct_symbol_graph();
+		void init_symbol_graph();
+		void connect_symbol_graph();
+
+	protected:
+		const wstring m_sentence;
+		shared_ptr<SymbolSegmentGraph> m_symbol_graph;
+		shared_ptr<SymbolSegmentGraph> m_word_graph;
 	};
 }
