@@ -1,4 +1,4 @@
-/*********************************************************************************
+﻿/*********************************************************************************
 	Copyright 2007-2009 Dancefire (dancefire@gmail.com).
 	All rights reserved.
 
@@ -25,24 +25,24 @@
 	SUCH DAMAGE.
 
 
-	��Ȩ���� 2007-2009 Dancefire (dancefire@gmail.com)��
-	��������Ȩ����
+	版权所有 2007-2009 Dancefire (dancefire@gmail.com)。
+	保留所有权利。
 
-	����������������ǰ���£��������·ַ��޸Ĺ���δ���޸ĵģ���Դ������ѱ�����ʽ
-	���ڵı�������
+	在满足下列条件的前提下，允许重新分发修改过或未经修改的，以源代码或已编译形式
+	存在的本软件：
 
-	1. ��Դ������ʽ���·������뱣��δ���޸ĵ�������Ȩ�����������������Լ�������
-	   ��������
-	2. ���ѱ�����ʽ���·��������ڷ����汾���ĵ���/������ͬʱ��������������������
-	   ��Ȩ�����������������Լ���������������
+	1. 以源代码形式重新发布必须保留未经修改的上述版权声明、本许可条件以及其后的免
+	   责声明。
+	2. 以已编译形式重新发布必须在发布版本的文档和/或其它同时发布的资料中重述上述
+	   版权声明、本许可条件以及其后的免责声明。
 
-	�����������߼������� ������״��ʽ��(AS-IS) �ṩ���ڴ���ʾ���ṩ�κΰ�����������
-	�����ض�Ŀ�ĵ������ԡ�ʵ���Ե���ʾ��ʾ�ĵ��������κ�����£����߼������߻���
-	�������߽Բ�������ʹ�ô�������ɵ�ֱ�ӡ���ӡ��������ر𡢳ͽ�Ļ������ɵĵ�
-	��(���������޶��ڻ������Ｐ�����޷�ʹ�á����ݶ�ʧ����ʧӯ���������ж�)��
-	�����������κ�������ʹ��ʱ�������������ɵġ����ں��������ƶϡ��Ƿ����ں�
-	ͬ���롢�ϸ��⳥���λ�������Ȩ��Ϊ(�������������ԭ��)����ʹԤ�ȱ���֪������
-	�����Ŀ����ԡ�
+	此软件由作者及贡献者 “按现状形式”(AS-IS) 提供。在此明示不提供任何包括但不限于
+	关于特定目的的适销性、实用性的明示或暗示的担保。在任何情况下，作者及贡献者或其
+	他参与者皆不对由于使用此软件造成的直接、间接、连带、特别、惩戒的或因而造成的的
+	损害(包括但不限定于获得替代物及服务、无法使用、数据丢失、损失盈利或商务中断)承
+	担义务，无论任何在软件使用时产生损害是如何造成的、基于何种责任推断、是否属于合
+	同范畴、严格赔偿责任或民事侵权行为(包括疏忽和其它原因)，即使预先被告知此类损害
+	发生的可能性。
 	
 **********************************************************************************/
 /*
@@ -361,16 +361,16 @@ namespace ictclas{
 
 	static const wchar_t* SPECIAL_STRING[] = {
 		L"",
-		L"ʼ##ʼ",
-		L"ĩ##ĩ",
-		L"δ##��",
-		L"δ##��",
-		L"δ##��",
-		L"δ##ʱ",
-		L"δ##��",
-		L"δ##��",
-		L"δ##��",
-		L"δ##ר"
+		L"始##始",
+		L"末##末",
+		L"未##串",
+		L"未##地",
+		L"未##人",
+		L"未##时",
+		L"未##数",
+		L"未##它",
+		L"未##团",
+		L"未##专"
 	};
 
 	class Utility{
@@ -380,10 +380,10 @@ namespace ictclas{
 			//	FIXME: we should centralize all wide string to avoid encoding
 			//	FIXME: we should use unicode value boundary, rather than enum all possible character.
 			//	0x22 should in CT_Delimiters
-			const wstring CT_Delimiters(L"\x20!,.:;?()[]{}+=������������������-�����������������������������������������������¡áġšơǡȡɡʡˡ̡͡ΡϡСѡҡӡԡա֡סء١ڡۡܡݡޡߡ���������������������������������������������������������������������������������������ۣܣݣޣߣ�������� ");
-			const wstring CT_Number(L"0123456789��������������������");
-			const wstring CT_Letter(L"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz���£ãģţƣǣȣɣʣˣ̣ͣΣϣУѣңӣԣգ֣ףأ٣���������������������������������");
-			const wstring CT_Index(L"�����������������������������������¢âĢŢƢǢȢɢʢˢ̢͢΢ϢТѢҢӢԢբ֢עآ٢ڢۢܢݢޢߢ����������������������������������");
+			const wstring CT_Delimiters(L"\x20!,.:;?()[]{}+=　、。·ˉˇ¨〃々-～‖…‘’“”〔〕〈〉《》「」『』〖〗【】±×÷∶∧∨∑∏∪∩∈∷√⊥∥∠⌒⊙∫∮≡≌≈∽∝≠≮≯≤≥∞∵∴♂♀°′″℃＄¤￠￡‰§№☆★○●◎◇◆□■△▲※→←↑↓〓！＂＃￥％＆＇（）＊＋，－．／：；＜＝＞？＠［＼］＾＿｀｛｜｝￣ ");
+			const wstring CT_Number(L"0123456789０１２３４５６７８９");
+			const wstring CT_Letter(L"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ");
+			const wstring CT_Index(L"⒈⒉⒊⒋⒌⒍⒎⒏⒐⒑⒒⒓⒔⒕⒖⒗⒘⒙⒚⒛⑴⑵⑶⑷⑸⑹⑺⑻⑼⑽⑾⑿⒀⒁⒂⒃⒄⒅⒆⒇①②③④⑤⑥⑦⑧⑨⑩㈠㈡㈢㈣㈤㈥㈦㈧㈨㈩ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩⅪⅫ");
 			
 			//	ASCII
 			if( CT_Index.find(ch) != string::npos ){
@@ -449,16 +449,16 @@ namespace openclas {
 
 	static const char_type* WordTypeName[] = {
 		L"",
-		L"[���ӿ�ʼ]",		//L"ʼ##ʼ",
-		L"[���ӽ���]",		//L"ĩ##ĩ",
-		L"[δ��¼�ַ���]",	//L"δ##��",
-		L"[δ��¼�ص�]",	//L"δ##��",
-		L"[δ��¼����]",	//L"δ##��",
-		L"[δ��¼ʱ��]",	//L"δ##ʱ",
-		L"[δ��¼����]",	//L"δ##��",
-		L"[δ��¼Item]",	//L"δ##��",
-		L"[δ��¼��֯]",	//L"δ##��",
-		L"[δ��¼ר�ô�]",	//L"δ##ר"
+		L"[句子开始]",		//L"始##始",
+		L"[句子结束]",		//L"末##末",
+		L"[未登录字符串]",	//L"未##串",
+		L"[未登录地点]",	//L"未##地",
+		L"[未登录人名]",	//L"未##人",
+		L"[未登录时间]",	//L"未##时",
+		L"[未登录数字]",	//L"未##数",
+		L"[未登录Item]",	//L"未##它",
+		L"[未登录组织]",	//L"未##团",
+		L"[未登录专用词]",	//L"未##专"
 	};
 
 	template<class T>
@@ -485,7 +485,7 @@ namespace openclas {
 	enum SymbolType get_symbol_type(char_type symbol);
 	bool is_inside(char_type symbol, const string_type& collection);
 
-	const string_type NUMBER_PREFIXS(L".-+������");
+	const string_type NUMBER_PREFIXS(L".-+．－＋");
 
 	enum Constans{
 		MAX_FREQUENCE = 2079997

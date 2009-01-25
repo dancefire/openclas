@@ -1,4 +1,4 @@
-/*********************************************************************************
+ï»¿/*********************************************************************************
 	Copyright 2007-2009 Dancefire (dancefire@gmail.com).
 	All rights reserved.
 
@@ -25,24 +25,24 @@
 	SUCH DAMAGE.
 
 
-	°æÈ¨ËùÓÐ 2007-2009 Dancefire (dancefire@gmail.com)¡£
-	±£ÁôËùÓÐÈ¨Àû¡£
+	ç‰ˆæƒæ‰€æœ‰ 2007-2009 Dancefire (dancefire@gmail.com)ã€‚
+	ä¿ç•™æ‰€æœ‰æƒåˆ©ã€‚
 
-	ÔÚÂú×ãÏÂÁÐÌõ¼þµÄÇ°ÌáÏÂ£¬ÔÊÐíÖØÐÂ·Ö·¢ÐÞ¸Ä¹ý»òÎ´¾­ÐÞ¸ÄµÄ£¬ÒÔÔ´´úÂë»òÒÑ±àÒëÐÎÊ½
-	´æÔÚµÄ±¾Èí¼þ£º
+	åœ¨æ»¡è¶³ä¸‹åˆ—æ¡ä»¶çš„å‰æä¸‹ï¼Œå…è®¸é‡æ–°åˆ†å‘ä¿®æ”¹è¿‡æˆ–æœªç»ä¿®æ”¹çš„ï¼Œä»¥æºä»£ç æˆ–å·²ç¼–è¯‘å½¢å¼
+	å­˜åœ¨çš„æœ¬è½¯ä»¶ï¼š
 
-	1. ÒÔÔ´´úÂëÐÎÊ½ÖØÐÂ·¢²¼±ØÐë±£ÁôÎ´¾­ÐÞ¸ÄµÄÉÏÊö°æÈ¨ÉùÃ÷¡¢±¾Ðí¿ÉÌõ¼þÒÔ¼°ÆäºóµÄÃâ
-	   ÔðÉùÃ÷¡£
-	2. ÒÔÒÑ±àÒëÐÎÊ½ÖØÐÂ·¢²¼±ØÐëÔÚ·¢²¼°æ±¾µÄÎÄµµºÍ/»òÆäËüÍ¬Ê±·¢²¼µÄ×ÊÁÏÖÐÖØÊöÉÏÊö
-	   °æÈ¨ÉùÃ÷¡¢±¾Ðí¿ÉÌõ¼þÒÔ¼°ÆäºóµÄÃâÔðÉùÃ÷¡£
+	1. ä»¥æºä»£ç å½¢å¼é‡æ–°å‘å¸ƒå¿…é¡»ä¿ç•™æœªç»ä¿®æ”¹çš„ä¸Šè¿°ç‰ˆæƒå£°æ˜Žã€æœ¬è®¸å¯æ¡ä»¶ä»¥åŠå…¶åŽçš„å…
+	   è´£å£°æ˜Žã€‚
+	2. ä»¥å·²ç¼–è¯‘å½¢å¼é‡æ–°å‘å¸ƒå¿…é¡»åœ¨å‘å¸ƒç‰ˆæœ¬çš„æ–‡æ¡£å’Œ/æˆ–å…¶å®ƒåŒæ—¶å‘å¸ƒçš„èµ„æ–™ä¸­é‡è¿°ä¸Šè¿°
+	   ç‰ˆæƒå£°æ˜Žã€æœ¬è®¸å¯æ¡ä»¶ä»¥åŠå…¶åŽçš„å…è´£å£°æ˜Žã€‚
 
-	´ËÈí¼þÓÉ×÷Õß¼°¹±Ï×Õß ¡°°´ÏÖ×´ÐÎÊ½¡±(AS-IS) Ìá¹©¡£ÔÚ´ËÃ÷Ê¾²»Ìá¹©ÈÎºÎ°üÀ¨µ«²»ÏÞÓÚ
-	¹ØÓÚÌØ¶¨Ä¿µÄµÄÊÊÏúÐÔ¡¢ÊµÓÃÐÔµÄÃ÷Ê¾»ò°µÊ¾µÄµ£±£¡£ÔÚÈÎºÎÇé¿öÏÂ£¬×÷Õß¼°¹±Ï×Õß»òÆä
-	Ëû²ÎÓëÕß½Ô²»¶ÔÓÉÓÚÊ¹ÓÃ´ËÈí¼þÔì³ÉµÄÖ±½Ó¡¢¼ä½Ó¡¢Á¬´ø¡¢ÌØ±ð¡¢³Í½äµÄ»òÒò¶øÔì³ÉµÄµÄ
-	Ëðº¦(°üÀ¨µ«²»ÏÞ¶¨ÓÚ»ñµÃÌæ´úÎï¼°·þÎñ¡¢ÎÞ·¨Ê¹ÓÃ¡¢Êý¾Ý¶ªÊ§¡¢ËðÊ§Ó¯Àû»òÉÌÎñÖÐ¶Ï)³Ð
-	µ£ÒåÎñ£¬ÎÞÂÛÈÎºÎÔÚÈí¼þÊ¹ÓÃÊ±²úÉúËðº¦ÊÇÈçºÎÔì³ÉµÄ¡¢»ùÓÚºÎÖÖÔðÈÎÍÆ¶Ï¡¢ÊÇ·ñÊôÓÚºÏ
-	Í¬·¶³ë¡¢ÑÏ¸ñÅâ³¥ÔðÈÎ»òÃñÊÂÇÖÈ¨ÐÐÎª(°üÀ¨ÊèºöºÍÆäËüÔ­Òò)£¬¼´Ê¹Ô¤ÏÈ±»¸æÖª´ËÀàËðº¦
-	·¢ÉúµÄ¿ÉÄÜÐÔ¡£
+	æ­¤è½¯ä»¶ç”±ä½œè€…åŠè´¡çŒ®è€… â€œæŒ‰çŽ°çŠ¶å½¢å¼â€(AS-IS) æä¾›ã€‚åœ¨æ­¤æ˜Žç¤ºä¸æä¾›ä»»ä½•åŒ…æ‹¬ä½†ä¸é™äºŽ
+	å…³äºŽç‰¹å®šç›®çš„çš„é€‚é”€æ€§ã€å®žç”¨æ€§çš„æ˜Žç¤ºæˆ–æš—ç¤ºçš„æ‹…ä¿ã€‚åœ¨ä»»ä½•æƒ…å†µä¸‹ï¼Œä½œè€…åŠè´¡çŒ®è€…æˆ–å…¶
+	ä»–å‚ä¸Žè€…çš†ä¸å¯¹ç”±äºŽä½¿ç”¨æ­¤è½¯ä»¶é€ æˆçš„ç›´æŽ¥ã€é—´æŽ¥ã€è¿žå¸¦ã€ç‰¹åˆ«ã€æƒ©æˆ’çš„æˆ–å› è€Œé€ æˆçš„çš„
+	æŸå®³(åŒ…æ‹¬ä½†ä¸é™å®šäºŽèŽ·å¾—æ›¿ä»£ç‰©åŠæœåŠ¡ã€æ— æ³•ä½¿ç”¨ã€æ•°æ®ä¸¢å¤±ã€æŸå¤±ç›ˆåˆ©æˆ–å•†åŠ¡ä¸­æ–­)æ‰¿
+	æ‹…ä¹‰åŠ¡ï¼Œæ— è®ºä»»ä½•åœ¨è½¯ä»¶ä½¿ç”¨æ—¶äº§ç”ŸæŸå®³æ˜¯å¦‚ä½•é€ æˆçš„ã€åŸºäºŽä½•ç§è´£ä»»æŽ¨æ–­ã€æ˜¯å¦å±žäºŽåˆ
+	åŒèŒƒç•´ã€ä¸¥æ ¼èµ”å¿è´£ä»»æˆ–æ°‘äº‹ä¾µæƒè¡Œä¸º(åŒ…æ‹¬ç–å¿½å’Œå…¶å®ƒåŽŸå› )ï¼Œå³ä½¿é¢„å…ˆè¢«å‘ŠçŸ¥æ­¤ç±»æŸå®³
+	å‘ç”Ÿçš„å¯èƒ½æ€§ã€‚
 	
 **********************************************************************************/
 /*
@@ -122,7 +122,7 @@ namespace ictclas{
 				//	and "+-" follow by a number, such as "-134", "+234", "234-234+234", we consider "+-" is part of the number.
 				if (has_next && ct_next == CT_NUMBER)
 				{
-					const wstring pre_number(L".-+£®£­£«");		//	FIXME: we should centralize all L"" string to avoid encoding problem.
+					const wstring pre_number(L".-+ï¼Žï¼ï¼‹");		//	FIXME: we should centralize all L"" string to avoid encoding problem.
 					if (pre_number.find(c) != string::npos)
 					{
 						atom.type = CT_NUMBER;
@@ -189,8 +189,8 @@ namespace ictclas{
 		}
 		int get_bias_case_1(const wstring& current, const wstring& next)
 		{
-			//	don't split ÔÂ·Ý
-			if(current == L"ÔÂ" && next == L"·Ý")
+			//	don't split æœˆä»½
+			if(current == L"æœˆ" && next == L"ä»½")
 			{
 				return 1;
 			}else{
@@ -199,11 +199,11 @@ namespace ictclas{
 		}
 		bool get_continue_case_1(const Atom& prev, const wstring& word)
 		{
-			//	[0-9£°-£¹]+[ÄêÔÂ][Ä©ÄÚÖÐµ×Ç°¼ä³õ]
+			//	[0-9ï¼-ï¼™]+[å¹´æœˆ][æœ«å†…ä¸­åº•å‰é—´åˆ]
 			if (prev.type == CT_NUMBER && word.length() == 2)
 			{
-				const wstring first(L"ÄêÔÂ");
-				const wstring second(L"Ä©ÄÚÖÐµ×Ç°¼ä³õ");
+				const wstring first(L"å¹´æœˆ");
+				const wstring second(L"æœ«å†…ä¸­åº•å‰é—´åˆ");
 				if( (first.find(word[0]) != string::npos) && (second.find(word[1]) != string::npos))
 				{
 					return false;
