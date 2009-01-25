@@ -1,5 +1,5 @@
 /*********************************************************************************
-	Copyright 2007 Dancefire (dancefire@gmail.com).
+	Copyright 2007-2009 Dancefire (dancefire@gmail.com).
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 	SUCH DAMAGE.
 
 
-	版权所有 2007 Dancefire (dancefire@gmail.com)。
+	版权所有 2007-2009 Dancefire (dancefire@gmail.com)。
 	保留所有权利。
 
 	在满足下列条件的前提下，允许重新分发修改过或未经修改的，以源代码或已编译形式
