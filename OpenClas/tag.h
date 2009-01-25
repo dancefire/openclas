@@ -144,92 +144,100 @@ namespace ictclas{
 }
 
 namespace openclas {
-	enum TagTypePKU{
-		TAG_PKU_UNKNOWN,
-		TAG_PKU_AG,	//	形语素	形容词性语素。形容词代码为a，语素代码g前面置以a。
-		TAG_PKU_A,	//	形容词	取英语形容词adjective的第1个字母。
-		TAG_PKU_AD,	//	副形词	直接作状语的形容词。形容词代码a和副词代码d并在一起。
-		TAG_PKU_AN,	//	名形词	具有名词功能的形容词。形容词代码a和名词代码N并在一起。
-		TAG_PKU_B,	//	区别词	取汉字“别”的声母。
-		TAG_PKU_C,	//	连词		取英语连词conjunction的第1个字母。
-		TAG_PKU_DG,	//	副语素	副词性语素。副词代码为d，语素代码g前面置以d。
-		TAG_PKU_D,	//	副词		取adverb的第2个字母，因其第1个字母已用于形容词。
-		TAG_PKU_E,	//	叹词		取英语叹词exclamation的第1个字母。
-		TAG_PKU_F,	//	方位词	取汉字“方” 的声母。
-		TAG_PKU_G,	//	语素		绝大多数语素都能作为合成词的“词根”，取汉字“根”的声母。
-		TAG_PKU_H,	//	前接成分	取英语head的第1个字母。
-		TAG_PKU_I,	//	成语		取英语成语idiom的第1个字母。
-		TAG_PKU_J,	//	简称略语	取汉字“简”的声母。
-		TAG_PKU_K,	//	后接成分
-		TAG_PKU_L,	//	习用语	习用语尚未成为成语，有点“临时性”，取“临”的声母。
-		TAG_PKU_M,	//	数词		取英语numeral的第3个字母，n，u已有他用。
-		TAG_PKU_NG,	//	名语素	名词性语素。名词代码为n，语素代码g前面置以n。
-		TAG_PKU_N,	//	名词		取英语名词noun的第1个字母。
-		TAG_PKU_NR,	//	人名		名词代码n和“人(ren)”的声母并在一起。
-		TAG_PKU_NS,	//	地名		名词代码n和处所词代码s并在一起。
-		TAG_PKU_NT,	//	机构团体	“团”的声母为t，名词代码n和t并在一起。
-		TAG_PKU_NZ,	//	其他专名	“专”的声母的第1个字母为z，名词代码n和z并在一起。 
-		TAG_PKU_O,	//	 拟声词	取英语拟声词onomatopoeia的第1个字母。
-		TAG_PKU_P,	//	介词		取英语介词prepositional的第1个字母。
-		TAG_PKU_Q,	//	量词		取英语quantity的第1个字母。
-		TAG_PKU_R,	//	代词		取英语代词pronoun的第2个字母,因p已用于介词。
-		TAG_PKU_S,	//	处所词	取英语space的第1个字母。
-		TAG_PKU_TG,	//	时语素	时间词性语素。时间词代码为t,在语素的代码g前面置以t。
-		TAG_PKU_T,	//	时间词	取英语time的第1个字母。
-		TAG_PKU_U,	//	助词		取英语助词auxiliary 的第2个字母,因a已用于形容词。
-		TAG_PKU_VG,	//	动语素	动词性语素。动词代码为v。在语素的代码g前面置以v。
-		TAG_PKU_V,	//	动词		取英语动词verb的第一个字母。
-		TAG_PKU_VD,	//	副动词	直接作状语的动词。动词和副词的代码并在一起。
-		TAG_PKU_VN,	//	名动词	指具有名词功能的动词。动词和名词的代码并在一起。
-		TAG_PKU_W,	//	标点符号   
-		TAG_PKU_X,	//	非语素字	非语素字只是一个符号，字母x通常用于代表未知数、符号。
-		TAG_PKU_Y,	//	语气词	取汉字“语”的声母。
-		TAG_PKU_Z	//	状态词	取汉字“状”的声母的前一个字母。
-	};
+	namespace pku {
+		//	Reference:
+		//		北京大学现代汉语语料库基本加工规范
+		//			俞士汶 段慧明 朱学锋 孙斌
+		//			http://www.chineseldc.org/EN/doc/CLDC-LAC-2003-002/label.htm
+		enum WordTag{
+			WORD_TAG_UNKNOWN,
+			WORD_TAG_AG,	//	形语素	形容词性语素。形容词代码为a，语素代码g前面置以a。
+			WORD_TAG_A,	//	形容词	取英语形容词adjective的第1个字母。
+			WORD_TAG_AD,	//	副形词	直接作状语的形容词。形容词代码a和副词代码d并在一起。
+			WORD_TAG_AN,	//	名形词	具有名词功能的形容词。形容词代码a和名词代码N并在一起。
+			WORD_TAG_B,	//	区别词	取汉字“别”的声母。
+			WORD_TAG_C,	//	连词		取英语连词conjunction的第1个字母。
+			WORD_TAG_DG,	//	副语素	副词性语素。副词代码为d，语素代码g前面置以d。
+			WORD_TAG_D,	//	副词		取adverb的第2个字母，因其第1个字母已用于形容词。
+			WORD_TAG_E,	//	叹词		取英语叹词exclamation的第1个字母。
+			WORD_TAG_F,	//	方位词	取汉字“方” 的声母。
+			WORD_TAG_G,	//	语素		绝大多数语素都能作为合成词的“词根”，取汉字“根”的声母。
+			WORD_TAG_H,	//	前接成分	取英语head的第1个字母。
+			WORD_TAG_I,	//	成语		取英语成语idiom的第1个字母。
+			WORD_TAG_J,	//	简称略语	取汉字“简”的声母。
+			WORD_TAG_K,	//	后接成分
+			WORD_TAG_L,	//	习用语	习用语尚未成为成语，有点“临时性”，取“临”的声母。
+			WORD_TAG_M,	//	数词		取英语numeral的第3个字母，n，u已有他用。
+			WORD_TAG_NG,	//	名语素	名词性语素。名词代码为n，语素代码g前面置以n。
+			WORD_TAG_N,	//	名词		取英语名词noun的第1个字母。
+			WORD_TAG_NR,	//	人名		名词代码n和“人(ren)”的声母并在一起。
+			WORD_TAG_NS,	//	地名		名词代码n和处所词代码s并在一起。
+			WORD_TAG_NT,	//	机构团体	“团”的声母为t，名词代码n和t并在一起。
+			WORD_TAG_NX,	//	非汉字串
+			WORD_TAG_NZ,	//	其他专名	“专”的声母的第1个字母为z，名词代码n和z并在一起。 
+			WORD_TAG_O,	//	 拟声词	取英语拟声词onomatopoeia的第1个字母。
+			WORD_TAG_P,	//	介词		取英语介词prepositional的第1个字母。
+			WORD_TAG_Q,	//	量词		取英语quantity的第1个字母。
+			WORD_TAG_R,	//	代词		取英语代词pronoun的第2个字母,因p已用于介词。
+			WORD_TAG_S,	//	处所词	取英语space的第1个字母。
+			WORD_TAG_TG,	//	时语素	时间词性语素。时间词代码为t,在语素的代码g前面置以t。
+			WORD_TAG_T,	//	时间词	取英语time的第1个字母。
+			WORD_TAG_U,	//	助词		取英语助词auxiliary 的第2个字母,因a已用于形容词。
+			WORD_TAG_VG,	//	动语素	动词性语素。动词代码为v。在语素的代码g前面置以v。
+			WORD_TAG_V,	//	动词		取英语动词verb的第一个字母。
+			WORD_TAG_VD,	//	副动词	直接作状语的动词。动词和副词的代码并在一起。
+			WORD_TAG_VN,	//	名动词	指具有名词功能的动词。动词和名词的代码并在一起。
+			WORD_TAG_W,	//	标点符号   
+			WORD_TAG_X,	//	非语素字	非语素字只是一个符号，字母x通常用于代表未知数、符号。
+			WORD_TAG_Y,	//	语气词	取汉字“语”的声母。
+			WORD_TAG_Z	//	状态词	取汉字“状”的声母的前一个字母。
+		};
 
-	const size_t TAG_PKU_COUNT = static_cast<size_t>(TAG_PKU_Z + 1);	//	Get the count of TagTypePKU
+		const size_t WORD_TAG_COUNT = static_cast<size_t>(WORD_TAG_Z + 1);	//	Get the count of TagTypePKU
 
-	const char_type* TAG_PKU_NAME[] = 
-	{
-		L"",
-		L"ag",	//	形语素	形容词性语素。形容词代码为a，语素代码ｇ前面置以A。
-		L"a",	//	形容词	取英语形容词adjective的第1个字母。
-		L"ad",	//	副形词	直接作状语的形容词。形容词代码a和副词代码d并在一起。
-		L"an",	//	名形词	具有名词功能的形容词。形容词代码a和名词代码n并在一起。
-		L"b",	//	区别词	取汉字“别”的声母。
-		L"c",	//	连词		取英语连词conjunction的第1个字母。
-		L"dg",	//	副语素	副词性语素。副词代码为d，语素代码ｇ前面置以D。
-		L"d",	//	副词		取adverb的第2个字母，因其第1个字母已用于形容词。
-		L"e",	//	叹词		取英语叹词exclamation的第1个字母。
-		L"f",	//	方位词	取汉字“方” 的声母。
-		L"g",	//	语素		绝大多数语素都能作为合成词的“词根”，取汉字“根”的声母。
-		L"h",	//	前接成分	取英语head的第1个字母。
-		L"i",	//	成语		取英语成语idiom的第1个字母。
-		L"j",	//	简称略语	取汉字“简”的声母。
-		L"k",	//	后接成分
-		L"l",	//	习用语	习用语尚未成为成语，有点“临时性”，取“临”的声母。
-		L"m",	//	数词		取英语numeral的第3个字母，n，u已有他用。
-		L"ng",	//	名语素	名词性语素。名词代码为n，语素代码ｇ前面置以N。
-		L"n",	//	名词		取英语名词noun的第1个字母。
-		L"nr",	//	人名		名词代码n和“人(ren)”的声母并在一起。
-		L"ns",	//	地名		名词代码n和处所词代码s并在一起。
-		L"nt",	//	机构团体	“团”的声母为t，名词代码n和t并在一起。
-		L"nz",	//	其他专名	“专”的声母的第1个字母为z，名词代码n和z并在一起。 
-		L"o",	//	 拟声词	取英语拟声词onomatopoeia的第1个字母。
-		L"p",	//	介词		取英语介词prepositional的第1个字母。
-		L"q",	//	量词		取英语quantity的第1个字母。
-		L"r",	//	代词		取英语代词pronoun的第2个字母,因p已用于介词。
-		L"s",	//	处所词	取英语space的第1个字母。
-		L"tg",	//	时语素	时间词性语素。时间词代码为t,在语素的代码g前面置以T。
-		L"t",	//	时间词	取英语time的第1个字母。
-		L"u",	//	助词		取英语助词auxiliary 的第2个字母,因a已用于形容词。
-		L"vg",	//	动语素	动词性语素。动词代码为v。在语素的代码g前面置以V。
-		L"v",	//	动词		取英语动词verb的第一个字母。
-		L"vd",	//	副动词	直接作状语的动词。动词和副词的代码并在一起。
-		L"vn",	//	名动词	指具有名词功能的动词。动词和名词的代码并在一起。
-		L"w",	//	标点符号   
-		L"x",	//	非语素字	非语素字只是一个符号，字母x通常用于代表未知数、符号。
-		L"y",	//	语气词	取汉字“语”的声母。
-		L"z"		//	状态词	取汉字“状”的声母的前一个字母。
-	};
-}
+		const char_type* WORD_TAG_NAME[] = 
+		{
+			L"",
+			L"Ag",	//	形语素	形容词性语素。形容词代码为a，语素代码ｇ前面置以A。
+			L"a",	//	形容词	取英语形容词adjective的第1个字母。
+			L"ad",	//	副形词	直接作状语的形容词。形容词代码a和副词代码d并在一起。
+			L"an",	//	名形词	具有名词功能的形容词。形容词代码a和名词代码n并在一起。
+			L"b",	//	区别词	取汉字“别”的声母。
+			L"c",	//	连词		取英语连词conjunction的第1个字母。
+			L"Dg",	//	副语素	副词性语素。副词代码为d，语素代码ｇ前面置以D。
+			L"d",	//	副词		取adverb的第2个字母，因其第1个字母已用于形容词。
+			L"e",	//	叹词		取英语叹词exclamation的第1个字母。
+			L"f",	//	方位词	取汉字“方” 的声母。
+			L"g",	//	语素		绝大多数语素都能作为合成词的“词根”，取汉字“根”的声母。
+			L"h",	//	前接成分	取英语head的第1个字母。
+			L"i",	//	成语		取英语成语idiom的第1个字母。
+			L"j",	//	简称略语	取汉字“简”的声母。
+			L"k",	//	后接成分
+			L"l",	//	习用语	习用语尚未成为成语，有点“临时性”，取“临”的声母。
+			L"m",	//	数词		取英语numeral的第3个字母，n，u已有他用。
+			L"Ng",	//	名语素	名词性语素。名词代码为n，语素代码ｇ前面置以N。
+			L"n",	//	名词		取英语名词noun的第1个字母。
+			L"nr",	//	人名		名词代码n和“人(ren)”的声母并在一起。
+			L"ns",	//	地名		名词代码n和处所词代码s并在一起。
+			L"nt",	//	机构团体	“团”的声母为t，名词代码n和t并在一起。
+			L"nx",	//	非汉字串
+			L"nz",	//	其他专名	“专”的声母的第1个字母为z，名词代码n和z并在一起。 
+			L"o",	//	 拟声词	取英语拟声词onomatopoeia的第1个字母。
+			L"p",	//	介词		取英语介词prepositional的第1个字母。
+			L"q",	//	量词		取英语quantity的第1个字母。
+			L"r",	//	代词		取英语代词pronoun的第2个字母,因p已用于介词。
+			L"s",	//	处所词	取英语space的第1个字母。
+			L"Tg",	//	时语素	时间词性语素。时间词代码为t,在语素的代码g前面置以T。
+			L"t",	//	时间词	取英语time的第1个字母。
+			L"u",	//	助词		取英语助词auxiliary 的第2个字母,因a已用于形容词。
+			L"Vg",	//	动语素	动词性语素。动词代码为v。在语素的代码g前面置以V。
+			L"v",	//	动词		取英语动词verb的第一个字母。
+			L"vd",	//	副动词	直接作状语的动词。动词和副词的代码并在一起。
+			L"vn",	//	名动词	指具有名词功能的动词。动词和名词的代码并在一起。
+			L"w",	//	标点符号   
+			L"x",	//	非语素字	非语素字只是一个符号，字母x通常用于代表未知数、符号。
+			L"y",	//	语气词	取汉字“语”的声母。
+			L"z"		//	状态词	取汉字“状”的声母的前一个字母。
+		};
+	}	//	namespace pku
+}	//	namespace openclas

@@ -358,6 +358,20 @@ namespace ictclas{
 
 namespace openclas {
 
+	class SymbolEdgeValueType {
+	public:
+		enum openclas::pku::WordType type;
+		bool is_unknown;
+	public:
+		SymbolEdgeValueType()
+		{
+		}
+		SymbolEdgeValueType(enum openclas::pku::WordType type, bool is_unknown = false)
+			: type(type), is_unknown(is_unknown)
+		{
+		}
+	};
+
 	typedef int SymbolEdgeValueType;
 	class SymbolNodeValueType {
 	public:
