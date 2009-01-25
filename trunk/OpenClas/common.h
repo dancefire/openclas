@@ -46,10 +46,10 @@ SUCH DAMAGE.
 
 **********************************************************************************/
 /*
-*	$Date: 2009-01-25 00:47:56 +1100 (Sun, 25 Jan 2009) $
-*	$Revision: 8 $
-*	$Author: Dancefire $
-*	$Id: graph.h 8 2009-01-24 13:47:56Z Dancefire $
+*	$Date$
+*	$Revision$
+*	$Author$
+*	$Id$
 */
 #pragma once
 #ifndef _OPENCLAS_COMMON_H_
