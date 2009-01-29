@@ -57,6 +57,7 @@
 #include <utility>
 
 #include "Utility.h"
+#include "tag.h"
 
 using namespace std;
 
@@ -365,3 +366,25 @@ namespace ictclas{
 
 	};
 }
+
+namespace openclas {
+
+	class TagEntry {
+	public:
+		enum pku::WordTag tag;
+		int weight;
+	};
+
+	class DictEntry {
+	public:
+		int id;
+		std::wstring word;
+		std::vector<TagEntry> tags;
+	};
+
+	class Dictionary {
+	public:
+		std::list<DictEntry> find_prefixes(std::wstring::const_iterator& iter, std::wstring::const_iterator& end) const;
+		double get_word_transit_weight(int current_index, int next_index) const;
+	};
+}	//	namespace openclas

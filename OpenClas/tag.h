@@ -48,12 +48,16 @@ SUCH DAMAGE.
 /*
 *	$Id$
 */
+#pragma once
+#ifndef _OPENCLAS_TAG_H_
+#define _OPENCLAS_TAG_H_
+
 #include "common.h"
 
 
 namespace ictclas{
 
-	const wchar_t* PKU_TAG_STRING[] = 
+	static const wchar_t* PKU_TAG_STRING[] = 
 	{
 		L"ag",	//	形语素	形容词性语素。形容词代码为a，语素代码ｇ前面置以A。
 		L"a",	//	形容词	取英语形容词adjective的第1个字母。
@@ -190,12 +194,15 @@ namespace openclas {
 			WORD_TAG_W,	//	标点符号   
 			WORD_TAG_X,	//	非语素字	非语素字只是一个符号，字母x通常用于代表未知数、符号。
 			WORD_TAG_Y,	//	语气词	取汉字“语”的声母。
-			WORD_TAG_Z	//	状态词	取汉字“状”的声母的前一个字母。
+			WORD_TAG_Z,	//	状态词	取汉字“状”的声母的前一个字母。
+
+			WORD_TAG_BEGIN,	//	句子开始(特殊标记)
+			WORD_TAG_END	//	句子结束(特殊标记)
 		};
 
 		const size_t WORD_TAG_COUNT = static_cast<size_t>(WORD_TAG_Z + 1);	//	Get the count of TagTypePKU
 
-		const char_type* WORD_TAG_NAME[] = 
+		static const char_type* WORD_TAG_NAME[] = 
 		{
 			L"",
 			L"Ag",	//	形语素	形容词性语素。形容词代码为a，语素代码ｇ前面置以A。
@@ -241,3 +248,5 @@ namespace openclas {
 		};
 	}	//	namespace pku
 }	//	namespace openclas
+
+#endif //	_OPENCLAS_TAG_H_

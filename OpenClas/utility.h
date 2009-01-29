@@ -76,7 +76,7 @@ namespace ictclas{
 
 	class Encoding{
 	public:
-		enum code_page : unsigned int {
+		enum code_page {
 			C = 0,
 			ANSI = 1250,
 			GB2312 = 20936,
