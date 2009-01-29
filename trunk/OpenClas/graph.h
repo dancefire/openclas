@@ -224,30 +224,31 @@ namespace openclas {
 		}
 	};
 
-	template <typename EdgeValueType, typename NodeValueType>
+	template <typename NodeValueType, typename EdgeValueType>
 	class Node{
 	public:
 		std::vector< shared_ptr< Edge<EdgeValueType> > > in;
 		std::vector< shared_ptr< Edge<EdgeValueType> > > out;
 		NodeValueType value;
+		size_t index;
 	public:
 		Node()
 		{
 		}
 
-		Node(NodeValueType value)
-			: value(value)
+		Node(NodeValueType value, size_t index = 0)
+			: value(value), index(index)
 		{
 		}
 	};
 
 	//	Definition of class Graph
-	template <typename EdgeValueType = int, typename NodeValueType = int>
+	template <typename NodeValueType = int, typename EdgeValueType = int>
 	class Graph{
 	public:
-		typedef EdgeValueType edge_value_type;
 		typedef NodeValueType node_value_type;
-		typedef Node<EdgeValueType, NodeValueType> node_type;
+		typedef EdgeValueType edge_value_type;
+		typedef Node<NodeValueType, EdgeValueType> node_type;
 		typedef Edge<EdgeValueType> edge_type;
 		typedef typename Edge<EdgeValueType>::index_type index_type;
 		typedef typename Edge<EdgeValueType>::value_type value_type;
@@ -263,7 +264,7 @@ namespace openclas {
 
 		const std::vector<node_type>& nodes() const
 		{
-			return m_node;
+			return m_nodes;
 		}
 
 		const std::vector< shared_ptr<edge_type> >& edges() const
@@ -276,12 +277,11 @@ namespace openclas {
 			return m_nodes.at(index);
 		}
 
-		void add_node(const node_value_type& value)
+		size_t add_node(const node_value_type& value)
 		{
-			m_nodes.push_back(node_type(value));
-			if (m_nodes.size() > 1) {
-				add_edge(m_nodes.size() - 2, m_nodes.size() - 1);
-			}
+			node_type node(value, m_nodes.size());
+			m_nodes.push_back(node);
+			return (node.index);	//	return node index
 		}
 
 		void add_edge(index_type begin, index_type end, value_type value = value_type())
@@ -290,6 +290,7 @@ namespace openclas {
 			m_nodes.at(begin).out.push_back(edge);
 			m_nodes.at(end).in.push_back(edge);
 		}
+
 	protected:
 		std::vector<node_type> m_nodes;
 		std::vector< shared_ptr<edge_type> > m_edges;

@@ -49,6 +49,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="4"
+				DisableSpecificWarnings="4819;4396"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -176,6 +177,10 @@
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
+			<File
+				RelativePath=".\dictionary.cpp"
+				>
+			</File>
 			<File
 				RelativePath=".\main.cpp"
 				>

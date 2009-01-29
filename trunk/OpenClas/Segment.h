@@ -50,16 +50,19 @@
 */
 
 #pragma once
+#ifndef _OPENCLAS_SEGMENT_H_
+#define _OPENCLAS_SEGMENT_H_
 
 #include <map>
 #include <string>
 #include <cmath>
 #include <utility>
+#include <list>
 
 #include "graph.h"
 #include "utility.h"
 #include "dictionary.h"
-
+#include "tag.h"
 
 namespace ictclas{
 
@@ -196,7 +199,7 @@ namespace ictclas{
 		}
 		bool get_continue_case_1(const Atom& prev, const wstring& word)
 		{
-			//	[0-9０-９]+[年月][末内中底前间初]
+			//	don't merge last 2 [0-9０-９]+[年月][末内中底前间初]
 			if (prev.type == CT_NUMBER && word.length() == 2)
 			{
 				const wstring first(L"年月");
@@ -269,7 +272,7 @@ namespace ictclas{
 							bContinue = get_continue_case_1(atom_list.at(i-1), word);
 							if(!bContinue)
 							{
-								break;
+								break;	//	break for(j)
 							}
 						}
 
@@ -358,49 +361,56 @@ namespace ictclas{
 
 namespace openclas {
 
-	class SymbolEdgeValueType {
+	class Word {
 	public:
-		enum openclas::pku::WordType type;
-		bool is_unknown;
+		enum pku::WordTag tag;
+		double weight;
+		size_t offset;
+		size_t length;
+		bool is_recorded;
+		int id;	//	the id from dictionary
 	public:
-		SymbolEdgeValueType()
-		{
-		}
-		SymbolEdgeValueType(enum openclas::pku::WordType type, bool is_unknown = false)
-			: type(type), is_unknown(is_unknown)
-		{
-		}
-	};
-
-	typedef int SymbolEdgeValueType;
-	class SymbolNodeValueType {
-	public:
-		enum SymbolType type;
-		int offset;
-		int length;
-	public:
-		SymbolNodeValueType()
-		{
-		}
-		SymbolNodeValueType(enum SymbolType type, int offset = 0, int length = 0)
-			: type(type), offset(offset), length(length)
+		Word(enum pku::WordTag tag = pku::WORD_TAG_UNKNOWN, double weight = 0, bool is_recorded = true, size_t offset = 0, size_t length = 0, int id = 0)
+			: tag(tag), weight(weight), is_recorded(is_recorded), offset(offset), length(length), id(id)
 		{
 		}
 	};
 
-	typedef Graph<int, SymbolNodeValueType> SymbolSegmentGraph;
+	class WordTransit {
+	public:
+		double weight;
+	public:
+		WordTransit(double weight = 0)
+			: weight(weight)
+		{
+		}
+	};
+
+	typedef Graph<Word, WordTransit> WordGraph;
 
 	class Segment{
 	public:
-		Segment(const wstring& sentence);
+		typedef Graph<Word, WordTransit> graph_type;
+		typedef Word word_type;
+		typedef WordTransit word_transit_type;
+	public:
+		Segment(const wstring& sentence, const Dictionary& dict);
 
-		void construct_symbol_graph();
-		void init_symbol_graph();
-		void connect_symbol_graph();
+	protected:
+		std::vector<word_type> get_atom_list();
+		void merge_atoms(std::vector<word_type>& atom_list);
+		void create_graph(const std::vector<word_type>& atom_list);
+
+		word_type create_word(enum SymbolType type, size_t offset, size_t length);
+		word_type create_word_from_symbol_type(enum SymbolType type);
+		std::vector<word_type> create_word_list_from_dict(const word_type& word);
+		double get_weight(size_t current_index, size_t next_index);
 
 	protected:
 		const wstring m_sentence;
-		shared_ptr<SymbolSegmentGraph> m_symbol_graph;
-		shared_ptr<SymbolSegmentGraph> m_word_graph;
+		const Dictionary& m_dict;
+		shared_ptr<WordGraph> m_word_graph;
 	};
 }
+
+#endif	//	_OPENCLAS_SEGMENT_H_
