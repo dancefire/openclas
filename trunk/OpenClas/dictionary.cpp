@@ -46,13 +46,31 @@ SUCH DAMAGE.
 
 **********************************************************************************/
 /*
-*	$Id: Segment.cpp 13 2009-01-25 01:04:13Z Dancefire $
+*	$Id$
 */
 
 #include "common.h"
 #include "dictionary.h"
 
 namespace openclas {
+
+	void DictEntry::add(int tag, int weight)
+	{
+		std::vector<TagEntry>::iterator iter = find(this->tags.begin(), this->tags.end(), TagEntry(tag));
+		//	if find the entry, then update it; otherwise add new one
+		if (iter != this->tags.end())
+			iter->weight = weight;
+		else
+			this->tags.push_back(TagEntry(tag, weight));
+	}
+
+	void DictEntry::remove(int tag)
+	{
+		std::vector<TagEntry>::iterator iter = find(this->tags.begin(), this->tags.end(), TagEntry(tag));
+
+		if (iter != this->tags.end())
+			this->tags.erase(iter);
+	}
 
 	std::list<DictEntry> Dictionary::find_prefixes(std::wstring::const_iterator &iter, std::wstring::const_iterator &end) const
 	{
