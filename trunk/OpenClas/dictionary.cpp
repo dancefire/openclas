@@ -1,4 +1,4 @@
-/*********************************************************************************
+ï»¿/*********************************************************************************
 Copyright 2009 Dancefire (dancefire@gmail.com).
 All rights reserved.
 
@@ -25,24 +25,24 @@ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGE.
 
 
-°æÈ¨ËùÓÐ 2009 Dancefire (dancefire@gmail.com)¡£
-±£ÁôËùÓÐÈ¨Àû¡£
+ç‰ˆæƒæ‰€æœ‰ 2009 Dancefire (dancefire@gmail.com)ã€‚
+ä¿ç•™æ‰€æœ‰æƒåˆ©ã€‚
 
-ÔÚÂú×ãÏÂÁÐÌõ¼þµÄÇ°ÌáÏÂ£¬ÔÊÐíÖØÐÂ·Ö·¢ÐÞ¸Ä¹ý»òÎ´¾­ÐÞ¸ÄµÄ£¬ÒÔÔ´´úÂë»òÒÑ±àÒëÐÎÊ½
-´æÔÚµÄ±¾Èí¼þ£º
+åœ¨æ»¡è¶³ä¸‹åˆ—æ¡ä»¶çš„å‰æä¸‹ï¼Œå…è®¸é‡æ–°åˆ†å‘ä¿®æ”¹è¿‡æˆ–æœªç»ä¿®æ”¹çš„ï¼Œä»¥æºä»£ç æˆ–å·²ç¼–è¯‘å½¢å¼
+å­˜åœ¨çš„æœ¬è½¯ä»¶ï¼š
 
-1. ÒÔÔ´´úÂëÐÎÊ½ÖØÐÂ·¢²¼±ØÐë±£ÁôÎ´¾­ÐÞ¸ÄµÄÉÏÊö°æÈ¨ÉùÃ÷¡¢±¾Ðí¿ÉÌõ¼þÒÔ¼°ÆäºóµÄÃâ
-ÔðÉùÃ÷¡£
-2. ÒÔÒÑ±àÒëÐÎÊ½ÖØÐÂ·¢²¼±ØÐëÔÚ·¢²¼°æ±¾µÄÎÄµµºÍ/»òÆäËüÍ¬Ê±·¢²¼µÄ×ÊÁÏÖÐÖØÊöÉÏÊö
-°æÈ¨ÉùÃ÷¡¢±¾Ðí¿ÉÌõ¼þÒÔ¼°ÆäºóµÄÃâÔðÉùÃ÷¡£
+1. ä»¥æºä»£ç å½¢å¼é‡æ–°å‘å¸ƒå¿…é¡»ä¿ç•™æœªç»ä¿®æ”¹çš„ä¸Šè¿°ç‰ˆæƒå£°æ˜Žã€æœ¬è®¸å¯æ¡ä»¶ä»¥åŠå…¶åŽçš„å…
+è´£å£°æ˜Žã€‚
+2. ä»¥å·²ç¼–è¯‘å½¢å¼é‡æ–°å‘å¸ƒå¿…é¡»åœ¨å‘å¸ƒç‰ˆæœ¬çš„æ–‡æ¡£å’Œ/æˆ–å…¶å®ƒåŒæ—¶å‘å¸ƒçš„èµ„æ–™ä¸­é‡è¿°ä¸Šè¿°
+ç‰ˆæƒå£°æ˜Žã€æœ¬è®¸å¯æ¡ä»¶ä»¥åŠå…¶åŽçš„å…è´£å£°æ˜Žã€‚
 
-´ËÈí¼þÓÉ×÷Õß¼°¹±Ï×Õß ¡°°´ÏÖ×´ÐÎÊ½¡±(AS-IS) Ìá¹©¡£ÔÚ´ËÃ÷Ê¾²»Ìá¹©ÈÎºÎ°üÀ¨µ«²»ÏÞÓÚ
-¹ØÓÚÌØ¶¨Ä¿µÄµÄÊÊÏúÐÔ¡¢ÊµÓÃÐÔµÄÃ÷Ê¾»ò°µÊ¾µÄµ£±£¡£ÔÚÈÎºÎÇé¿öÏÂ£¬×÷Õß¼°¹±Ï×Õß»òÆä
-Ëû²ÎÓëÕß½Ô²»¶ÔÓÉÓÚÊ¹ÓÃ´ËÈí¼þÔì³ÉµÄÖ±½Ó¡¢¼ä½Ó¡¢Á¬´ø¡¢ÌØ±ð¡¢³Í½äµÄ»òÒò¶øÔì³ÉµÄµÄ
-Ëðº¦(°üÀ¨µ«²»ÏÞ¶¨ÓÚ»ñµÃÌæ´úÎï¼°·þÎñ¡¢ÎÞ·¨Ê¹ÓÃ¡¢Êý¾Ý¶ªÊ§¡¢ËðÊ§Ó¯Àû»òÉÌÎñÖÐ¶Ï)³Ð
-µ£ÒåÎñ£¬ÎÞÂÛÈÎºÎÔÚÈí¼þÊ¹ÓÃÊ±²úÉúËðº¦ÊÇÈçºÎÔì³ÉµÄ¡¢»ùÓÚºÎÖÖÔðÈÎÍÆ¶Ï¡¢ÊÇ·ñÊôÓÚºÏ
-Í¬·¶³ë¡¢ÑÏ¸ñÅâ³¥ÔðÈÎ»òÃñÊÂÇÖÈ¨ÐÐÎª(°üÀ¨ÊèºöºÍÆäËüÔ­Òò)£¬¼´Ê¹Ô¤ÏÈ±»¸æÖª´ËÀàËðº¦
-·¢ÉúµÄ¿ÉÄÜÐÔ¡£
+æ­¤è½¯ä»¶ç”±ä½œè€…åŠè´¡çŒ®è€… â€œæŒ‰çŽ°çŠ¶å½¢å¼â€(AS-IS) æä¾›ã€‚åœ¨æ­¤æ˜Žç¤ºä¸æä¾›ä»»ä½•åŒ…æ‹¬ä½†ä¸é™äºŽ
+å…³äºŽç‰¹å®šç›®çš„çš„é€‚é”€æ€§ã€å®žç”¨æ€§çš„æ˜Žç¤ºæˆ–æš—ç¤ºçš„æ‹…ä¿ã€‚åœ¨ä»»ä½•æƒ…å†µä¸‹ï¼Œä½œè€…åŠè´¡çŒ®è€…æˆ–å…¶
+ä»–å‚ä¸Žè€…çš†ä¸å¯¹ç”±äºŽä½¿ç”¨æ­¤è½¯ä»¶é€ æˆçš„ç›´æŽ¥ã€é—´æŽ¥ã€è¿žå¸¦ã€ç‰¹åˆ«ã€æƒ©æˆ’çš„æˆ–å› è€Œé€ æˆçš„çš„
+æŸå®³(åŒ…æ‹¬ä½†ä¸é™å®šäºŽèŽ·å¾—æ›¿ä»£ç‰©åŠæœåŠ¡ã€æ— æ³•ä½¿ç”¨ã€æ•°æ®ä¸¢å¤±ã€æŸå¤±ç›ˆåˆ©æˆ–å•†åŠ¡ä¸­æ–­)æ‰¿
+æ‹…ä¹‰åŠ¡ï¼Œæ— è®ºä»»ä½•åœ¨è½¯ä»¶ä½¿ç”¨æ—¶äº§ç”ŸæŸå®³æ˜¯å¦‚ä½•é€ æˆçš„ã€åŸºäºŽä½•ç§è´£ä»»æŽ¨æ–­ã€æ˜¯å¦å±žäºŽåˆ
+åŒèŒƒç•´ã€ä¸¥æ ¼èµ”å¿è´£ä»»æˆ–æ°‘äº‹ä¾µæƒè¡Œä¸º(åŒ…æ‹¬ç–å¿½å’Œå…¶å®ƒåŽŸå› )ï¼Œå³ä½¿é¢„å…ˆè¢«å‘ŠçŸ¥æ­¤ç±»æŸå®³
+å‘ç”Ÿçš„å¯èƒ½æ€§ã€‚
 
 **********************************************************************************/
 /*
@@ -53,6 +53,12 @@ SUCH DAMAGE.
 #include "dictionary.h"
 
 namespace openclas {
+
+	/*******************************************************************
+	*
+	*	DictEntry
+	*
+	********************************************************************/
 
 	void DictEntry::add(int tag, int weight)
 	{
@@ -72,17 +78,244 @@ namespace openclas {
 			this->tags.erase(iter);
 	}
 
-	std::list<DictEntry> Dictionary::find_prefixes(std::wstring::const_iterator &iter, std::wstring::const_iterator &end) const
+	double DictEntry::get_forward_weight(const string_type& word) const
 	{
-		std::list<DictEntry> entries;
-
-		return entries;
+		unordered_map<string_type, double>::const_iterator iter = forward.find(word);
+		if (iter != forward.end())
+		{
+			return iter->second;
+		}else{
+			return 0;
+		}
 	}
 
-	double Dictionary::get_word_transit_weight(int current_index, int next_index) const
+	double DictEntry::get_backward_weight(const string_type& word) const
 	{
-		double weight = 0;
+		unordered_map<string_type, double>::const_iterator iter = backward.find(word);
+		if (iter != backward.end())
+		{
+			return iter->second;
+		}else{
+			return 0;
+		}
+	}
 
-		return weight;
+	/*******************************************************************
+	*
+	*	WordIndexerNode
+	*
+	********************************************************************/
+
+	WordIndexerNode::WordIndexerNode()
+		: m_entry_ptr(0)
+	{
+	}
+
+	WordIndexerNode::~WordIndexerNode()
+	{
+		for(unordered_map<char_type, WordIndexerNode*>::iterator iter = m_table.begin(); iter != m_table.end(); ++iter)
+		{
+			if (iter->second)
+				delete iter->second;
+		}
+	}
+
+	void WordIndexerNode::add(string_type::const_iterator& iter, string_type::const_iterator& end, DictEntry* entry_ptr)
+	{
+		if (iter == end)
+		{
+			m_entry_ptr = entry_ptr;
+			return;
+		}
+
+		unordered_map<char_type, WordIndexerNode*>::iterator it = m_table.find(*iter);
+		if (it == m_table.end())
+		{
+			//	not existed in table
+			WordIndexerNode* node = new WordIndexerNode();
+			m_table[it->first] = node;
+			node->add(iter+1, end, entry_ptr);
+		}else{
+			it->second->add(iter+1, end, entry_ptr);
+		}
+	}
+
+	DictEntry* WordIndexerNode::get(string_type::const_iterator& iter, string_type::const_iterator& end) const
+	{
+		if (iter == end)
+			return m_entry_ptr;
+
+		unordered_map<char_type, WordIndexerNode*>::const_iterator it = m_table.find(*iter);
+		if (it == m_table.end())
+		{
+			//	not existed in table
+			return 0;
+		}else{
+			return it->second->get(iter+1, end);
+		}
+	}
+
+	void WordIndexerNode::find_prefixes(string_type::const_iterator& iter, string_type::const_iterator& end, std::list<DictEntry*>& entry_list) const
+	{
+		if (m_entry_ptr)
+			entry_list.push_back(m_entry_ptr);
+
+		if (iter == end)
+		{
+			return;
+		}
+
+		unordered_map<char_type, WordIndexerNode*>::const_iterator it = m_table.find(*iter);
+		if (it != m_table.end())
+		{
+			it->second->find_prefixes(iter+1, end, entry_list);
+		}
+	}
+
+	/*******************************************************************
+	*
+	*	WordIndexer
+	*
+	********************************************************************/
+
+	void WordIndexer::add(const string_type& word, DictEntry* entry_ptr)
+	{
+		m_top_node.add(word.begin(), word.end(), entry_ptr);
+	}
+
+	DictEntry* WordIndexer::get(string_type::const_iterator& iter, string_type::const_iterator& end) const
+	{
+		return m_top_node.get(iter, end);
+	}
+
+	std::list<DictEntry*> WordIndexer::find_prefixes(string_type::const_iterator& iter, string_type::const_iterator& end) const
+	{
+		std::list<DictEntry*> entry_list;
+		m_top_node.find_prefixes(iter, end, entry_list);
+		return entry_list;
+	}
+
+	/*******************************************************************
+	*
+	*	Dictionary
+	*
+	********************************************************************/
+
+	Dictionary::Dictionary()
+	{
+	}
+
+	Dictionary::~Dictionary()
+	{
+		for(word_dict_type::iterator iter = m_word_dict.begin(); iter != m_word_dict.end(); ++iter)
+		{
+			delete (*iter);
+		}
+	}
+
+	/*****************   Word   *****************/
+
+	DictEntry* Dictionary::add_word(const string_type& word)
+	{
+		DictEntry* entry_ptr = get_word(word.begin(), word.end());
+
+		if (entry_ptr)
+		{
+			//	exists, then return the index
+			return entry_ptr;
+		}else{
+			//	not exists, create new one
+			DictEntry* ptr = new DictEntry();
+			ptr->word = word;
+			m_word_dict.push_back(ptr);
+			m_word_indexer.add(word, ptr);
+			return ptr;
+		}
+	}
+
+	void Dictionary::remove_word(const string_type& word)
+	{
+		const DictEntry* entry_ptr = get_word(word.begin(), word.end());
+		if (entry_ptr)
+		{
+			m_word_indexer.remove(word);
+			word_dict_type::iterator iter = std::find(m_word_dict.begin(), m_word_dict.end(), entry_ptr);
+			if (iter != m_word_dict.end())
+				m_word_dict.erase(iter);
+			
+			delete entry_ptr;	//	release memory
+		}
+	}
+
+	DictEntry* Dictionary::get_word(string_type::const_iterator& iter, string_type::const_iterator& end)
+	{
+		return m_word_indexer.get(iter, end);
+	}
+
+	const DictEntry* Dictionary::get_word(string_type::const_iterator& iter, string_type::const_iterator& end) const
+	{
+		return m_word_indexer.get(iter, end);
+	}
+
+	std::list<DictEntry*> Dictionary::find_prefixes(string_type::const_iterator &iter, string_type::const_iterator &end) const
+	{
+		return m_word_indexer.find_prefixes(iter, end);
+	}
+
+	/*****************   Tag   *****************/
+
+	void Dictionary::init_tag_dict(int size)
+	{
+		//	initialize tag table
+		m_tag_dict.clear();
+		m_tag_dict.resize(size, 0);
+		//	initialize tag transit table
+		m_tag_transit_dict.clear();
+		m_tag_transit_dict.resize(size*size, 0);
+	}
+
+	void Dictionary::add_tag_weight(int tag, int weight)
+	{
+		if (static_cast<int>(m_tag_dict.size()) > tag)
+			m_tag_dict[tag] = weight;
+	}
+
+	void Dictionary::remove_tag_weight(int tag)
+	{
+		if (static_cast<int>(m_tag_dict.size()) > tag)
+			m_tag_dict[tag] = 0;
+	}
+
+	double Dictionary::get_tag_weight(int tag) const
+	{
+		if (static_cast<int>(m_tag_dict.size()) > tag)
+			return m_tag_dict[tag];
+		else
+			return 0;
+	}
+
+	/*****************   Tag transit   *****************/
+
+	int Dictionary::get_tag_transit_index(int current_tag, int next_tag) const
+	{
+		return static_cast<int>((current_tag * m_tag_dict.size()) + next_tag);
+	}
+
+	void Dictionary::add_tag_transit_weight(int current_tag, int next_tag, int weight)
+	{
+		int index = get_tag_transit_index(current_tag, next_tag);
+		m_tag_transit_dict.at(index) = weight;
+	}
+
+	void Dictionary::remove_tag_transit_weight(int current_tag, int next_tag)
+	{
+		int index = get_tag_transit_index(current_tag, next_tag);
+		m_tag_transit_dict.at(index) = 0;
+	}
+
+	int Dictionary::get_tag_transit_weight(int current_tag, int next_tag) const
+	{
+		int index = get_tag_transit_index(current_tag, next_tag);
+		return m_tag_transit_dict.at(index);
 	}
 }	//	namespace openclas
