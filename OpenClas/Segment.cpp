@@ -232,11 +232,11 @@ namespace openclas {
 		//	this function need to guaranteed that the given word must returned in the word_list.
 		std::vector<word_type> word_list;
 
-		std::list<DictEntry> words = m_dict.find_prefixes(m_sentence.begin() + word.offset, m_sentence.end());
+		std::list<DictEntry*> words = m_dict.find_prefixes(m_sentence.begin() + word.offset, m_sentence.end());
 
-		for(std::list<DictEntry>::iterator iter = words.begin(); iter != words.end(); ++iter)
+		for(std::list<DictEntry*>::iterator iter = words.begin(); iter != words.end(); ++iter)
 		{
-			if (iter == words.begin() && iter->word.length() > word.length)
+			if (iter == words.begin() && (*iter)->word.length() > word.length)
 			{
 				//	the first word is not the given atom, so add the atom manually
 				word_list.push_back(word);
@@ -246,17 +246,17 @@ namespace openclas {
 			word_type item;
 			item.weight = 0;
 			//	sum all tags weights as the item's weight
-			for(size_t i = 0; i < iter->tags.size(); ++i)
-				item.weight += iter->tags[i].weight;
+			for(size_t i = 0; i < (*iter)->tags.size(); ++i)
+				item.weight += (*iter)->tags[i].weight;
 
 			//	use the tag if the word has the only tag
-			if (iter->tags.size() == 1)
-				item.tag = static_cast<enum pku::WordTag>(iter->tags[0].tag);
+			if ((*iter)->tags.size() == 1)
+				item.tag = static_cast<enum pku::WordTag>((*iter)->tags[0].tag);
 
 			item.is_recorded = true;
 			item.offset = word.offset;
-			item.length = iter->word.length();
-			item.id = iter->id;
+			item.length = (*iter)->word.length();
+			item.id = (*iter)->id;
 
 			word_list.push_back(item);
 		}
@@ -270,7 +270,8 @@ namespace openclas {
 		const word_type& next_word = m_word_graph->nodes().at(next_index).value;
 
 		double current_weight = current_word.weight;
-		double adj_weight = m_dict.get_word_transit_weight(current_word.id, next_word.id);
+		const DictEntry* current_entry = m_dict.get_word(m_sentence.begin() + current_word.offset, m_sentence.begin() + current_word.offset + current_word.length);
+		double adj_weight = current_entry->get_forward_weight(m_sentence.substr(next_word.offset, next_word.length));
 		
 		//	Calculate the possibility
 		//	0 < smoothing < 1

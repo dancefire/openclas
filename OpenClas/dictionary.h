@@ -368,6 +368,21 @@ namespace ictclas{
 }
 
 namespace openclas {
+	class IndexGenerator {
+	public:
+		IndexGenerator(int init_value)
+			: current_id(init_value)
+		{
+		}
+		int get(){
+			return current_id;
+		}
+		int generate(){
+			return (++current_id);
+		}
+	protected:
+		int current_id;
+	};
 
 	class TagEntry {
 	public:
@@ -389,64 +404,79 @@ namespace openclas {
 		int id;
 		std::wstring word;
 		std::vector<TagEntry> tags;
+		//	transit table
+		unordered_map<string_type, double> backward;
+		unordered_map<string_type, double> forward;
 	public:
 		void add(int tag, int weight);
 		void remove(int tag);
+		double get_forward_weight(const string_type& word) const;
+		double get_backward_weight(const string_type& word) const;
 	};
 
-	class WordIndexNode {
+	class WordIndexerNode {
 	public:
-		void add(string_type::const_iterator& iter, string_type::const_iterator& end);
-		int get(string_type::const_iterator& iter, string_type::const_iterator& end);
+		WordIndexerNode();
+		virtual ~WordIndexerNode();
+		void add(string_type::const_iterator& iter, string_type::const_iterator& end, DictEntry* entry_ptr);
+		DictEntry* get(string_type::const_iterator& iter, string_type::const_iterator& end) const;
+//		const DictEntry* get(string_type::const_iterator& iter, string_type::const_iterator& end) const;
+		void find_prefixes(string_type::const_iterator& iter, string_type::const_iterator& end, std::list<DictEntry*>& entry_list) const;
 	protected:
-		int index;
-		unordered_map <char_type, WordIndexNode> m_table;
+		DictEntry* m_entry_ptr;
+		unordered_map <char_type, WordIndexerNode*> m_table;
 	};
 
-	class WordIndex {
+	class WordIndexer {
 	public:
-		void add(const string_type& word, size_t index);
-		int get(string_type::const_iterator& iter, string_type::const_iterator& end);
-		std::list<int> find_prefixes(string_type::const_iterator& iter, string_type::const_iterator& end);
+		void add(const string_type& word, DictEntry* entry_ptr);
+		void remove(const string_type& word);
+		DictEntry* get(string_type::const_iterator& iter, string_type::const_iterator& end) const;
+//		const DictEntry* get(string_type::const_iterator& iter, string_type::const_iterator& end) const;
+		std::list<DictEntry*> find_prefixes(string_type::const_iterator& iter, string_type::const_iterator& end) const;
 	protected:
-		WordIndexNode m_top_node;
+		WordIndexerNode m_top_node;
 	};
 
 	class Dictionary {
 	public:
-		typedef std::vector<DictEntry> word_dict_type;
+		typedef std::vector<DictEntry*> word_dict_type;
 		typedef std::vector<int> tag_dict_type;
+		typedef std::vector<int> tag_transit_dict_type;
 		typedef std::pair<int, int> transit_index_type;
 		typedef unordered_map<typename transit_index_type, int> transit_dict_type;
-		typedef WordIndex word_indexer_type;
+		typedef WordIndexer word_indexer_type;
 	public:
+		Dictionary();
+		virtual ~Dictionary();
 		//	word
-		int add_word(const string_type& word);
-		void remove_word(int index);
-		int get_word_index(const string_type& word) const;
-		DictEntry get_word(int index);
-		DictEntry get_word(int index) const;
-		std::list<DictEntry> find_prefixes(string_type::const_iterator& iter, string_type::const_iterator& end) const;
-		//	word transit
-		void add_word_transit_weight(int current_index, int next_index, double weight);
-		double get_word_transit_weight(int current_index, int next_index) const;
-		void remove_word_transit_weight(int current_index, int next_index);
+		DictEntry* add_word(const string_type& word);
+		void remove_word(const string_type& word);
+		DictEntry* get_word(string_type::const_iterator& iter, string_type::const_iterator& end);
+		const DictEntry* get_word(string_type::const_iterator& iter, string_type::const_iterator& end) const;
+		std::list<DictEntry*> find_prefixes(string_type::const_iterator& iter, string_type::const_iterator& end) const;
+		////	word transit
+		//void add_word_transit_weight(int current_index, int next_index, double weight);
+		//void remove_word_transit_weight(int current_index, int next_index);
+		//double get_word_transit_weight(int current_index, int next_index) const;
 		//	tag
-		void add_tag_weight(int tag, double weight);
+		void init_tag_dict(int size);
+		void add_tag_weight(int tag, int weight);
 		void remove_tag_weight(int tag);
 		double get_tag_weight(int tag) const;
 		//	tag transit
-		void add_tag_transit_weight(int current_tag, int next_tag, double weight);
+		int get_tag_transit_index(int current_tag, int next_tag) const;
+		void add_tag_transit_weight(int current_tag, int next_tag, int weight);
 		void remove_tag_transit_weight(int current_tag, int next_tag);
-		double get_tag_transit_weight(int current_tag, int next_tag) const;
+		int get_tag_transit_weight(int current_tag, int next_tag) const;
 
 	protected:
 		//	word
 		word_dict_type m_word_dict;
-		transit_dict_type m_word_transit_dict;
+		//transit_dict_type m_word_transit_dict;
 		//	tag
 		tag_dict_type m_tag_dict;
-		transit_dict_type m_tag_transit_dict;
+		tag_transit_dict_type m_tag_transit_dict;
 		//	indexer
 		word_indexer_type m_word_indexer;
 	};
