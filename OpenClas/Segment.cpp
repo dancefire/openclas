@@ -251,7 +251,7 @@ namespace openclas {
 
 			//	use the tag if the word has the only tag
 			if (iter->tags.size() == 1)
-				item.tag = iter->tags[0].tag;
+				item.tag = static_cast<enum pku::WordTag>(iter->tags[0].tag);
 
 			item.is_recorded = true;
 			item.offset = word.offset;

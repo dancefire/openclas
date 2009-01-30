@@ -371,20 +371,83 @@ namespace openclas {
 
 	class TagEntry {
 	public:
-		enum pku::WordTag tag;
+		int tag;
 		int weight;
+	public:
+		TagEntry(int tag = 0, int weight = 0)
+			: tag(tag), weight(weight)
+		{
+		}
+		bool operator==(const TagEntry& other)
+		{
+			return this->tag == other.tag;
+		}
 	};
 
-	class DictEntry {
+	class DictEntry{
 	public:
 		int id;
 		std::wstring word;
 		std::vector<TagEntry> tags;
+	public:
+		void add(int tag, int weight);
+		void remove(int tag);
+	};
+
+	class WordIndexNode {
+	public:
+		void add(string_type::const_iterator& iter, string_type::const_iterator& end);
+		int get(string_type::const_iterator& iter, string_type::const_iterator& end);
+	protected:
+		int index;
+		unordered_map <char_type, WordIndexNode> m_table;
+	};
+
+	class WordIndex {
+	public:
+		void add(const string_type& word, size_t index);
+		int get(string_type::const_iterator& iter, string_type::const_iterator& end);
+		std::list<int> find_prefixes(string_type::const_iterator& iter, string_type::const_iterator& end);
+	protected:
+		WordIndexNode m_top_node;
 	};
 
 	class Dictionary {
 	public:
-		std::list<DictEntry> find_prefixes(std::wstring::const_iterator& iter, std::wstring::const_iterator& end) const;
+		typedef std::vector<DictEntry> word_dict_type;
+		typedef std::vector<int> tag_dict_type;
+		typedef std::pair<int, int> transit_index_type;
+		typedef unordered_map<typename transit_index_type, int> transit_dict_type;
+		typedef WordIndex word_indexer_type;
+	public:
+		//	word
+		int add_word(const string_type& word);
+		void remove_word(int index);
+		int get_word_index(const string_type& word) const;
+		DictEntry get_word(int index);
+		DictEntry get_word(int index) const;
+		std::list<DictEntry> find_prefixes(string_type::const_iterator& iter, string_type::const_iterator& end) const;
+		//	word transit
+		void add_word_transit_weight(int current_index, int next_index, double weight);
 		double get_word_transit_weight(int current_index, int next_index) const;
+		void remove_word_transit_weight(int current_index, int next_index);
+		//	tag
+		void add_tag_weight(int tag, double weight);
+		void remove_tag_weight(int tag);
+		double get_tag_weight(int tag) const;
+		//	tag transit
+		void add_tag_transit_weight(int current_tag, int next_tag, double weight);
+		void remove_tag_transit_weight(int current_tag, int next_tag);
+		double get_tag_transit_weight(int current_tag, int next_tag) const;
+
+	protected:
+		//	word
+		word_dict_type m_word_dict;
+		transit_dict_type m_word_transit_dict;
+		//	tag
+		tag_dict_type m_tag_dict;
+		transit_dict_type m_tag_transit_dict;
+		//	indexer
+		word_indexer_type m_word_indexer;
 	};
 }	//	namespace openclas
