@@ -414,28 +414,18 @@ namespace openclas {
 		double get_backward_weight(const string_type& word) const;
 	};
 
-	class WordIndexerNode {
+	class WordIndexer {
 	public:
-		WordIndexerNode();
-		virtual ~WordIndexerNode();
+		WordIndexer();
+		virtual ~WordIndexer();
 		void add(string_type::const_iterator& iter, string_type::const_iterator& end, DictEntry* entry_ptr);
+		void remove(string_type::const_iterator& iter, string_type::const_iterator& end);
 		DictEntry* get(string_type::const_iterator& iter, string_type::const_iterator& end) const;
 //		const DictEntry* get(string_type::const_iterator& iter, string_type::const_iterator& end) const;
 		void find_prefixes(string_type::const_iterator& iter, string_type::const_iterator& end, std::list<DictEntry*>& entry_list) const;
 	protected:
 		DictEntry* m_entry_ptr;
-		unordered_map <char_type, WordIndexerNode*> m_table;
-	};
-
-	class WordIndexer {
-	public:
-		void add(const string_type& word, DictEntry* entry_ptr);
-		void remove(const string_type& word);
-		DictEntry* get(string_type::const_iterator& iter, string_type::const_iterator& end) const;
-//		const DictEntry* get(string_type::const_iterator& iter, string_type::const_iterator& end) const;
-		std::list<DictEntry*> find_prefixes(string_type::const_iterator& iter, string_type::const_iterator& end) const;
-	protected:
-		WordIndexerNode m_top_node;
+		unordered_map <char_type, WordIndexer*> m_table;
 	};
 
 	class Dictionary {

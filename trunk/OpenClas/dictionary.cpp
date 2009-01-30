@@ -102,37 +102,39 @@ namespace openclas {
 
 	/*******************************************************************
 	*
-	*	WordIndexerNode
+	*	WordIndexer
 	*
 	********************************************************************/
 
-	WordIndexerNode::WordIndexerNode()
+	WordIndexer::WordIndexer()
 		: m_entry_ptr(0)
 	{
 	}
 
-	WordIndexerNode::~WordIndexerNode()
+	WordIndexer::~WordIndexer()
 	{
-		for(unordered_map<char_type, WordIndexerNode*>::iterator iter = m_table.begin(); iter != m_table.end(); ++iter)
+		for(unordered_map<char_type, WordIndexer*>::iterator iter = m_table.begin(); iter != m_table.end(); ++iter)
 		{
 			if (iter->second)
 				delete iter->second;
 		}
 	}
 
-	void WordIndexerNode::add(string_type::const_iterator& iter, string_type::const_iterator& end, DictEntry* entry_ptr)
+	void WordIndexer::add(string_type::const_iterator& iter, string_type::const_iterator& end, DictEntry* entry_ptr)
 	{
 		if (iter == end)
 		{
+			if (m_entry_ptr)
+				delete m_entry_ptr;
 			m_entry_ptr = entry_ptr;
 			return;
 		}
 
-		unordered_map<char_type, WordIndexerNode*>::iterator it = m_table.find(*iter);
+		unordered_map<char_type, WordIndexer*>::iterator it = m_table.find(*iter);
 		if (it == m_table.end())
 		{
 			//	not existed in table
-			WordIndexerNode* node = new WordIndexerNode();
+			WordIndexer* node = new WordIndexer();
 			m_table[it->first] = node;
 			node->add(iter+1, end, entry_ptr);
 		}else{
@@ -140,12 +142,35 @@ namespace openclas {
 		}
 	}
 
-	DictEntry* WordIndexerNode::get(string_type::const_iterator& iter, string_type::const_iterator& end) const
+	void WordIndexer::remove(string_type::const_iterator& iter, string_type::const_iterator& end)
+	{
+		if (iter == end)
+		{
+			if (m_entry_ptr)
+				delete m_entry_ptr;
+			return;
+		}
+
+		unordered_map<char_type, WordIndexer*>::iterator it = m_table.find(*iter);
+		if (it == m_table.end())
+		{
+			return;
+		}else{
+			it->second->remove(iter+1, end);
+			if (it->second->m_table.size() == 0)
+			{
+				delete it->second;
+				m_table.erase(it);
+			}
+		}
+	}
+
+	DictEntry* WordIndexer::get(string_type::const_iterator& iter, string_type::const_iterator& end) const
 	{
 		if (iter == end)
 			return m_entry_ptr;
 
-		unordered_map<char_type, WordIndexerNode*>::const_iterator it = m_table.find(*iter);
+		unordered_map<char_type, WordIndexer*>::const_iterator it = m_table.find(*iter);
 		if (it == m_table.end())
 		{
 			//	not existed in table
@@ -155,7 +180,7 @@ namespace openclas {
 		}
 	}
 
-	void WordIndexerNode::find_prefixes(string_type::const_iterator& iter, string_type::const_iterator& end, std::list<DictEntry*>& entry_list) const
+	void WordIndexer::find_prefixes(string_type::const_iterator& iter, string_type::const_iterator& end, std::list<DictEntry*>& entry_list) const
 	{
 		if (m_entry_ptr)
 			entry_list.push_back(m_entry_ptr);
@@ -165,34 +190,11 @@ namespace openclas {
 			return;
 		}
 
-		unordered_map<char_type, WordIndexerNode*>::const_iterator it = m_table.find(*iter);
+		unordered_map<char_type, WordIndexer*>::const_iterator it = m_table.find(*iter);
 		if (it != m_table.end())
 		{
 			it->second->find_prefixes(iter+1, end, entry_list);
 		}
-	}
-
-	/*******************************************************************
-	*
-	*	WordIndexer
-	*
-	********************************************************************/
-
-	void WordIndexer::add(const string_type& word, DictEntry* entry_ptr)
-	{
-		m_top_node.add(word.begin(), word.end(), entry_ptr);
-	}
-
-	DictEntry* WordIndexer::get(string_type::const_iterator& iter, string_type::const_iterator& end) const
-	{
-		return m_top_node.get(iter, end);
-	}
-
-	std::list<DictEntry*> WordIndexer::find_prefixes(string_type::const_iterator& iter, string_type::const_iterator& end) const
-	{
-		std::list<DictEntry*> entry_list;
-		m_top_node.find_prefixes(iter, end, entry_list);
-		return entry_list;
 	}
 
 	/*******************************************************************
@@ -228,7 +230,7 @@ namespace openclas {
 			DictEntry* ptr = new DictEntry();
 			ptr->word = word;
 			m_word_dict.push_back(ptr);
-			m_word_indexer.add(word, ptr);
+			m_word_indexer.add(word.begin(), word.end(), ptr);
 			return ptr;
 		}
 	}
@@ -238,7 +240,7 @@ namespace openclas {
 		const DictEntry* entry_ptr = get_word(word.begin(), word.end());
 		if (entry_ptr)
 		{
-			m_word_indexer.remove(word);
+			m_word_indexer.remove(word.begin(), word.end());
 			word_dict_type::iterator iter = std::find(m_word_dict.begin(), m_word_dict.end(), entry_ptr);
 			if (iter != m_word_dict.end())
 				m_word_dict.erase(iter);
@@ -259,7 +261,9 @@ namespace openclas {
 
 	std::list<DictEntry*> Dictionary::find_prefixes(string_type::const_iterator &iter, string_type::const_iterator &end) const
 	{
-		return m_word_indexer.find_prefixes(iter, end);
+		std::list<DictEntry*> entry_list;
+		m_word_indexer.find_prefixes(iter, end, entry_list);
+		return entry_list;
 	}
 
 	/*****************   Tag   *****************/
