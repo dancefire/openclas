@@ -46,23 +46,67 @@ SUCH DAMAGE.
 
 **********************************************************************************/
 /*
-*	$Id$
+*	$Id: utility.cpp 13 2009-01-25 01:04:13Z Dancefire $
 */
-#pragma once
-#ifndef _OPENCLAS_COMMON_H_
-#define _OPENCLAS_COMMON_H_
 
+#pragma once
+#ifndef _OPENCLAS_SERIALIZATION_H_
+#define _OPENCLAS_SERIALIZATION_H_
+
+#include "dictionary.h"
 #include <string>
-#include <boost/shared_ptr.hpp>
-#include <boost/shared_array.hpp>
-#include <boost/unordered_map.hpp>
 
 namespace openclas {
-	typedef wchar_t			char_type;
-	typedef std::wstring	string_type;
-	using boost::shared_ptr;
-	using boost::shared_array;
-	using boost::unordered_map;
+
+	namespace ict {
+
+		struct WordHeader {
+			int weight;
+			int length;
+			int pos;
+		};
+
+		static const enum pku::WordTag SpecialWordTagIndex[] = {
+			pku::WORD_TAG_BEGIN,
+			pku::WORD_TAG_END,
+			pku::WORD_TAG_NX,
+			pku::WORD_TAG_NS,
+			pku::WORD_TAG_NR,
+			pku::WORD_TAG_T,
+			pku::WORD_TAG_M,
+			pku::WORD_TAG_N,
+			pku::WORD_TAG_NT,
+			pku::WORD_TAG_NZ
+		};
+
+		static const char_type* SpecialWordString[] = {
+			L"始##始",
+			L"末##末",
+			L"未##串",
+			L"未##地",
+			L"未##人",
+			L"未##时",
+			L"未##数",
+			L"未##它",
+			L"未##团",
+			L"未##专"
+		};
+
+		const int SPECIAL_WORD_COUNT = 10;
+		const int GB2312_COUNT = 6768;
+		const std::locale locale_gbk(CodePageString[CODEPAGE_GBK]);
+
+		void load_words_from_dict(Dictionary& dict, const std::string& filename);
+		void load_words_transit_from_dict(Dictionary& dict, const std::string& filename);
+		void load_tags_from_dict(Dictionary& dict, const std::string& filename);
+
+		void save_words_to_dict(Dictionary& dict, const std::string& filename);
+		void save_words_transit_to_dict(Dictionary& dict, const std::string& filename);
+		void save_tags_to_dict(Dictionary& dict, const std::string& filename);
+	}
+
+	
+
 }
 
-#endif
+#endif	//	_OPENCLAS_SERIALIZATION_H_
