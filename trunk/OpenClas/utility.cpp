@@ -138,4 +138,65 @@ namespace openclas {
 		return false;
 	}
 
+	std::string narrow(const std::wstring& str, const std::locale& loc)
+	{
+		const code_converter_type& cc = std::use_facet<code_converter_type>(loc);
+
+		int buf_size = static_cast<int>(cc.max_length() * (str.length() + 1));
+		char* buf = new char[buf_size];
+
+		mbstate_t state = mbstate_t();
+		const wchar_t* from_next = 0;
+		char* to_next = 0;
+
+		std::codecvt_base::result result = cc.out(state,
+			str.c_str(), str.c_str() + str.length(), from_next,
+			buf, buf + buf_size, to_next);
+
+		if (result == std::codecvt_base::ok)
+		{
+			std::string narrow_string(buf, to_next);
+			delete buf;
+			return narrow_string;
+		}else{
+			delete buf;
+			return std::string();
+		}
+	}
+
+	std::wstring widen(const std::string& str, const std::locale& loc)
+	{
+		const code_converter_type& cc = std::use_facet<code_converter_type>(loc);
+
+		int buf_size = str.length() + 1;
+		wchar_t* buf = new wchar_t[buf_size];
+
+		mbstate_t state = mbstate_t();
+		const char* from_next = 0;
+		wchar_t* to_next = 0;
+
+		std::codecvt_base::result result = cc.in(state,
+			str.c_str(), str.c_str() + str.length(), from_next,
+			buf, buf + buf_size, to_next);
+
+		if (result == std::codecvt_base::ok)
+		{
+			std::wstring widen_string(buf, to_next);
+			delete buf;
+			return widen_string;
+		}else{
+			delete buf;
+			return std::wstring();
+		}
+	}
+
+	namespace pku {
+		string_type get_special_word_string(enum WordTag tag)
+		{
+			string_type str;
+			str.push_back(L'$');
+			str.append(WORD_TAG_NAME[tag]);
+			return str;
+		}
+	}
 }
