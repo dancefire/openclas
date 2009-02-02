@@ -118,9 +118,9 @@ namespace openclas {
 			return gb2312_array;
 		}
 
-		void load_entries_from_dict(Dictionary& dict, const std::string& filename, bool is_transit)
+		void load_from_dct(Dictionary& dict, const char* filename, bool is_transit)
 		{
-			std::ifstream in(filename.c_str(), std::ios_base::in | std::ios_base::binary);
+			std::ifstream in(filename, std::ios_base::in | std::ios_base::binary);
 
 			shared_array<wchar_t> GB2312_ARRAY = get_gb2312_array();
 
@@ -197,31 +197,49 @@ namespace openclas {
 			}
 		}
 
-		void load_words_from_dict(Dictionary& dict, const std::string& filename)
+		void load_words_from_dct(Dictionary& dict, const char* filename)
 		{
-			load_entries_from_dict(dict, filename, false);
+			load_from_dct(dict, filename, false);
 		}
 
-		void load_words_transit_from_dict(Dictionary& dict, const std::string& filename)
+		void load_words_transit_from_dct(Dictionary& dict, const char* filename)
 		{
-			load_entries_from_dict(dict, filename, true);
+			load_from_dct(dict, filename, true);
 		}
 
-		void load_tags_from_dict(Dictionary& dict, const std::string& filename)
-		{
-		}
-
-		void save_words_to_dict(Dictionary& dict, const std::string& filename)
+		void load_tags_from_ctx(Dictionary& dict, const char* filename)
 		{
 		}
 
-		void save_words_transit_to_dict(Dictionary& dict, const std::string& filename)
+
+		void load_from_file(Dictionary& dict, const char* tag_filename, const char* words_filename, const char* words_transit_filename)
+		{
+			load_words_from_dct(dict, words_filename);
+			if (words_transit_filename)
+				load_words_transit_from_dct(dict, words_transit_filename);
+			load_tags_from_ctx(dict, tag_filename);
+		}
+
+		void save_words_to_dct(Dictionary& dict, const char* filename)
 		{
 		}
 
-		void save_tags_to_dict(Dictionary& dict, const std::string& filename)
+		void save_words_transit_to_dct(Dictionary& dict, const char* filename)
 		{
 		}
+
+		void save_tags_to_ctx(Dictionary& dict, const char* filename)
+		{
+		}
+
+		void save_to_file(Dictionary& dict, const char* tag_filename, const char* words_filename, const char* words_transit_filename)
+		{
+			save_words_to_dct(dict, words_filename);
+			if (words_transit_filename)
+				save_words_transit_to_dct(dict, words_transit_filename);
+			save_tags_to_ctx(dict, tag_filename);
+		}
+
 	}
 
 

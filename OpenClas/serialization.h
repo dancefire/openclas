@@ -96,13 +96,15 @@ namespace openclas {
 		const int GB2312_COUNT = 6768;
 		const std::locale locale_gbk(CodePageString[CODEPAGE_GBK]);
 
-		void load_words_from_dict(Dictionary& dict, const std::string& filename);
-		void load_words_transit_from_dict(Dictionary& dict, const std::string& filename);
-		void load_tags_from_dict(Dictionary& dict, const std::string& filename);
+		void load_words_from_dct(Dictionary& dict, const char* filename);
+		void load_words_transit_from_dct(Dictionary& dict, const char* filename);
+		void load_tags_from_ctx(Dictionary& dict, const char* filename);
+		void load_from_file(Dictionary& dict, const char* tag_filename, const char* words_filename, const char* words_transit_filename = 0);
 
-		void save_words_to_dict(Dictionary& dict, const std::string& filename);
-		void save_words_transit_to_dict(Dictionary& dict, const std::string& filename);
-		void save_tags_to_dict(Dictionary& dict, const std::string& filename);
+		void save_words_to_dct(Dictionary& dict, const char* filename);
+		void save_words_transit_to_dct(Dictionary& dict, const char* filename);
+		void save_tags_to_ctx(Dictionary& dict, const char* filename);
+		void save_to_file(Dictionary& dict, const char* tag_filename, const char* words_filename, const char* words_transit_filename = 0);
 	}
 
 	
