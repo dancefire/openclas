@@ -168,7 +168,7 @@ namespace openclas {
 	{
 		const code_converter_type& cc = std::use_facet<code_converter_type>(loc);
 
-		int buf_size = str.length() + 1;
+		size_t buf_size = str.length() + 1;
 		wchar_t* buf = new wchar_t[buf_size];
 
 		mbstate_t state = mbstate_t();

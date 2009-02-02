@@ -55,6 +55,7 @@ SUCH DAMAGE.
 #include <string>
 #include <boost/shared_ptr.hpp>
 #include <boost/shared_array.hpp>
+#include <boost/scoped_array.hpp>
 #include <boost/unordered_map.hpp>
 
 namespace openclas {
@@ -62,6 +63,7 @@ namespace openclas {
 	typedef std::wstring	string_type;
 	using boost::shared_ptr;
 	using boost::shared_array;
+	using boost::scoped_array;
 	using boost::unordered_map;
 }
 

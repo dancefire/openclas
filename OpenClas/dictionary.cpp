@@ -266,6 +266,11 @@ namespace openclas {
 		return entry_list;
 	}
 
+	const Dictionary::word_dict_type Dictionary::words() const
+	{
+		return m_word_dict;
+	}
+
 	/*****************   Tag   *****************/
 
 	void Dictionary::init_tag_dict(int size)
@@ -298,6 +303,11 @@ namespace openclas {
 			return 0;
 	}
 
+	const Dictionary::tag_dict_type Dictionary::tags() const
+	{
+		return m_tag_dict;
+	}
+
 	/*****************   Tag transit   *****************/
 
 	int Dictionary::get_tag_transit_index(int current_tag, int next_tag) const
@@ -311,6 +321,12 @@ namespace openclas {
 		m_tag_transit_dict.at(index) = weight;
 	}
 
+	void Dictionary::add_tag_transit_weight(int tags_index, int weight)
+	{
+		if (tags_index < static_cast<int>(m_tag_transit_dict.size()))
+			m_tag_transit_dict.at(tags_index) = weight;
+	}
+
 	void Dictionary::remove_tag_transit_weight(int current_tag, int next_tag)
 	{
 		int index = get_tag_transit_index(current_tag, next_tag);
@@ -321,5 +337,10 @@ namespace openclas {
 	{
 		int index = get_tag_transit_index(current_tag, next_tag);
 		return m_tag_transit_dict.at(index);
+	}
+
+	const Dictionary::tag_transit_dict_type Dictionary::tags_transit() const
+	{
+		return m_tag_transit_dict;
 	}
 }	//	namespace openclas

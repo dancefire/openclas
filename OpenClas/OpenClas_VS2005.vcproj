@@ -189,6 +189,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\serialization.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\utility.cpp"
 				>
 			</File>
@@ -228,6 +232,10 @@
 			</File>
 			<File
 				RelativePath=".\Segment.h"
+				>
+			</File>
+			<File
+				RelativePath=".\serialization.h"
 				>
 			</File>
 			<File
