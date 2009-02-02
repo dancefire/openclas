@@ -401,7 +401,6 @@ namespace openclas {
 
 	class DictEntry{
 	public:
-		int id;
 		std::wstring word;
 		std::vector<TagEntry> tags;
 		//	transit table
@@ -433,8 +432,6 @@ namespace openclas {
 		typedef std::vector<DictEntry*> word_dict_type;
 		typedef std::vector<int> tag_dict_type;
 		typedef std::vector<int> tag_transit_dict_type;
-		typedef std::pair<int, int> transit_index_type;
-		typedef unordered_map<typename transit_index_type, int> transit_dict_type;
 		typedef WordIndexer word_indexer_type;
 	public:
 		Dictionary();
@@ -445,6 +442,7 @@ namespace openclas {
 		DictEntry* get_word(string_type::const_iterator& iter, string_type::const_iterator& end);
 		const DictEntry* get_word(string_type::const_iterator& iter, string_type::const_iterator& end) const;
 		std::list<DictEntry*> find_prefixes(string_type::const_iterator& iter, string_type::const_iterator& end) const;
+		const word_dict_type words() const;
 		////	word transit
 		//void add_word_transit_weight(int current_index, int next_index, double weight);
 		//void remove_word_transit_weight(int current_index, int next_index);
@@ -454,11 +452,14 @@ namespace openclas {
 		void add_tag_weight(int tag, int weight);
 		void remove_tag_weight(int tag);
 		double get_tag_weight(int tag) const;
+		const tag_dict_type tags() const;
 		//	tag transit
 		int get_tag_transit_index(int current_tag, int next_tag) const;
 		void add_tag_transit_weight(int current_tag, int next_tag, int weight);
+		void add_tag_transit_weight(int tags_index, int weight);
 		void remove_tag_transit_weight(int current_tag, int next_tag);
 		int get_tag_transit_weight(int current_tag, int next_tag) const;
+		const tag_transit_dict_type tags_transit() const;
 
 	protected:
 		//	word

@@ -239,8 +239,115 @@ namespace openclas {
 				save_words_transit_to_dct(dict, words_transit_filename);
 			save_tags_to_ctx(dict, tag_filename);
 		}
-
 	}
 
+	void save_to_file(Dictionary& dict, const char* filename)
+	{
+		std::ofstream out(filename, std::ios_base::out | std::ios_base::binary);
 
+		//	Write Dictionary Header
+		DictHeader header;
+		header.magic_code = DICT_MAGIC_CODE;
+		header.tag_count = static_cast<unsigned short>(dict.tags().size());
+		header.word_count = static_cast<int>(dict.words().size());
+		out.write(reinterpret_cast<const char *>(&header), sizeof(DictHeader));
+
+		//	Write all tags
+		//		tag
+		scoped_array<int> tags(new int[header.tag_count]);
+		std::copy(dict.tags().begin(), dict.tags().end(), tags.get());
+		out.write(reinterpret_cast<const char*>(tags.get()), static_cast<int>(sizeof(int) * dict.tags().size()));
+		//		tag transit
+		scoped_array<int> tags_transit(new int[dict.tags_transit().size()]);
+		std::copy(dict.tags_transit().begin(), dict.tags_transit().end(), tags_transit.get());
+		out.write(reinterpret_cast<const char*>(tags_transit.get()), static_cast<int>(sizeof(int) * dict.tags_transit().size()));
+		//	Write all words
+		for (Dictionary::word_dict_type::const_iterator iter = dict.words().begin(); iter != dict.words().end(); ++iter)
+		{
+			std::string narrow_word = narrow((*iter)->word, locale_utf8);
+
+			WordHeader word_header;
+			word_header.length = static_cast<unsigned char>(narrow_word.length());
+			word_header.tag_count = static_cast<unsigned char>((*iter)->tags.size());
+			word_header.transit_count = static_cast<unsigned short>((*iter)->forward.size());
+			//	Word Header
+			out.write(reinterpret_cast<const char*>(&word_header), sizeof(WordHeader));
+			//	Word content
+			out.write(reinterpret_cast<const char*>(narrow_word.c_str()), static_cast<int>(narrow_word.length()));
+			//	Word Tags
+			for (std::vector<TagEntry>::iterator it = (*iter)->tags.begin(); it != (*iter)->tags.end(); ++it)
+			{
+				TagItem tag;
+				tag.tag = it->tag;
+				tag.weight = it->weight;
+				out.write(reinterpret_cast<const char*>(&tag), sizeof(TagItem));
+			}
+			//	Word Transit
+			for (unordered_map<string_type, double>::iterator it = (*iter)->forward.begin(); it != (*iter)->forward.end(); ++it)
+			{
+				std::string narrow_transit_word = narrow(it->first, locale_utf8);
+				TransitHeader transit_header;
+				transit_header.length = static_cast<int>(narrow_transit_word.length());
+				transit_header.weight = static_cast<int>(it->second);
+				out.write(reinterpret_cast<const char*>(&transit_header), sizeof(TransitHeader));
+				out.write(reinterpret_cast<const char*>(narrow_transit_word.c_str()), sizeof(narrow_transit_word.length()));
+			}
+		}
+	}
+
+	void load_from_file(Dictionary& dict, const char* filename)
+	{
+		std::ifstream in(filename, std::ios_base::in | std::ios_base::binary);
+
+		//	Read Dictionary Header
+		DictHeader header;
+		in.read(reinterpret_cast<char*>(&header), sizeof(DictHeader));
+		if (header.magic_code != DICT_MAGIC_CODE)
+			return;
+
+		//	Read all tags
+		//		tag
+		scoped_array<int> tags(new int[header.tag_count]);
+		in.read(reinterpret_cast<char*>(tags.get()), header.tag_count);
+		for (int i = 0; i < header.tag_count; ++i)
+		{
+			dict.add_tag_weight(i, tags[i]);
+		}
+		//		tag transit
+		int tag_transit_count = header.tag_count * header.tag_count;
+		scoped_array<int> tags_transit(new int[tag_transit_count]);
+		in.read(reinterpret_cast<char*>(tags_transit.get()), static_cast<int>(tag_transit_count));
+		for (int i = 0; i < tag_transit_count; ++i)
+		{
+			dict.add_tag_transit_weight(i, tags_transit[i]);
+		}
+		//	Write all words
+		for (Dictionary::word_dict_type::const_iterator iter = dict.words().begin(); iter != dict.words().end(); ++iter)
+		{
+			//	Word Header
+			WordHeader word_header;
+			in.read(reinterpret_cast<char*>(&word_header), sizeof(WordHeader));
+			//	Word content
+			scoped_array<char> word_ptr(new char[word_header.length]);
+			in.read(reinterpret_cast<char*>(word_ptr.get()), word_header.length);
+			string_type word_content = widen(std::string(word_ptr.get(), word_ptr.get() + word_header.length), locale_utf8);
+			DictEntry* entry = dict.add_word(word_content);
+			//	Word Tags
+			for (int i = 0; i < word_header.tag_count; ++i)
+			{
+				TagItem tag;
+				in.read(reinterpret_cast<char*>(&tag), sizeof(TagItem));
+				dict.add_tag_weight(tag.tag, tag.weight);
+			}
+			//	Word Transit
+			for (int i = 0; i < word_header.transit_count; ++i)
+			{
+				TransitHeader transit_header;
+				in.read(reinterpret_cast<char*>(&transit_header), sizeof(TransitHeader));
+				scoped_array<char> transit_word_ptr(new char[transit_header.length]);
+				in.read(reinterpret_cast<char*>(transit_word_ptr.get()), sizeof(transit_header.length));
+				string_type transit_word = widen(transit_word_ptr.get(), locale_utf8);
+			}
+		}
+	}
 }

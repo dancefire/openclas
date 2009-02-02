@@ -107,8 +107,34 @@ namespace openclas {
 		void save_to_file(Dictionary& dict, const char* tag_filename, const char* words_filename, const char* words_transit_filename = 0);
 	}
 
-	
+	const unsigned short DICT_MAGIC_CODE = 'D' << 8 | 'C';
 
+	struct DictHeader{
+		unsigned short magic_code;
+		unsigned short tag_count;
+		int word_count;
+	};
+
+	struct WordHeader {
+		unsigned char length;
+		unsigned char tag_count;
+		unsigned short transit_count;
+	};
+
+	struct TagItem{
+		int tag;
+		int weight;
+	};
+
+	struct TransitHeader {
+		int length;
+		int weight;
+	};
+
+	const std::locale locale_utf8(CodePageString[CODEPAGE_UTF8]);
+
+	void load_from_dict(Dictionary& dict, const char* filename);
+	void save_to_dict(Dictionary& dict, const char* filename);
 }
 
 #endif	//	_OPENCLAS_SERIALIZATION_H_

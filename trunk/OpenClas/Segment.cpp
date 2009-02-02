@@ -256,7 +256,6 @@ namespace openclas {
 			item.is_recorded = true;
 			item.offset = word.offset;
 			item.length = (*iter)->word.length();
-			item.id = (*iter)->id;
 
 			word_list.push_back(item);
 		}
