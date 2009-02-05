@@ -1,0 +1,24 @@
+#开发路线图
+
+= The way to 1.0 =
+
+== Milestone 1 ==
+重写旧版本rev37中的所有类，凡是涉及不合理的，进行重构。所有重写的代码放至namespace openclas下。
+
+
+== Milestone 2 ==
+继续未完成的任务，将ICTCLAS剩下的内容完整实现出来。
+
+
+== Milestone 3 ==
+制作词典工具。包括
+
+  * 词典编辑工具
+  * 词典导入工具(源自wikipedia,中文词典等)
+  * 词典导入、生成工具（源自语料库）
+
+
+= 1.x =
+
+  * 改进算法
+  * 看需求是不是开设一个open dictionary的项目
