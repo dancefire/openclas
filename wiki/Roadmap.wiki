@@ -5,12 +5,42 @@
 == Milestone 1 ==
 重写旧版本rev37中的所有类，凡是涉及不合理的，进行重构。所有重写的代码放至namespace openclas下。
 
+|| *namespace ictclas* || *namespace openclas* || *status* ||
+|| `Edge<T>` || `Edge<EdgeValueType>` || *Done* ||
+|| `TagEdge<T>` || `Word` || *Done* ||
+|| `AdjacencyList<T, E>` || `Graph<NodeValueType, EdgeValueType>` || *Done* ||
+|| `WordEntry` || `DiskEntry` || *Done* ||
+|| `WordTag` || `TagItem` || *Done* ||
+|| `Dictionary` || `Dictionary` || *Done* ||
+|| `Encoding` || `"utility.h"` || *Done* ||
+|| `WordIdPair` || - || - ||
+|| `Atom` || `Word` || *Done* ||
+|| `Segment<T>` || `Segment` || *Done* ||
+|| `KShortestPath<T, G>` || `"kshortestpath.h"` || _Working_ ||
+|| `Serializer` || `"serialization.h"` || *Done* ||
+|| `ICT_Serializer` || `"serialization.h"` || *Done* ||
+|| `OpenClasSerializer` || `"serialization.h"` || *Done* ||
+|| `Utility` || `"utility.h"` || *Done* ||
 
 == Milestone 2 ==
+
 继续未完成的任务，将ICTCLAS剩下的内容完整实现出来。
 
+|| *Class* || *Status* ||
+|| `ContextStat` || Waiting ||
+|| `Dictionary` || *Done* ||
+|| `DynamicArray` || *Done* ||
+|| `NShortestPath` || Working ||
+|| `Queue` || - ||
+|| `Result` || Waiting ||
+|| `SegGraph` || *Done* ||
+|| `Segment` || *Done* ||
+|| `Span` || Waiting ||
+|| `UnknowWord` || Waiting ||
+|| `Utility` || *Done* ||
 
 == Milestone 3 ==
+
 制作词典工具。包括
 
   * 词典编辑工具
@@ -21,4 +51,4 @@
 = 1.x =
 
   * 改进算法
-  * 看需求是不是开设一个open dictionary的项目
+  * 看需求是不是开设一个open dictionary的项目(?)
