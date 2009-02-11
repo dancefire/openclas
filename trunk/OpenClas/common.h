@@ -53,6 +53,7 @@ SUCH DAMAGE.
 #define _OPENCLAS_COMMON_H_
 
 #include <string>
+#include <boost/config.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/shared_array.hpp>
 #include <boost/scoped_array.hpp>

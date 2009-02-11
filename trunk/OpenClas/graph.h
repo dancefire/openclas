@@ -203,6 +203,7 @@ namespace ictclas{
 }
 
 namespace openclas {
+	/*
 	//	Definition of class Edge
 	template <typename EdgeValueType>
 	class Edge{
@@ -295,4 +296,5 @@ namespace openclas {
 		std::vector<node_type> m_nodes;
 		std::vector< shared_ptr<edge_type> > m_edges;
 	};
+	*/
 }

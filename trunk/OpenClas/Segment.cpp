@@ -50,18 +50,32 @@ SUCH DAMAGE.
 */
 #include "common.h"
 #include "Segment.h"
+#include <limits>
+//#include <boost/config.hpp>
+#include <boost/utility.hpp>
+#include <boost/graph/graph_traits.hpp>
 
 namespace openclas {
 
 	Segment::Segment(const wstring& sentence, const Dictionary& dict)
-		: m_sentence(sentence), m_dict(dict)
+		: m_sentence(sentence), m_dict(dict), m_graph(0), m_wordlist(), m_offset_array(0)
 	{
+		//	put [begin] to m_wordlist at the very first place
+		word_type* word_begin = new word_type();
+		word_begin->tag = pku::WORD_TAG_BEGIN;
+		m_wordlist.push_back(word_begin);
 	}
 
-	std::vector<Segment::word_type> Segment::get_atom_list()
+	Segment::~Segment()
 	{
-		std::vector<word_type> atom_list;
+		delete m_graph;
+		for (wordlist_type::iterator iter = m_wordlist.begin(); iter != m_wordlist.end(); ++iter)
+			delete *iter;
+		delete[] m_offset_array;
+	}
 
+	void Segment::generate_atoms()
+	{
 		//	Add sentence.
 		size_t			index_begin = 0;
 		char_type		current_symbol = char_type();
@@ -85,23 +99,21 @@ namespace openclas {
 					pending = true;
 
 				if (!pending) {
-					word_type word = create_word(previous_type, index_begin, i - index_begin);
-					atom_list.push_back(word);
+					word_type* word = create_word(previous_type, index_begin, i - index_begin);
+					m_wordlist.push_back(word);
 					index_begin = i;
 				}
 			}
 
 			if (i == m_sentence.size() - 1)
 			{
-				word_type word = create_word(current_type, index_begin, i - index_begin + 1);
-				atom_list.push_back(word);
+				word_type* word = create_word(current_type, index_begin, i - index_begin + 1);
+				m_wordlist.push_back(word);
 			}
 		}
-
-		return atom_list;
 	}
 
-	void Segment::merge_atoms(std::vector<word_type>& atom_list)
+	void Segment::merge_atoms()
 	{
 		//	TODO: implement the following:
 		//		[may be better adjust it by dict's weight]
@@ -109,184 +121,168 @@ namespace openclas {
 		//	get_continue_case_1(): 	([0-9０-９]+[年月])/([末内中底前间初])
 	}
 
-	void Segment::create_graph(const std::vector<word_type>& atom_list)
+	void Segment::generate_offset_array()
 	{
-		//	create look-up table for offset of string => index of the node end with the offset
-		unordered_map<int, size_t> offset_index_table;
-		for(std::vector<word_type>::const_iterator iter = atom_list.begin(); iter != atom_list.end(); ++iter)
-		{
-			offset_index_table[static_cast<int>(iter->offset)] = 0;
-		}
-		//	create list for all not fully connected nodes
-		std::list<size_t> uncompleted_nodes;
+		if (m_offset_array)
+			delete[] m_offset_array;
 
-		//	create new graph
-		m_word_graph = shared_ptr<graph_type>(new graph_type);
-		//	add the BEGIN and END node
-		m_word_graph->add_node(word_type(pku::WORD_TAG_BEGIN));
-		size_t end_index = m_word_graph->add_node(word_type(pku::WORD_TAG_END));
+		m_offset_array = new offset_array_list_type[m_sentence.size()+1];
+		//	initialize from atoms
+		for (wordlist_type::iterator iter = m_wordlist.begin(); iter != m_wordlist.end(); ++iter)
+			if ((*iter)->tag != pku::WORD_TAG_BEGIN && (*iter)->tag != pku::WORD_TAG_END)
+				m_offset_array[(*iter)->offset].push_back(*iter);
 
-		//	Stage 1, connect atoms, and connect nodes with it's previous atom only.
-		for(size_t i = 0; i < atom_list.size(); ++i)
+		//	initialize from dictionary
+		size_t atom_begin = 1;
+		size_t atom_end = m_wordlist.size();
+		for (size_t i = atom_begin; i < atom_end; ++i)
 		{
-			const word_type& atom = atom_list[i];
-			std::vector<word_type> word_list = create_word_list_from_dict(atom);
-			for(std::vector<word_type>::iterator it = word_list.begin(); it != word_list.end(); ++it)
+			word_type* atom = m_wordlist[i];
+			std::list<DictEntry*> entries = m_dict.find_prefixes(m_sentence.begin() + atom->offset, m_sentence.end());
+			for(std::list<DictEntry*>::iterator iter = entries.begin(); iter != entries.end(); ++iter)
 			{
-				//	the end point of the word should be one of the atoms.
-				if (offset_index_table.find(static_cast<int>(it->offset + it->length)) != offset_index_table.end()) {
-					//	add the word to graph, and fetch the index
-					size_t current_index = m_word_graph->add_node(*it);
-					//	get previous [atom] node
-					size_t previous_index = offset_index_table[static_cast<int>(atom.offset)];
-					//	get the word transit weight
-					double weight = get_weight(previous_index, previous_index);
-					//	add the edge from the current word to previous [atom] (to form a tree)
-					m_word_graph->add_edge(previous_index, current_index, word_transit_type(weight));
-
-					if (it->offset + it->length == m_sentence.length())
-					{
-						//	reach the end of the sentence
-						//	connect to the end node
-						m_word_graph->add_edge(current_index, end_index, get_weight(current_index, end_index));
-						continue;
-					}
-
-					if (it->length == atom.length)
-					{
-						offset_index_table[static_cast<int>(it->offset + it->length)] = current_index;
-					}else{
-						uncompleted_nodes.push_back(current_index);
-					}
-				}
-			}
-		}
-
-		//	Stage 2, complete the connection. From tree to directed acyclic graph
-
-		for(std::list<size_t>::iterator iter = uncompleted_nodes.begin(); iter != uncompleted_nodes.end(); ++iter)
-		{
-			size_t current_index = *iter;
-			const graph_type::node_type& current_node = m_word_graph->nodes().at(current_index);
-			//	if the out edges set is empty, then fill in by reference node
-			if (current_node.out.empty()) {
-				const word_type& current_word = current_node.value;
-				//	get the offset of next node, so we can find the previous atom
-				int next_offset = static_cast<int>(current_word.offset + current_word.length);
-				const graph_type::node_type& previous_atom = m_word_graph->nodes().at(offset_index_table[next_offset]);
-				for (size_t i = 0; i < previous_atom.out.size(); ++i)
+				if ((*iter)->word.length() >= atom->length 
+					&& m_offset_array[atom->offset + (*iter)->word.length()].size() > 0)
 				{
-					size_t next_index = previous_atom.out.at(i)->end;
-					double weight = get_weight(current_index, next_index);
-					m_word_graph->add_edge(current_index, next_index, word_transit_type(weight));
+					//	Construct the word
+					word_type* item;
+
+					if ((*iter)->word.length() == atom->length)
+						item = atom;
+					else
+						item = new word_type();
+
+					item->weight = 0;
+					//	sum all tags weights as the item's weight
+					for(size_t i = 0; i < (*iter)->tags.size(); ++i)
+						item->weight += (*iter)->tags[i].weight;
+
+					//	use the tag if the word has the only tag
+					if ((*iter)->tags.size() == 1)
+						item->tag = static_cast<enum pku::WordTag>((*iter)->tags[0].tag);
+
+					item->is_recorded = true;
+					item->offset = atom->offset;
+					item->length = (*iter)->word.length();
+
+					if (item->length != atom->offset)
+					{
+						//	add new word to both offset array and wordlist
+						m_offset_array[atom->offset].push_back(item);
+						m_wordlist.push_back(item);
+					}
 				}
 			}
 		}
+		//	add the [end] as the last node
+		word_type* word_end = new word_type();
+		word_end->tag = pku::WORD_TAG_END;
+		m_wordlist.push_back(word_end);
+		//	add the [end] to the last list of offset array
+		m_offset_array[m_sentence.length()].push_back(word_end);
 
+		//	assign index to each word
+		for (size_t i = 0; i < m_wordlist.size(); ++i)
+			m_wordlist[i]->index = i;
 	}
-	Segment::word_type Segment::create_word(enum SymbolType type, size_t offset, size_t length)
+
+	void Segment::generate_graph()
 	{
-		word_type word;
-		if (type != SYMBOL_TYPE_CHINESE)
+		//	all vertices information are stored in m_wordlist,
+		//	so, it's not necessary to at more information on vertices.
+		m_graph = new WordGraph(m_wordlist.size());
+		//	adding edges
+		for (size_t i = 0; i < m_wordlist.size()-1; ++i)
 		{
-			word = create_word_from_symbol_type(type);
-		}
-		word.offset = offset;
-		word.length = length;
-		return word;
-	}
-
-	Segment::word_type Segment::create_word_from_symbol_type(openclas::SymbolType type)
-	{
-		const double MAX = 1000000;
-
-		word_type word;
-		word.weight = 0;
-		switch(type){
-			case SYMBOL_TYPE_INDEX:
-			case SYMBOL_TYPE_NUMBER:
-				word.tag = pku::WORD_TAG_M;
-				word.is_recorded = false;
-				break;
-			case SYMBOL_TYPE_LETTER:
-			case SYMBOL_TYPE_SINGLE:
-				word.tag = pku::WORD_TAG_NX;
-				word.is_recorded = false;
-				break;
-			case SYMBOL_TYPE_PUNCTUATION:
-				word.tag = pku::WORD_TAG_W;
-				word.is_recorded = true;
-				word.weight = MAX;
-				break;
-			default:
-				word.tag = pku::WORD_TAG_UNKNOWN;
-				break;
-		}
-
-		return word;
-	}
-
-	std::vector<Segment::word_type> Segment::create_word_list_from_dict(const word_type& word)
-	{
-		//	get all prefix word based on the given word from dictionary
-		//	this function need to guaranteed that the given word must returned in the word_list.
-		std::vector<word_type> word_list;
-
-		std::list<DictEntry*> words = m_dict.find_prefixes(m_sentence.begin() + word.offset, m_sentence.end());
-
-		for(std::list<DictEntry*>::iterator iter = words.begin(); iter != words.end(); ++iter)
-		{
-			if (iter == words.begin() && (*iter)->word.length() > word.length)
+			size_t next_offset = m_wordlist[i]->offset + m_wordlist[i]->length;
+			offset_array_list_type& next_wordlist = m_offset_array[next_offset];
+			//	Get dictionary entry of current word
+			const DictEntry* current_entry;
+			if (m_wordlist[i]->is_recorded)
 			{
-				//	the first word is not the given atom, so add the atom manually
-				word_list.push_back(word);
+				//	get normal word
+				current_entry = m_dict.get_word(m_sentence.begin() + m_wordlist[i]->offset, m_sentence.begin() + m_wordlist[i]->offset + m_wordlist[i]->length);
 			}
+			else
+			{
+				//	get special word
+				string_type special_word = get_special_word_string(m_wordlist[i]->tag);
+				current_entry = m_dict.get_word(special_word.begin(), special_word.end());
+			}
+			double current_weight = m_wordlist[i]->weight;
 
-			//	Construct the word
-			word_type item;
-			item.weight = 0;
-			//	sum all tags weights as the item's weight
-			for(size_t i = 0; i < (*iter)->tags.size(); ++i)
-				item.weight += (*iter)->tags[i].weight;
+			//	add all edges begin from the end of current word
+			for (offset_array_list_type::iterator iter = next_wordlist.begin(); iter != next_wordlist.end(); ++iter)
+			{
+				//	get next word or use the special word
+				string_type next_word;
+				if ((*iter)->is_recorded)
+					next_word = m_sentence.substr((*iter)->offset, (*iter)->length);
+				else
+					next_word = get_special_word_string((*iter)->tag);
 
-			//	use the tag if the word has the only tag
-			if ((*iter)->tags.size() == 1)
-				item.tag = static_cast<enum pku::WordTag>((*iter)->tags[0].tag);
-
-			item.is_recorded = true;
-			item.offset = word.offset;
-			item.length = (*iter)->word.length();
-
-			word_list.push_back(item);
+				//	get transit weight
+				double adjacency_weight = current_entry->get_forward_weight(next_word);
+				double weight = calculate_transit_weight(current_weight, adjacency_weight);
+				//	add the edge with weight
+				graph_traits<WordGraph>::edge_descriptor edge_desc;
+				bool inserted;
+				tie(edge_desc, inserted) = add_edge(m_wordlist[i]->index, (*iter)->index, weight, *m_graph);
+			}
 		}
-
-		return word_list;
 	}
 
-	double Segment::get_weight(size_t current_index, size_t next_index)
+	double Segment::calculate_transit_weight(double current_weight, double adjacency_weight, double smoothing)
 	{
-		const word_type& current_word = m_word_graph->nodes().at(current_index).value;
-		const word_type& next_word = m_word_graph->nodes().at(next_index).value;
-
-		double current_weight = current_word.weight;
-		const DictEntry* current_entry = m_dict.get_word(m_sentence.begin() + current_word.offset, m_sentence.begin() + current_word.offset + current_word.length);
-		double adj_weight = current_entry->get_forward_weight(m_sentence.substr(next_word.offset, next_word.length));
-		
 		//	Calculate the possibility
 		//	0 < smoothing < 1
 		//		A = smoothing * P(Ci-1)
 		//		B = (1-smoothing) * P(Ci|Ci-1)
 		//		frequency = - Log( A + B );
-		double smoothing = 0.1;
 		double P1 = (1 + current_weight) / (MAX_FREQUENCE+80000);
 		double A = smoothing * P1;
 
 		double t = 1/(double)MAX_FREQUENCE;
-		double P2 = (((1-t) * adj_weight) / (1+current_weight)) + t;
+		double P2 = (((1-t) * adjacency_weight) / (1+current_weight)) + t;
 		double B = (1 - smoothing) * P2;
 
 		double weight = - log( A + B );
-
 		return weight;
+	}
+
+
+	Segment::word_type* Segment::create_word(enum SymbolType type, size_t offset, size_t length)
+	{
+		word_type* word = new word_type();
+		word->offset = offset;
+		word->length = length;
+		if (type != SYMBOL_TYPE_CHINESE)
+		{
+			word->weight = 0;
+			switch(type){
+			case SYMBOL_TYPE_INDEX:
+			case SYMBOL_TYPE_NUMBER:
+				//	number
+				word->tag = pku::WORD_TAG_M;
+				word->is_recorded = false;
+				break;
+			case SYMBOL_TYPE_LETTER:
+			case SYMBOL_TYPE_SINGLE:
+				//	nouns of english, or etc.
+				word->tag = pku::WORD_TAG_NX;
+				word->is_recorded = false;
+				break;
+			case SYMBOL_TYPE_PUNCTUATION:
+				//	punctuation
+				word->tag = pku::WORD_TAG_W;
+				word->is_recorded = true;
+				word->weight = std::numeric_limits<double>::max();
+				break;
+			default:
+				word->tag = pku::WORD_TAG_UNKNOWN;
+				break;
+			}	
+		}
+		return word;
 	}
 }

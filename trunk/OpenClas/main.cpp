@@ -666,12 +666,12 @@ void test_stats_dict(Dictionary& dict)
 
 void test_openclas()
 {
-	openclas::Graph<int, int> g(10);
-	g.add_edge(1,2);
-	g.add_edge(2,3);
-	g.add_edge(3,9);
-	g.add_edge(3,4);
-	g.add_edge(2,4);
+	//openclas::Graph<int, int> g(10);
+	//g.add_edge(1,2);
+	//g.add_edge(2,3);
+	//g.add_edge(3,9);
+	//g.add_edge(3,4);
+	//g.add_edge(2,4);
 }
 
 int main(int argc, const char** argv)
