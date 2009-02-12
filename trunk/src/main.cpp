@@ -48,6 +48,7 @@ SUCH DAMAGE.
 /*
 *	$Id: main.cpp 29 2009-02-12 12:41:05Z Dancefire $
 */
+#include <openclas/segment.h>
 
 int main(int argc, const char** argv)
 {
