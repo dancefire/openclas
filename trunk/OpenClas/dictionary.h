@@ -59,22 +59,6 @@ SUCH DAMAGE.
 using namespace std;
 
 namespace openclas {
-	class IndexGenerator {
-	public:
-		IndexGenerator(int init_value)
-			: current_id(init_value)
-		{
-		}
-		int get(){
-			return current_id;
-		}
-		int generate(){
-			return (++current_id);
-		}
-	protected:
-		int current_id;
-	};
-
 	class TagEntry {
 	public:
 		int tag;
@@ -90,6 +74,12 @@ namespace openclas {
 		}
 	};
 
+	/*******************************************************************
+	*
+	*	DictEntry
+	*
+	********************************************************************/
+
 	class DictEntry{
 	public:
 		std::wstring word;
@@ -98,25 +88,157 @@ namespace openclas {
 		unordered_map<string_type, double> backward;
 		unordered_map<string_type, double> forward;
 	public:
-		void add(int tag, int weight);
-		void remove(int tag);
-		double get_forward_weight(const string_type& word) const;
-		double get_backward_weight(const string_type& word) const;
-	};
+		void add(int tag, int weight)
+		{
+			std::vector<TagEntry>::iterator iter = find(this->tags.begin(), this->tags.end(), TagEntry(tag));
+			//	if find the entry, then update it; otherwise add new one
+			if (iter != this->tags.end())
+				iter->weight = weight;
+			else
+				this->tags.push_back(TagEntry(tag, weight));
+		}
+
+		void remove(int tag)
+		{
+			std::vector<TagEntry>::iterator iter = find(this->tags.begin(), this->tags.end(), TagEntry(tag));
+
+			if (iter != this->tags.end())
+				this->tags.erase(iter);
+		}
+
+		double get_forward_weight(const string_type& word) const
+		{
+			unordered_map<string_type, double>::const_iterator iter = forward.find(word);
+			if (iter != forward.end())
+			{
+				return iter->second;
+			}else{
+				return 0;
+			}
+		}
+
+		double get_backward_weight(const string_type& word) const
+		{
+			unordered_map<string_type, double>::const_iterator iter = backward.find(word);
+			if (iter != backward.end())
+			{
+				return iter->second;
+			}else{
+				return 0;
+			}
+		}
+	};	//	class DictEntry
+
+	/*******************************************************************
+	*
+	*	WordIndexer
+	*
+	********************************************************************/
 
 	class WordIndexer {
 	public:
-		WordIndexer();
-		virtual ~WordIndexer();
-		void add(string_type::const_iterator& iter, string_type::const_iterator& end, DictEntry* entry_ptr);
-		void remove(string_type::const_iterator& iter, string_type::const_iterator& end);
-		DictEntry* get(string_type::const_iterator& iter, string_type::const_iterator& end) const;
+		WordIndexer()
+			: m_entry_ptr(0)
+		{
+		}
+
+		virtual ~WordIndexer()
+		{
+			for(unordered_map<char_type, WordIndexer*>::iterator iter = m_table.begin(); iter != m_table.end(); ++iter)
+			{
+				if (iter->second)
+					delete iter->second;
+			}
+		}
+
+		void add(string_type::const_iterator& iter, string_type::const_iterator& end, DictEntry* entry_ptr)
+		{
+			if (iter == end)
+			{
+				if (m_entry_ptr)
+					delete m_entry_ptr;
+				m_entry_ptr = entry_ptr;
+				return;
+			}
+
+			unordered_map<char_type, WordIndexer*>::iterator it = m_table.find(*iter);
+			if (it == m_table.end())
+			{
+				//	not existed in table
+				WordIndexer* node = new WordIndexer();
+				m_table[it->first] = node;
+				node->add(iter+1, end, entry_ptr);
+			}else{
+				it->second->add(iter+1, end, entry_ptr);
+			}
+		}
+
+		void remove(string_type::const_iterator& iter, string_type::const_iterator& end)
+		{
+			if (iter == end)
+			{
+				if (m_entry_ptr)
+					delete m_entry_ptr;
+				return;
+			}
+
+			unordered_map<char_type, WordIndexer*>::iterator it = m_table.find(*iter);
+			if (it == m_table.end())
+			{
+				return;
+			}else{
+				it->second->remove(iter+1, end);
+				if (it->second->m_table.size() == 0)
+				{
+					delete it->second;
+					m_table.erase(it);
+				}
+			}
+		}
+
+		DictEntry* get(string_type::const_iterator& iter, string_type::const_iterator& end) const
+		{
+			if (iter == end)
+				return m_entry_ptr;
+
+			unordered_map<char_type, WordIndexer*>::const_iterator it = m_table.find(*iter);
+			if (it == m_table.end())
+			{
+				//	not existed in table
+				return 0;
+			}else{
+				return it->second->get(iter+1, end);
+			}
+		}
+
 		//		const DictEntry* get(string_type::const_iterator& iter, string_type::const_iterator& end) const;
-		void find_prefixes(string_type::const_iterator& iter, string_type::const_iterator& end, std::list<DictEntry*>& entry_list) const;
+		void find_prefixes(string_type::const_iterator& iter, string_type::const_iterator& end, std::list<DictEntry*>& entry_list) const
+		{
+			if (m_entry_ptr)
+				entry_list.push_back(m_entry_ptr);
+
+			if (iter == end)
+			{
+				return;
+			}
+
+			unordered_map<char_type, WordIndexer*>::const_iterator it = m_table.find(*iter);
+			if (it != m_table.end())
+			{
+				it->second->find_prefixes(iter+1, end, entry_list);
+			}
+		}
+
 	protected:
 		DictEntry* m_entry_ptr;
 		unordered_map <char_type, WordIndexer*> m_table;
 	};
+
+	/*******************************************************************
+	*
+	*	Dictionary
+	*
+	********************************************************************/
 
 	class Dictionary {
 	public:
@@ -125,32 +247,144 @@ namespace openclas {
 		typedef std::vector<int> tag_transit_dict_type;
 		typedef WordIndexer word_indexer_type;
 	public:
-		Dictionary();
-		virtual ~Dictionary();
-		//	word
-		DictEntry* add_word(const string_type& word);
-		void remove_word(const string_type& word);
-		DictEntry* get_word(string_type::const_iterator& iter, string_type::const_iterator& end);
-		const DictEntry* get_word(string_type::const_iterator& iter, string_type::const_iterator& end) const;
-		std::list<DictEntry*> find_prefixes(string_type::const_iterator& iter, string_type::const_iterator& end) const;
-		const word_dict_type words() const;
-		////	word transit
-		//void add_word_transit_weight(int current_index, int next_index, double weight);
-		//void remove_word_transit_weight(int current_index, int next_index);
-		//double get_word_transit_weight(int current_index, int next_index) const;
-		//	tag
-		void init_tag_dict(int size);
-		void add_tag_weight(int tag, int weight);
-		void remove_tag_weight(int tag);
-		double get_tag_weight(int tag) const;
-		const tag_dict_type tags() const;
-		//	tag transit
-		int get_tag_transit_index(int current_tag, int next_tag) const;
-		void add_tag_transit_weight(int current_tag, int next_tag, int weight);
-		void add_tag_transit_weight(int tags_index, int weight);
-		void remove_tag_transit_weight(int current_tag, int next_tag);
-		int get_tag_transit_weight(int current_tag, int next_tag) const;
-		const tag_transit_dict_type tags_transit() const;
+		Dictionary()
+		{
+		}
+
+		virtual ~Dictionary()
+		{
+			for(word_dict_type::iterator iter = m_word_dict.begin(); iter != m_word_dict.end(); ++iter)
+			{
+				delete (*iter);
+			}
+		}
+
+		/*****************   Word   *****************/
+		DictEntry* add_word(const string_type& word)
+		{
+			DictEntry* entry_ptr = get_word(word.begin(), word.end());
+
+			if (entry_ptr)
+			{
+				//	exists, then return the index
+				return entry_ptr;
+			}else{
+				//	not exists, create new one
+				DictEntry* ptr = new DictEntry();
+				ptr->word = word;
+				m_word_dict.push_back(ptr);
+				m_word_indexer.add(word.begin(), word.end(), ptr);
+				return ptr;
+			}
+		}
+
+		void remove_word(const string_type& word)
+		{
+			const DictEntry* entry_ptr = get_word(word.begin(), word.end());
+			if (entry_ptr)
+			{
+				m_word_indexer.remove(word.begin(), word.end());
+				word_dict_type::iterator iter = std::find(m_word_dict.begin(), m_word_dict.end(), entry_ptr);
+				if (iter != m_word_dict.end())
+					m_word_dict.erase(iter);
+
+				delete entry_ptr;	//	release memory
+			}
+		}
+
+		DictEntry* get_word(string_type::const_iterator& iter, string_type::const_iterator& end)
+		{
+			return m_word_indexer.get(iter, end);
+		}
+
+		const DictEntry* get_word(string_type::const_iterator& iter, string_type::const_iterator& end) const
+		{
+			return m_word_indexer.get(iter, end);
+		}
+
+		std::list<DictEntry*> find_prefixes(string_type::const_iterator& iter, string_type::const_iterator& end) const
+		{
+			std::list<DictEntry*> entry_list;
+			m_word_indexer.find_prefixes(iter, end, entry_list);
+			return entry_list;
+		}
+
+		const word_dict_type words() const
+		{
+			return m_word_dict;
+		}
+
+		/*****************   Tag   *****************/
+		void init_tag_dict(int size)
+		{
+			//	initialize tag table
+			m_tag_dict.clear();
+			m_tag_dict.resize(size, 0);
+			//	initialize tag transit table
+			m_tag_transit_dict.clear();
+			m_tag_transit_dict.resize(size*size, 0);
+		}
+
+		void add_tag_weight(int tag, int weight)
+		{
+			if (static_cast<int>(m_tag_dict.size()) > tag)
+				m_tag_dict[tag] = weight;
+		}
+
+		void remove_tag_weight(int tag)
+		{
+			if (static_cast<int>(m_tag_dict.size()) > tag)
+				m_tag_dict[tag] = 0;
+		}
+
+		double get_tag_weight(int tag) const
+		{
+			if (static_cast<int>(m_tag_dict.size()) > tag)
+				return m_tag_dict[tag];
+			else
+				return 0;
+		}
+
+		const tag_dict_type tags() const
+		{
+			return m_tag_dict;
+		}
+
+		/*****************   Tag transit   *****************/
+		int get_tag_transit_index(int current_tag, int next_tag) const
+		{
+			return static_cast<int>((current_tag * m_tag_dict.size()) + next_tag);
+		}
+
+		void add_tag_transit_weight(int current_tag, int next_tag, int weight)
+		{
+			int index = get_tag_transit_index(current_tag, next_tag);
+			m_tag_transit_dict.at(index) = weight;
+		}
+
+		void add_tag_transit_weight(int tags_index, int weight)
+		{
+			if (tags_index < static_cast<int>(m_tag_transit_dict.size()))
+				m_tag_transit_dict.at(tags_index) = weight;
+		}
+
+		void remove_tag_transit_weight(int current_tag, int next_tag)
+		{
+			int index = get_tag_transit_index(current_tag, next_tag);
+			m_tag_transit_dict.at(index) = 0;
+		}
+
+		int get_tag_transit_weight(int current_tag, int next_tag) const
+		{
+			int index = get_tag_transit_index(current_tag, next_tag);
+			return m_tag_transit_dict.at(index);
+		}
+
+		const tag_transit_dict_type tags_transit() const
+		{
+			return m_tag_transit_dict;
+		}
+
 
 	protected:
 		//	word
@@ -161,7 +395,7 @@ namespace openclas {
 		tag_transit_dict_type m_tag_transit_dict;
 		//	indexer
 		word_indexer_type m_word_indexer;
-	};
+	};	//	class Dictionary
 }	//	namespace openclas
 
 #endif	//	_OPENCLAS_DICTIONARY_H_
