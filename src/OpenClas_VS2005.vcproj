@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;E:\Program Files\boost_1_37&quot;"
+				AdditionalIncludeDirectories="&quot;E:\Program Files\boost_1_37&quot;;..\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -114,6 +114,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;E:\Program Files\boost_1_37&quot;;..\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -180,34 +181,6 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
-			<File
-				RelativePath=".\common.h"
-				>
-			</File>
-			<File
-				RelativePath=".\dictionary.h"
-				>
-			</File>
-			<File
-				RelativePath=".\k_shortest_path.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Segment.h"
-				>
-			</File>
-			<File
-				RelativePath=".\serialization.h"
-				>
-			</File>
-			<File
-				RelativePath=".\utility.h"
-				>
-			</File>
-			<File
-				RelativePath=".\viterbi.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
