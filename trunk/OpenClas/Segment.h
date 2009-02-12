@@ -377,7 +377,9 @@ namespace openclas {
 		{}
 	};
 
-	typedef property<vertex_index_t, size_t> VertexProperty;
+	typedef property<vertex_index_t, size_t,
+		property<vertex_distance_t, double, 
+		property<vertex_predecessor_t, size_t> > > VertexProperty;
 	typedef property<edge_weight_t, double> EdgeProperty;
 
 	typedef adjacency_list<vecS, vecS, directedS, VertexProperty, EdgeProperty> WordGraph;
