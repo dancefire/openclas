@@ -46,7 +46,7 @@ SUCH DAMAGE.
 
 **********************************************************************************/
 /*
-*	$Id$
+*	$Id: common.h 25 2009-02-11 13:15:39Z Dancefire $
 */
 #pragma once
 #ifndef _OPENCLAS_COMMON_H_
