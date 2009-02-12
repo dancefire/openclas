@@ -46,7 +46,7 @@ SUCH DAMAGE.
 
 **********************************************************************************/
 /*
-*	$Id$
+*	$Id: k_shortest_path.h 29 2009-02-12 12:41:05Z Dancefire $
 */
 #pragma once
 #ifndef _OPENCLAS_K_SHORTEST_PATH_H_

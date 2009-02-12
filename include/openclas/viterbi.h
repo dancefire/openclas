@@ -46,7 +46,7 @@ SUCH DAMAGE.
 
 **********************************************************************************/
 /*
-*	$Id$
+*	$Id: viterbi.h 29 2009-02-12 12:41:05Z Dancefire $
 *
 *	a C++ implementatiton of Viterbi algorithm, which is described 
 *	in Wikipedia in Python as an example.
