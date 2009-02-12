@@ -1,5 +1,5 @@
 /*********************************************************************************
-Copyright 2007-2009 Dancefire (dancefire@gmail.com).
+Copyright 2009 Dancefire (dancefire@gmail.com).
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGE.
 
 
-版权所有 2007-2009 Dancefire (dancefire@gmail.com)。
+版权所有 2009 Dancefire (dancefire@gmail.com)。
 保留所有权利。
 
 在满足下列条件的前提下，允许重新分发修改过或未经修改的，以源代码或已编译形式
@@ -52,6 +52,10 @@ SUCH DAMAGE.
 *	in Wikipedia in Python as an example.
 *	http://en.wikipedia.org/wiki/Viterbi_algorithm
 */
+
+#pragma once
+#ifndef _OPENCLAS_VITERBI_H_
+#define _OPENCLAS_VITERBI_H_
 
 #include <vector>
 #include <iostream>
@@ -160,3 +164,5 @@ namespace openclas {
 		std::cout << "]" << std::endl << "  with probability " << result.v_prob << std::endl;
 	}
 }
+
+#endif	//	_OPENCLAS_VITERBI_H_

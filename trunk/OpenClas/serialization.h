@@ -54,7 +54,7 @@ SUCH DAMAGE.
 #define _OPENCLAS_SERIALIZATION_H_
 
 #include "dictionary.h"
-#include <string>
+#include "utility.h"
 
 namespace openclas {
 

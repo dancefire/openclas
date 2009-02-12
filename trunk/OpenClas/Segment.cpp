@@ -51,7 +51,6 @@ SUCH DAMAGE.
 #include "common.h"
 #include "Segment.h"
 #include <limits>
-//#include <boost/config.hpp>
 #include <boost/utility.hpp>
 #include <boost/graph/graph_traits.hpp>
 
