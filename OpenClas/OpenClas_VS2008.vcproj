@@ -251,6 +251,10 @@
 				RelativePath=".\utility.h"
 				>
 			</File>
+			<File
+				RelativePath=".\viterbi.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
