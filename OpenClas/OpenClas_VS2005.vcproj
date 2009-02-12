@@ -211,23 +211,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\graph.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ict_serializer.h"
-				>
-			</File>
-			<File
 				RelativePath=".\k_shortest_path.h"
-				>
-			</File>
-			<File
-				RelativePath=".\myKbest.h"
-				>
-			</File>
-			<File
-				RelativePath=".\openclas_serializer.h"
 				>
 			</File>
 			<File
@@ -236,14 +220,6 @@
 			</File>
 			<File
 				RelativePath=".\serialization.h"
-				>
-			</File>
-			<File
-				RelativePath=".\serializer.h"
-				>
-			</File>
-			<File
-				RelativePath=".\tag.h"
 				>
 			</File>
 			<File

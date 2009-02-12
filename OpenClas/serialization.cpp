@@ -51,9 +51,8 @@ SUCH DAMAGE.
 
 #include "common.h"
 #include "serialization.h"
-#include "tag.h"
-
 #include <fstream>
+#include <iostream>
 
 namespace openclas {
 
