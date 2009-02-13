@@ -49,6 +49,11 @@ SUCH DAMAGE.
 *	$Id$
 */
 #include <openclas/segment.h>
+#include <openclas/dictionary.h>
+#include <openclas/k_shortest_path.h>
+#include <openclas/serialization.h>
+#include <openclas/utility.h>
+#include <openclas/viterbi.h>
 
 int main(int argc, const char** argv)
 {

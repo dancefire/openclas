@@ -68,4 +68,4 @@ namespace openclas {
 	using boost::unordered_map;
 }
 
-#endif
+#endif	//	 _OPENCLAS_COMMON_H_
