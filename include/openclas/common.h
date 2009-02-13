@@ -52,7 +52,6 @@ SUCH DAMAGE.
 #ifndef _OPENCLAS_COMMON_H_
 #define _OPENCLAS_COMMON_H_
 
-#include <string>
 #include <boost/config.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/shared_array.hpp>
@@ -60,8 +59,6 @@ SUCH DAMAGE.
 #include <boost/unordered_map.hpp>
 
 namespace openclas {
-	typedef wchar_t			char_type;
-	typedef std::wstring	string_type;
 	using boost::shared_ptr;
 	using boost::shared_array;
 	using boost::scoped_array;

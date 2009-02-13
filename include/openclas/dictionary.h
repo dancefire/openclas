@@ -53,6 +53,7 @@ SUCH DAMAGE.
 #ifndef _OPENCLAS_DICTIONARY_H_
 #define _OPENCLAS_DICTIONARY_H_
 
+#include "common.h"
 #include <vector>
 #include <list>
 
@@ -85,8 +86,8 @@ namespace openclas {
 		std::wstring word;
 		std::vector<TagEntry> tags;
 		//	transit table
-		unordered_map<string_type, double> backward;
-		unordered_map<string_type, double> forward;
+		unordered_map<std::wstring, double> backward;
+		unordered_map<std::wstring, double> forward;
 	public:
 		void add(int tag, int weight)
 		{
@@ -106,9 +107,9 @@ namespace openclas {
 				this->tags.erase(iter);
 		}
 
-		double get_forward_weight(const string_type& word) const
+		double get_forward_weight(const std::wstring& word) const
 		{
-			unordered_map<string_type, double>::const_iterator iter = forward.find(word);
+			unordered_map<std::wstring, double>::const_iterator iter = forward.find(word);
 			if (iter != forward.end())
 			{
 				return iter->second;
@@ -117,9 +118,9 @@ namespace openclas {
 			}
 		}
 
-		double get_backward_weight(const string_type& word) const
+		double get_backward_weight(const std::wstring& word) const
 		{
-			unordered_map<string_type, double>::const_iterator iter = backward.find(word);
+			unordered_map<std::wstring, double>::const_iterator iter = backward.find(word);
 			if (iter != backward.end())
 			{
 				return iter->second;
@@ -144,14 +145,14 @@ namespace openclas {
 
 		virtual ~WordIndexer()
 		{
-			for(unordered_map<char_type, WordIndexer*>::iterator iter = m_table.begin(); iter != m_table.end(); ++iter)
+			for(unordered_map<wchar_t, WordIndexer*>::iterator iter = m_table.begin(); iter != m_table.end(); ++iter)
 			{
 				if (iter->second)
 					delete iter->second;
 			}
 		}
 
-		void add(string_type::const_iterator& iter, string_type::const_iterator& end, DictEntry* entry_ptr)
+		void add(std::wstring::const_iterator& iter, std::wstring::const_iterator& end, DictEntry* entry_ptr)
 		{
 			if (iter == end)
 			{
@@ -161,7 +162,7 @@ namespace openclas {
 				return;
 			}
 
-			unordered_map<char_type, WordIndexer*>::iterator it = m_table.find(*iter);
+			unordered_map<wchar_t, WordIndexer*>::iterator it = m_table.find(*iter);
 			if (it == m_table.end())
 			{
 				//	not existed in table
@@ -173,7 +174,7 @@ namespace openclas {
 			}
 		}
 
-		void remove(string_type::const_iterator& iter, string_type::const_iterator& end)
+		void remove(std::wstring::const_iterator& iter, std::wstring::const_iterator& end)
 		{
 			if (iter == end)
 			{
@@ -182,7 +183,7 @@ namespace openclas {
 				return;
 			}
 
-			unordered_map<char_type, WordIndexer*>::iterator it = m_table.find(*iter);
+			unordered_map<wchar_t, WordIndexer*>::iterator it = m_table.find(*iter);
 			if (it == m_table.end())
 			{
 				return;
@@ -196,12 +197,12 @@ namespace openclas {
 			}
 		}
 
-		DictEntry* get(string_type::const_iterator& iter, string_type::const_iterator& end) const
+		DictEntry* get(std::wstring::const_iterator& iter, std::wstring::const_iterator& end) const
 		{
 			if (iter == end)
 				return m_entry_ptr;
 
-			unordered_map<char_type, WordIndexer*>::const_iterator it = m_table.find(*iter);
+			unordered_map<wchar_t, WordIndexer*>::const_iterator it = m_table.find(*iter);
 			if (it == m_table.end())
 			{
 				//	not existed in table
@@ -211,8 +212,8 @@ namespace openclas {
 			}
 		}
 
-		//		const DictEntry* get(string_type::const_iterator& iter, string_type::const_iterator& end) const;
-		void find_prefixes(string_type::const_iterator& iter, string_type::const_iterator& end, std::list<DictEntry*>& entry_list) const
+		//		const DictEntry* get(std::wstring::const_iterator& iter, std::wstring::const_iterator& end) const;
+		void find_prefixes(std::wstring::const_iterator& iter, std::wstring::const_iterator& end, std::list<DictEntry*>& entry_list) const
 		{
 			if (m_entry_ptr)
 				entry_list.push_back(m_entry_ptr);
@@ -222,7 +223,7 @@ namespace openclas {
 				return;
 			}
 
-			unordered_map<char_type, WordIndexer*>::const_iterator it = m_table.find(*iter);
+			unordered_map<wchar_t, WordIndexer*>::const_iterator it = m_table.find(*iter);
 			if (it != m_table.end())
 			{
 				it->second->find_prefixes(iter+1, end, entry_list);
@@ -231,7 +232,7 @@ namespace openclas {
 
 	protected:
 		DictEntry* m_entry_ptr;
-		unordered_map <char_type, WordIndexer*> m_table;
+		unordered_map <wchar_t, WordIndexer*> m_table;
 	};
 
 	/*******************************************************************
@@ -260,7 +261,7 @@ namespace openclas {
 		}
 
 		/*****************   Word   *****************/
-		DictEntry* add_word(const string_type& word)
+		DictEntry* add_word(const std::wstring& word)
 		{
 			DictEntry* entry_ptr = get_word(word.begin(), word.end());
 
@@ -278,7 +279,7 @@ namespace openclas {
 			}
 		}
 
-		void remove_word(const string_type& word)
+		void remove_word(const std::wstring& word)
 		{
 			const DictEntry* entry_ptr = get_word(word.begin(), word.end());
 			if (entry_ptr)
@@ -292,17 +293,17 @@ namespace openclas {
 			}
 		}
 
-		DictEntry* get_word(string_type::const_iterator& iter, string_type::const_iterator& end)
+		DictEntry* get_word(std::wstring::const_iterator& iter, std::wstring::const_iterator& end)
 		{
 			return m_word_indexer.get(iter, end);
 		}
 
-		const DictEntry* get_word(string_type::const_iterator& iter, string_type::const_iterator& end) const
+		const DictEntry* get_word(std::wstring::const_iterator& iter, std::wstring::const_iterator& end) const
 		{
 			return m_word_indexer.get(iter, end);
 		}
 
-		std::list<DictEntry*> find_prefixes(string_type::const_iterator& iter, string_type::const_iterator& end) const
+		std::list<DictEntry*> find_prefixes(std::wstring::const_iterator& iter, std::wstring::const_iterator& end) const
 		{
 			std::list<DictEntry*> entry_list;
 			m_word_indexer.find_prefixes(iter, end, entry_list);

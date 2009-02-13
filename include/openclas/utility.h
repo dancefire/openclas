@@ -115,7 +115,7 @@ namespace openclas {
 
 		const size_t WORD_TAG_COUNT = static_cast<size_t>(WORD_TAG_Z + 1);	//	Get the count of TagTypePKU
 
-		static const char_type* WORD_TAG_NAME[] = 
+		static const wchar_t* WORD_TAG_NAME[] = 
 		{
 			L"",
 			L"Ag",	//	形语素	形容词性语素。形容词代码为a，语素代码g前面置以A。
@@ -163,9 +163,9 @@ namespace openclas {
 			L"END",		//	句子结束
 		};
 
-		inline string_type get_special_word_string(enum WordTag tag)
+		inline std::wstring get_special_word_string(enum WordTag tag)
 		{
-			string_type str;
+			std::wstring str;
 			str.push_back(L'$');
 			str.append(WORD_TAG_NAME[tag]);
 			return str;
@@ -206,7 +206,7 @@ namespace openclas {
 		return (value >= lower_bound && value <= higher_bound);
 	}
 
-	const string_type NUMBER_PREFIXS(L".-+．－＋");
+	const std::wstring NUMBER_PREFIXS(L".-+．－＋");
 	const int MAX_FREQUENCE = 2079997;
 
 	enum CodePage {
@@ -264,8 +264,8 @@ namespace openclas {
 
 	//	Detect the symbol type by unicode range
 	//	reference: http://orwell.ru/test/Unicode/
-	static enum SymbolType get_symbol_type(char_type symbol) {
-		ValueCheck<char_type> val(symbol);
+	static enum SymbolType get_symbol_type(wchar_t symbol) {
+		ValueCheck<wchar_t> val(symbol);
 		if (val.within(0x4E00, 0x9FFF)	//	CJK Unified Ideographs 
 			|| val.within(0x3400, 0x4DBF)	//	CJK Unified Ideographs Extension A
 			|| val.within(0xF900, 0xFAFF)	//	CJK Compatibility Ideographs
@@ -340,9 +340,9 @@ namespace openclas {
 		return SYMBOL_TYPE_OTHER;
 	}
 
-	static bool is_inside(char_type symbol, const string_type& collection)
+	static bool is_inside(wchar_t symbol, const std::wstring& collection)
 	{
-		for(string_type::const_iterator it = collection.begin(); it != collection.end(); ++it)
+		for(std::wstring::const_iterator it = collection.begin(); it != collection.end(); ++it)
 		{
 			if (*it == symbol) { return true; }
 		}
