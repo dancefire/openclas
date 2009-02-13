@@ -68,17 +68,17 @@ namespace openclas {
 			int pos;
 		};
 
-		static const enum pku::WordTag SpecialWordTagIndex[] = {
-			pku::WORD_TAG_BEGIN,
-			pku::WORD_TAG_END,
-			pku::WORD_TAG_NX,
-			pku::WORD_TAG_NS,
-			pku::WORD_TAG_NR,
-			pku::WORD_TAG_T,
-			pku::WORD_TAG_M,
-			pku::WORD_TAG_N,
-			pku::WORD_TAG_NT,
-			pku::WORD_TAG_NZ
+		static const enum WordTag SpecialWordTagIndex[] = {
+			WORD_TAG_BEGIN,
+			WORD_TAG_END,
+			WORD_TAG_NX,
+			WORD_TAG_NS,
+			WORD_TAG_NR,
+			WORD_TAG_T,
+			WORD_TAG_M,
+			WORD_TAG_N,
+			WORD_TAG_NT,
+			WORD_TAG_NZ
 		};
 
 		static const wchar_t* SpecialWordString[] = {
@@ -98,17 +98,17 @@ namespace openclas {
 		const int GB2312_COUNT = 6768;
 		const std::locale locale_gbk(CodePageString[CODEPAGE_GBK]);
 
-		static enum pku::WordTag get_special_word_tag(const std::wstring& word)
+		static enum WordTag get_special_word_tag(const std::wstring& word)
 		{
 			for (int i = 0 ; i < SPECIAL_WORD_COUNT; ++i)
 				if (word == SpecialWordString[i])
 					return SpecialWordTagIndex[i];
 
 			//	nothing matched
-			return pku::WORD_TAG_UNKNOWN;
+			return WORD_TAG_UNKNOWN;
 		}
 
-		static enum pku::WordTag get_tag_from_pos_value(int pos)
+		static enum WordTag get_tag_from_pos_value(int pos)
 		{
 			if (pos > 'a' * 0x100 * 100){
 				std::cerr << "Error in pos to tag convertion. 'cc+d' format found" << std::endl;
@@ -124,15 +124,15 @@ namespace openclas {
 				buf[2] = 0;
 			}
 			std::wstring tag_string(widen(buf, locale_gbk));
-			for (int i = 0; i < pku::WORD_TAG_COUNT; ++i)
+			for (int i = 0; i < WORD_TAG_COUNT; ++i)
 			{
-				if (tag_string == pku::WORD_TAG_NAME[i]){
-					return static_cast<enum pku::WordTag>(i);
+				if (tag_string == WORD_TAG_NAME[i]){
+					return static_cast<enum WordTag>(i);
 				}
 			}
 			//	cannot find the tag
 			std::cerr << "Cannot the find the corresponding tag. [" << buf << "]" << std::endl;
-			return pku::WORD_TAG_UNKNOWN;
+			return WORD_TAG_UNKNOWN;
 		}
 
 		static shared_array<wchar_t> get_gb2312_array()
@@ -208,10 +208,10 @@ namespace openclas {
 							std::wstring second(word_content.begin() + pos + 1, word_content.end());
 
 							if (first.find(L'#') != std::wstring::npos)
-								first = pku::get_special_word_string(get_special_word_tag(first));
+								first = get_special_word_string(get_special_word_tag(first));
 
 							if (second.find(L'#') != std::wstring::npos)
-								second = pku::get_special_word_string(get_special_word_tag(second));
+								second = get_special_word_string(get_special_word_tag(second));
 
 							//	TODO: add new entry to dict if cannot find the entry
 							DictEntry* first_entry = dict.get_word(first.begin(), first.end());
@@ -226,7 +226,7 @@ namespace openclas {
 						}
 					}else{
 						if (word_content.find(L'#') != std::wstring::npos)
-							word_content = pku::get_special_word_string(get_special_word_tag(word_content));
+							word_content = get_special_word_string(get_special_word_tag(word_content));
 
 						DictEntry* entry = dict.add_word(word_content);
 						if (entry)

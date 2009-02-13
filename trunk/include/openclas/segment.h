@@ -67,14 +67,14 @@ namespace openclas {
 	using namespace boost;
 
 	struct Word {
-		enum pku::WordTag tag;
+		enum WordTag tag;
 		double weight;
 		size_t offset;
 		size_t length;
 		bool is_recorded;
 		size_t index;
 		Word()
-			: tag(pku::WORD_TAG_UNKNOWN), weight(0), offset(0), length(0), is_recorded(false), index(0)
+			: tag(WORD_TAG_UNKNOWN), weight(0), offset(0), length(0), is_recorded(false), index(0)
 		{}
 	};
 
@@ -97,7 +97,7 @@ namespace openclas {
 		{
 			//	put [begin] to m_wordlist at the very first place
 			word_type* word_begin = new word_type();
-			word_begin->tag = pku::WORD_TAG_BEGIN;
+			word_begin->tag = WORD_TAG_BEGIN;
 			m_wordlist.push_back(word_begin);
 		}
 
@@ -114,7 +114,7 @@ namespace openclas {
 		void generate_atoms()
 		{
 			//	Add sentence.
-			size_t		index_begin = 0;
+			size_t			index_begin = 0;
 			wchar_t		current_symbol = wchar_t();
 			enum SymbolType	current_type = SYMBOL_TYPE_UNKNOWN;
 
@@ -129,7 +129,7 @@ namespace openclas {
 					bool pending = false;
 					//	Exception cases
 					//	case: [\.+-．－＋][0-9]+
-					if (current_type == SYMBOL_TYPE_NUMBER && is_inside(previous_symbol, NUMBER_PREFIXS))
+					if (current_type == SYMBOL_TYPE_NUMBER && exist(previous_symbol, NUMBER_PREFIXS))
 						pending = true;
 					//	case: [\d][\d] or [\w][\w]
 					if ( (previous_type == current_type) && (previous_type == SYMBOL_TYPE_LETTER || previous_type == SYMBOL_TYPE_NUMBER) )
@@ -166,7 +166,7 @@ namespace openclas {
 			m_offset_array = new offset_array_list_type[m_sentence.size()+1];
 			//	initialize from atoms
 			for (wordlist_type::iterator iter = m_wordlist.begin(); iter != m_wordlist.end(); ++iter)
-				if ((*iter)->tag != pku::WORD_TAG_BEGIN && (*iter)->tag != pku::WORD_TAG_END)
+				if ((*iter)->tag != WORD_TAG_BEGIN && (*iter)->tag != WORD_TAG_END)
 					m_offset_array[(*iter)->offset].push_back(*iter);
 
 			//	initialize from dictionary
@@ -196,7 +196,7 @@ namespace openclas {
 
 						//	use the tag if the word has the only tag
 						if ((*iter)->tags.size() == 1)
-							item->tag = static_cast<enum pku::WordTag>((*iter)->tags[0].tag);
+							item->tag = static_cast<enum WordTag>((*iter)->tags[0].tag);
 
 						item->is_recorded = true;
 						item->offset = atom->offset;
@@ -213,7 +213,7 @@ namespace openclas {
 			}
 			//	add the [end] as the last node
 			word_type* word_end = new word_type();
-			word_end->tag = pku::WORD_TAG_END;
+			word_end->tag = WORD_TAG_END;
 			m_wordlist.push_back(word_end);
 			//	add the [end] to the last list of offset array
 			m_offset_array[m_sentence.length()].push_back(word_end);
@@ -299,23 +299,23 @@ namespace openclas {
 	case SYMBOL_TYPE_INDEX:
 	case SYMBOL_TYPE_NUMBER:
 		//	number
-		word->tag = pku::WORD_TAG_M;
+		word->tag = WORD_TAG_M;
 		word->is_recorded = false;
 		break;
 	case SYMBOL_TYPE_LETTER:
 	case SYMBOL_TYPE_SINGLE:
 		//	nouns of english, or etc.
-		word->tag = pku::WORD_TAG_NX;
+		word->tag = WORD_TAG_NX;
 		word->is_recorded = false;
 		break;
 	case SYMBOL_TYPE_PUNCTUATION:
 		//	punctuation
-		word->tag = pku::WORD_TAG_W;
+		word->tag = WORD_TAG_W;
 		word->is_recorded = true;
 		word->weight = std::numeric_limits<double>::max();
 		break;
 	default:
-		word->tag = pku::WORD_TAG_UNKNOWN;
+		word->tag = WORD_TAG_UNKNOWN;
 		break;
 				}
 			}

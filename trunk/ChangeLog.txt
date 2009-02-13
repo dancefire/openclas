@@ -1,5 +1,18 @@
 ﻿2009-02-13  Tao Wang  <dancefire@gmail.com>
 
+	* include/openclas/segment.h:
+	* include/openclas/serialization.h:
+	* include/openclas/utility.h:
+	Put pku::* to namespace openclas and remove namespace pku. Since 
+	pku is spreaded many places, it may not be introduce another tag system.
+	Remove class ValueCheck, use the function version instead.
+	Rename within() to in_range()
+	Rename is_inside() to exist(), and make the function works for 
+	zero-terminated	string.
+	Add doxygen style comments for each function. (just for try).
+
+2009-02-13  Tao Wang  <dancefire@gmail.com>
+
 	* include/openclas/common.h:
 	* include/openclas/dictionary.h:
 	* include/openclas/segment.h:
