@@ -48,6 +48,7 @@ SUCH DAMAGE.
 /*
 *	$Id$
 */
+#include <openclas/segment.h>
 
 int main(int argc, const char** argv)
 {
