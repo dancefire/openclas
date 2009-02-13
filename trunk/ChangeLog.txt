@@ -1,1 +1,8 @@
-﻿ChangeLog
+﻿2009-02-13  Tao Wang  <dancefire@gmail.com>
+
+	* include/openclas/common.h:
+	* include/openclas/dictionary.h:
+	* include/openclas/segment.h:
+	* include/openclas/serialization.h:
+	* include/openclas/utility.h: Remove typedef char_type and string_type, 
+	use the original type instead.

@@ -114,13 +114,13 @@ namespace openclas {
 		void generate_atoms()
 		{
 			//	Add sentence.
-			size_t			index_begin = 0;
-			char_type		current_symbol = char_type();
+			size_t		index_begin = 0;
+			wchar_t		current_symbol = wchar_t();
 			enum SymbolType	current_type = SYMBOL_TYPE_UNKNOWN;
 
 			for(size_t i = 0; i < m_sentence.size(); ++i)
 			{
-				char_type		previous_symbol = current_symbol;
+				wchar_t		previous_symbol = current_symbol;
 				enum SymbolType	previous_type = current_type;
 				current_symbol = m_sentence[i];
 				current_type = get_symbol_type(current_symbol);
@@ -243,7 +243,7 @@ namespace openclas {
 				else
 				{
 					//	get special word
-					string_type special_word = get_special_word_string(m_wordlist[i]->tag);
+					std::wstring special_word = get_special_word_string(m_wordlist[i]->tag);
 					current_entry = m_dict.get_word(special_word.begin(), special_word.end());
 				}
 				double current_weight = m_wordlist[i]->weight;
@@ -252,7 +252,7 @@ namespace openclas {
 				for (offset_array_list_type::iterator iter = next_wordlist.begin(); iter != next_wordlist.end(); ++iter)
 				{
 					//	get next word or use the special word
-					string_type next_word;
+					std::wstring next_word;
 					if ((*iter)->is_recorded)
 						next_word = m_sentence.substr((*iter)->offset, (*iter)->length);
 					else

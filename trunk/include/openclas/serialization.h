@@ -81,7 +81,7 @@ namespace openclas {
 			pku::WORD_TAG_NZ
 		};
 
-		static const char_type* SpecialWordString[] = {
+		static const wchar_t* SpecialWordString[] = {
 			L"始##始",
 			L"末##末",
 			L"未##串",
@@ -348,7 +348,7 @@ namespace openclas {
 				out.write(reinterpret_cast<const char*>(&tag), sizeof(TagItem));
 			}
 			//	Word Transit
-			for (unordered_map<string_type, double>::iterator it = (*iter)->forward.begin(); it != (*iter)->forward.end(); ++it)
+			for (unordered_map<std::wstring, double>::iterator it = (*iter)->forward.begin(); it != (*iter)->forward.end(); ++it)
 			{
 				std::string narrow_transit_word = narrow(it->first, locale_utf8);
 				TransitHeader transit_header;
@@ -395,7 +395,7 @@ namespace openclas {
 			//	Word content
 			scoped_array<char> word_ptr(new char[word_header.length]);
 			in.read(reinterpret_cast<char*>(word_ptr.get()), word_header.length);
-			string_type word_content = widen(std::string(word_ptr.get(), word_ptr.get() + word_header.length), locale_utf8);
+			std::wstring word_content = widen(std::string(word_ptr.get(), word_ptr.get() + word_header.length), locale_utf8);
 			DictEntry* entry = dict.add_word(word_content);
 			//	Word Tags
 			for (int i = 0; i < word_header.tag_count; ++i)
@@ -411,7 +411,7 @@ namespace openclas {
 				in.read(reinterpret_cast<char*>(&transit_header), sizeof(TransitHeader));
 				scoped_array<char> transit_word_ptr(new char[transit_header.length]);
 				in.read(reinterpret_cast<char*>(transit_word_ptr.get()), sizeof(transit_header.length));
-				string_type transit_word = widen(transit_word_ptr.get(), locale_utf8);
+				std::wstring transit_word = widen(transit_word_ptr.get(), locale_utf8);
 			}
 		}
 	}
