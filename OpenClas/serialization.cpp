@@ -46,15 +46,11 @@ SUCH DAMAGE.
 
 **********************************************************************************/
 /*
-*	$Id: serialization.h 30 2009-02-12 14:05:24Z Dancefire $
+*	$Id$
 */
 
-#pragma once
-#ifndef _OPENCLAS_SERIALIZATION_H_
-#define _OPENCLAS_SERIALIZATION_H_
-
-#include "dictionary.h"
-#include "utility.h"
+#include "common.h"
+#include "serialization.h"
 #include <fstream>
 #include <iostream>
 
@@ -62,42 +58,7 @@ namespace openclas {
 
 	namespace ict {
 
-		struct WordHeader {
-			int weight;
-			int length;
-			int pos;
-		};
-
-		static const enum pku::WordTag SpecialWordTagIndex[] = {
-			pku::WORD_TAG_BEGIN,
-			pku::WORD_TAG_END,
-			pku::WORD_TAG_NX,
-			pku::WORD_TAG_NS,
-			pku::WORD_TAG_NR,
-			pku::WORD_TAG_T,
-			pku::WORD_TAG_M,
-			pku::WORD_TAG_N,
-			pku::WORD_TAG_NT,
-			pku::WORD_TAG_NZ
-		};
-
-		static const char_type* SpecialWordString[] = {
-			L"始##始",
-			L"末##末",
-			L"未##串",
-			L"未##地",
-			L"未##人",
-			L"未##时",
-			L"未##数",
-			L"未##它",
-			L"未##团",
-			L"未##专"
-		};
-
-		const int SPECIAL_WORD_COUNT = 10;
-		const int GB2312_COUNT = 6768;
-
-		static enum pku::WordTag get_special_word_tag(const std::wstring& word)
+		enum pku::WordTag get_special_word_tag(const std::wstring& word)
 		{
 			for (int i = 0 ; i < SPECIAL_WORD_COUNT; ++i)
 				if (word == SpecialWordString[i])
@@ -107,7 +68,7 @@ namespace openclas {
 			return pku::WORD_TAG_UNKNOWN;
 		}
 
-		static enum pku::WordTag get_tag_from_pos_value(int pos)
+		enum pku::WordTag get_tag_from_pos_value(int pos)
 		{
 			if (pos > 'a' * 0x100 * 100){
 				std::cerr << "Error in pos to tag convertion. 'cc+d' format found" << std::endl;
@@ -134,7 +95,7 @@ namespace openclas {
 			return pku::WORD_TAG_UNKNOWN;
 		}
 
-		static shared_array<wchar_t> get_gb2312_array()
+		shared_array<wchar_t> get_gb2312_array()
 		{
 			shared_array<wchar_t> gb2312_array(new wchar_t[GB2312_COUNT]);
 
@@ -156,7 +117,7 @@ namespace openclas {
 			return gb2312_array;
 		}
 
-		static void load_from_dct(Dictionary& dict, const char* filename, bool is_transit)
+		void load_from_dct(Dictionary& dict, const char* filename, bool is_transit)
 		{
 			std::ifstream in(filename, std::ios_base::in | std::ios_base::binary);
 
@@ -235,22 +196,22 @@ namespace openclas {
 			}
 		}
 
-		static void load_words_from_dct(Dictionary& dict, const char* filename)
+		void load_words_from_dct(Dictionary& dict, const char* filename)
 		{
 			load_from_dct(dict, filename, false);
 		}
 
-		static void load_words_transit_from_dct(Dictionary& dict, const char* filename)
+		void load_words_transit_from_dct(Dictionary& dict, const char* filename)
 		{
 			load_from_dct(dict, filename, true);
 		}
 
-		static void load_tags_from_ctx(Dictionary& dict, const char* filename)
+		void load_tags_from_ctx(Dictionary& dict, const char* filename)
 		{
 		}
 
 
-		static void load_from_file(Dictionary& dict, const char* tag_filename, const char* words_filename, const char* words_transit_filename)
+		void load_from_file(Dictionary& dict, const char* tag_filename, const char* words_filename, const char* words_transit_filename)
 		{
 			load_words_from_dct(dict, words_filename);
 			if (words_transit_filename)
@@ -258,54 +219,28 @@ namespace openclas {
 			load_tags_from_ctx(dict, tag_filename);
 		}
 
-		static void save_words_to_dct(Dictionary& dict, const char* filename)
+		void save_words_to_dct(Dictionary& dict, const char* filename)
 		{
 		}
 
-		static void save_words_transit_to_dct(Dictionary& dict, const char* filename)
+		void save_words_transit_to_dct(Dictionary& dict, const char* filename)
 		{
 		}
 
-		static void save_tags_to_ctx(Dictionary& dict, const char* filename)
+		void save_tags_to_ctx(Dictionary& dict, const char* filename)
 		{
 		}
 
-		static void save_to_file(Dictionary& dict, const char* tag_filename, const char* words_filename, const char* words_transit_filename)
+		void save_to_file(Dictionary& dict, const char* tag_filename, const char* words_filename, const char* words_transit_filename)
 		{
 			save_words_to_dct(dict, words_filename);
 			if (words_transit_filename)
 				save_words_transit_to_dct(dict, words_transit_filename);
 			save_tags_to_ctx(dict, tag_filename);
 		}
-	}	//	namespace ict
+	}
 
-	const unsigned short DICT_MAGIC_CODE = 'D' << 8 | 'C';
-
-	struct DictHeader{
-		unsigned short magic_code;
-		unsigned short tag_count;
-		int word_count;
-	};
-
-	struct WordHeader {
-		unsigned char length;
-		unsigned char tag_count;
-		unsigned short transit_count;
-	};
-
-	struct TagItem{
-		int tag;
-		int weight;
-	};
-
-	struct TransitHeader {
-		int length;
-		int weight;
-	};
-
-	const std::locale locale_utf8(CodePageString[CODEPAGE_UTF8]);
-
-	static void save_to_file(Dictionary& dict, const char* filename)
+	void save_to_file(Dictionary& dict, const char* filename)
 	{
 		std::ofstream out(filename, std::ios_base::out | std::ios_base::binary);
 
@@ -359,7 +294,7 @@ namespace openclas {
 		}
 	}
 
-	static void load_from_file(Dictionary& dict, const char* filename)
+	void load_from_file(Dictionary& dict, const char* filename)
 	{
 		std::ifstream in(filename, std::ios_base::in | std::ios_base::binary);
 
@@ -414,6 +349,4 @@ namespace openclas {
 			}
 		}
 	}
-}	//	namespace openclas
-
-#endif	//	_OPENCLAS_SERIALIZATION_H_
+}

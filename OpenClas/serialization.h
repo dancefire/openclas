@@ -1,5 +1,5 @@
 ﻿/*********************************************************************************
-Copyright 2007-2009 Dancefire (dancefire@gmail.com).
+Copyright 2009 Dancefire (dancefire@gmail.com).
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGE.
 
 
-版权所有 2007-2009 Dancefire (dancefire@gmail.com)。
+版权所有 2009 Dancefire (dancefire@gmail.com)。
 保留所有权利。
 
 在满足下列条件的前提下，允许重新分发修改过或未经修改的，以源代码或已编译形式
@@ -46,12 +46,95 @@ SUCH DAMAGE.
 
 **********************************************************************************/
 /*
-*	$Id: main.cpp 29 2009-02-12 12:41:05Z Dancefire $
+*	$Id$
 */
-#include <openclas/segment.h>
 
-int main(int argc, const char** argv)
-{
-	//	TODO: more test code
-	return 0;
+#pragma once
+#ifndef _OPENCLAS_SERIALIZATION_H_
+#define _OPENCLAS_SERIALIZATION_H_
+
+#include "dictionary.h"
+#include "utility.h"
+
+namespace openclas {
+
+	namespace ict {
+
+		struct WordHeader {
+			int weight;
+			int length;
+			int pos;
+		};
+
+		static const enum pku::WordTag SpecialWordTagIndex[] = {
+			pku::WORD_TAG_BEGIN,
+			pku::WORD_TAG_END,
+			pku::WORD_TAG_NX,
+			pku::WORD_TAG_NS,
+			pku::WORD_TAG_NR,
+			pku::WORD_TAG_T,
+			pku::WORD_TAG_M,
+			pku::WORD_TAG_N,
+			pku::WORD_TAG_NT,
+			pku::WORD_TAG_NZ
+		};
+
+		static const char_type* SpecialWordString[] = {
+			L"始##始",
+			L"末##末",
+			L"未##串",
+			L"未##地",
+			L"未##人",
+			L"未##时",
+			L"未##数",
+			L"未##它",
+			L"未##团",
+			L"未##专"
+		};
+
+		const int SPECIAL_WORD_COUNT = 10;
+		const int GB2312_COUNT = 6768;
+		const std::locale locale_gbk(CodePageString[CODEPAGE_GBK]);
+
+		void load_words_from_dct(Dictionary& dict, const char* filename);
+		void load_words_transit_from_dct(Dictionary& dict, const char* filename);
+		void load_tags_from_ctx(Dictionary& dict, const char* filename);
+		void load_from_file(Dictionary& dict, const char* tag_filename, const char* words_filename, const char* words_transit_filename = 0);
+
+		void save_words_to_dct(Dictionary& dict, const char* filename);
+		void save_words_transit_to_dct(Dictionary& dict, const char* filename);
+		void save_tags_to_ctx(Dictionary& dict, const char* filename);
+		void save_to_file(Dictionary& dict, const char* tag_filename, const char* words_filename, const char* words_transit_filename = 0);
+	}
+
+	const unsigned short DICT_MAGIC_CODE = 'D' << 8 | 'C';
+
+	struct DictHeader{
+		unsigned short magic_code;
+		unsigned short tag_count;
+		int word_count;
+	};
+
+	struct WordHeader {
+		unsigned char length;
+		unsigned char tag_count;
+		unsigned short transit_count;
+	};
+
+	struct TagItem{
+		int tag;
+		int weight;
+	};
+
+	struct TransitHeader {
+		int length;
+		int weight;
+	};
+
+	const std::locale locale_utf8(CodePageString[CODEPAGE_UTF8]);
+
+	void load_from_dict(Dictionary& dict, const char* filename);
+	void save_to_dict(Dictionary& dict, const char* filename);
 }
+
+#endif	//	_OPENCLAS_SERIALIZATION_H_

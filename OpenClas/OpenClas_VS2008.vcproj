@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="gb2312"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="9.00"
 	Name="OpenClas"
 	ProjectGUID="{244394E9-4CDF-4279-8A62-CDF63C8321AF}"
 	RootNamespace="OpenClas"
 	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -40,16 +41,15 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;E:\Program Files\boost_1_37&quot;;..\include"
+				AdditionalIncludeDirectories="&quot;C:\Program Files\boost\boost_1_36_0\&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
-				DisableSpecificWarnings="4566"
+				DisableSpecificWarnings="4819;4396"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -63,8 +63,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="&quot;C:\Program Files\boost\boost_1_36_0\lib&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="1"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -114,7 +117,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;E:\Program Files\boost_1_37&quot;;..\include"
+				AdditionalIncludeDirectories="&quot;C:\Program Files\boost\boost_1_36_0\&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -134,10 +137,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;C:\Program Files\boost\boost_1_36_0\lib&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -172,7 +178,23 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\dictionary.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\main.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Segment.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\serialization.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\utility.cpp"
 				>
 			</File>
 		</Filter>
@@ -181,6 +203,34 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath=".\common.h"
+				>
+			</File>
+			<File
+				RelativePath=".\dictionary.h"
+				>
+			</File>
+			<File
+				RelativePath=".\k_shortest_path.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Segment.h"
+				>
+			</File>
+			<File
+				RelativePath=".\serialization.h"
+				>
+			</File>
+			<File
+				RelativePath=".\utility.h"
+				>
+			</File>
+			<File
+				RelativePath=".\viterbi.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
