@@ -52,6 +52,7 @@ SUCH DAMAGE.
 #ifndef _OPENCLAS_K_SHORTEST_PATH_H_
 #define _OPENCLAS_K_SHORTEST_PATH_H_
 
+#include "common.h"
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/dag_shortest_paths.hpp>
@@ -60,12 +61,15 @@ SUCH DAMAGE.
 #include <algorithm>
 
 namespace openclas {
+
+	using namespace boost;
+
 	struct path_type {
 		double weight;
 		std::list<size_t> nodelist;
 	};
 
-	inline operator < (const path_type& left, const path_type& right)
+	inline bool operator < (const path_type& left, const path_type& right)
 	{
 		return left.weight < right.weight;
 	}
@@ -73,8 +77,8 @@ namespace openclas {
 	//	Find all paths of given pair of node in a DAG. (DFS-like algorithm)
 	template <class IncidenceGraph>
 	void dag_all_paths(const IncidenceGraph& g, 
-		typename graph_trais<IncidenceGraph>::vertex_descriptor begin, 
-		typename graph_trais<IncidenceGraph>::vertex_descriptor end,
+		typename graph_traits<IncidenceGraph>::vertex_descriptor begin, 
+		typename graph_traits<IncidenceGraph>::vertex_descriptor end,
 		std::list<size_t> current_nodelist,
 		std::vector<path_type>& result_paths)
 	{
@@ -95,8 +99,8 @@ namespace openclas {
 	//	Find k-shortest-path in DAG.
 	template <class IncidenceGraph>
 	void dag_k_shortest_paths(const IncidenceGraph& g, 
-		typename graph_trais<IncidenceGraph>::vertex_descriptor begin, 
-		typename graph_trais<IncidenceGraph>::vertex_descriptor end,
+		typename graph_traits<IncidenceGraph>::vertex_descriptor begin, 
+		typename graph_traits<IncidenceGraph>::vertex_descriptor end,
 		std::vector<path_type>& result_paths,
 		int k)
 	{
@@ -117,8 +121,8 @@ namespace openclas {
 	//	Find shortest-path in DAG. O(n+m)
 	template <class Graph>
 	void dag_shortest_path(const Graph& g, 
-		typename graph_trais<Graph>::vertex_descriptor begin, 
-		typename graph_trais<Graph>::vertex_descriptor end,
+		typename graph_traits<Graph>::vertex_descriptor begin, 
+		typename graph_traits<Graph>::vertex_descriptor end,
 		path_type& result_path)
 	{
 		typename property_map<Graph, vertex_distance_t>::type
