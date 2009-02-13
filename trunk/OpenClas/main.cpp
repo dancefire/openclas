@@ -1,4 +1,5 @@
-﻿Copyright 2009 Dancefire (dancefire@gmail.com).
+﻿/*********************************************************************************
+Copyright 2007-2009 Dancefire (dancefire@gmail.com).
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -24,7 +25,7 @@ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGE.
 
 
-版权所有 2009 Dancefire (dancefire@gmail.com)。
+版权所有 2007-2009 Dancefire (dancefire@gmail.com)。
 保留所有权利。
 
 在满足下列条件的前提下，允许重新分发修改过或未经修改的，以源代码或已编译形式
@@ -42,3 +43,14 @@ SUCH DAMAGE.
 担义务，无论任何在软件使用时产生损害是如何造成的、基于何种责任推断、是否属于合
 同范畴、严格赔偿责任或民事侵权行为(包括疏忽和其它原因)，即使预先被告知此类损害
 发生的可能性。
+
+**********************************************************************************/
+/*
+*	$Id$
+*/
+
+int main(int argc, const char** argv)
+{
+	//	TODO: more test code
+	return 0;
+}
