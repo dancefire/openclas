@@ -133,13 +133,13 @@ namespace openclas {
 	static const wchar_t* WORD_TAG_NAME[] = 
 	{
 		L"",
-		L"Ag",	//	形语素	形容词性语素。形容词代码为a，语素代码g前面置以A。
+		L"ag",	//	形语素	形容词性语素。形容词代码为a，语素代码g前面置以A。
 		L"a",	//	形容词	取英语形容词adjective的第1个字母。
 		L"ad",	//	副形词	直接作状语的形容词。形容词代码a和副词代码d并在一起。
 		L"an",	//	名形词	具有名词功能的形容词。形容词代码a和名词代码n并在一起。
 		L"b",	//	区别词	取汉字“别”的声母。
 		L"c",	//	连词		取英语连词conjunction的第1个字母。
-		L"Dg",	//	副语素	副词性语素。副词代码为d，语素代码ｇ前面置以D。
+		L"dg",	//	副语素	副词性语素。副词代码为d，语素代码g前面置以D。
 		L"d",	//	副词		取adverb的第2个字母，因其第1个字母已用于形容词。
 		L"e",	//	叹词		取英语叹词exclamation的第1个字母。
 		L"f",	//	方位词	取汉字“方” 的声母。
@@ -150,7 +150,7 @@ namespace openclas {
 		L"k",	//	后接成分
 		L"l",	//	习用语	习用语尚未成为成语，有点“临时性”，取“临”的声母。
 		L"m",	//	数词		取英语numeral的第3个字母，n，u已有他用。
-		L"Ng",	//	名语素	名词性语素。名词代码为n，语素代码ｇ前面置以N。
+		L"ng",	//	名语素	名词性语素。名词代码为n，语素代码ｇ前面置以N。
 		L"n",	//	名词		取英语名词noun的第1个字母。
 		L"nr",	//	人名		名词代码n和“人(ren)”的声母并在一起。
 		L"ns",	//	地名		名词代码n和处所词代码s并在一起。
@@ -162,10 +162,10 @@ namespace openclas {
 		L"q",	//	量词		取英语quantity的第1个字母。
 		L"r",	//	代词		取英语代词pronoun的第2个字母,因p已用于介词。
 		L"s",	//	处所词	取英语space的第1个字母。
-		L"Tg",	//	时语素	时间词性语素。时间词代码为t,在语素的代码g前面置以T。
+		L"tg",	//	时语素	时间词性语素。时间词代码为t,在语素的代码g前面置以T。
 		L"t",	//	时间词	取英语time的第1个字母。
 		L"u",	//	助词		取英语助词auxiliary 的第2个字母,因a已用于形容词。
-		L"Vg",	//	动语素	动词性语素。动词代码为v。在语素的代码g前面置以V。
+		L"vg",	//	动语素	动词性语素。动词代码为v。在语素的代码g前面置以V。
 		L"v",	//	动词		取英语动词verb的第一个字母。
 		L"vd",	//	副动词	直接作状语的动词。动词和副词的代码并在一起。
 		L"vn",	//	名动词	指具有名词功能的动词。动词和名词的代码并在一起。
@@ -190,7 +190,7 @@ namespace openclas {
 		SYMBOL_TYPE_INDEX,
 		SYMBOL_TYPE_OTHER,
 	};
-	const wchar_t* NUMBER_PREFIXS = L".-+．－＋";
+	static const wchar_t* NUMBER_PREFIXS = L".-+．－＋";
 	const int MAX_FREQUENCE = 2079997;
 
 	enum CodePage {

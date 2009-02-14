@@ -181,6 +181,30 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath=".\unit_test_dictionary.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\unit_test_k_shortest_path.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\unit_test_segment.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\unit_test_serialization.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\unit_test_utility.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\unit_test_viterbi.hpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
