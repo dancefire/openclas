@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;E:\Program Files\boost_1_37&quot;;..\include"
+				AdditionalIncludeDirectories="&quot;E:\Program Files\boost_1_37&quot;;..\..\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -87,6 +87,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="$(TargetDir)\$(TargetFileName)"
 			/>
 		</Configuration>
 		<Configuration
@@ -114,7 +115,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;E:\Program Files\boost_1_37&quot;;..\include"
+				AdditionalIncludeDirectories="&quot;E:\Program Files\boost_1_37&quot;;..\..\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -172,7 +173,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\test.cpp"
+				RelativePath=".\unit_test.cpp"
 				>
 			</File>
 		</Filter>
