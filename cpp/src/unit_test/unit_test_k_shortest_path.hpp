@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #ifndef _OPENCLAS_UNIT_TEST_K_SHORTEST_PATH_HPP_
 #define _OPENCLAS_UNIT_TEST_K_SHORTEST_PATH_HPP_
 
