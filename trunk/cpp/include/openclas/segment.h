@@ -53,6 +53,12 @@ SUCH DAMAGE.
 #ifndef _OPENCLAS_SEGMENT_H_
 #define _OPENCLAS_SEGMENT_H_
 
+//	workaround for remove VC max(a,b) macro function definition,
+//	which is make std::number_limites<T>::max() not working.
+#ifdef max
+#undef max
+#endif	//	max
+
 #include <boost/utility.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -61,6 +67,7 @@ SUCH DAMAGE.
 #include <vector>
 #include "utility.h"
 #include "dictionary.h"
+
 
 namespace openclas {
 
@@ -283,7 +290,7 @@ namespace openclas {
 			double P2 = (((1-t) * adjacency_weight) / (1+current_weight)) + t;
 			double B = (1 - smoothing) * P2;
 
-			double weight = - log( A + B );
+			double weight = - ::log( A + B );
 			return weight;
 		}
 

@@ -1,4 +1,21 @@
-﻿2009-02-13  Tao Wang  <dancefire@gmail.com>
+﻿2009-02-15  Tao Wang  <dancefire@gmail.com>
+
+	* cpp/include/openclas/segment.h: Add workaround code to undef VC max(a,b) macro.
+	And add global namespace for log() to avoid make it confuse with boost::unit_test::log
+	* cpp/include/openclas/utility.h: Make WORD_TAG_NAME to all little-case
+	And add static to NUMBER_PREFIXS.
+	* cpp/src/OpenClas_VS2005.vcproj:
+	* cpp/src/OpenClas_VS2008.vcproj: 
+	* cpp/src/test.cpp:
+	* cpp/src/unit_test_dictionary.hpp:
+	* cpp/src/unit_test_k_shortest_path.hpp:
+	* cpp/src/unit_test_segment.hpp:
+	* cpp/src/unit_test_serialization.hpp:
+	* cpp/src/unit_test_utility.hpp:
+	* cpp/src/unit_test_viterbi.hpp: Using Boost.Test do the regression test.
+	Added test cases for utility.
+
+2009-02-13  Tao Wang  <dancefire@gmail.com>
 
 	* include/openclas/segment.h:
 	* include/openclas/serialization.h:

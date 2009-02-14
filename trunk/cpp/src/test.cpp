@@ -48,15 +48,18 @@ SUCH DAMAGE.
 /*
 *	$Id$
 */
-#include <openclas/segment.h>
-#include <openclas/dictionary.h>
-#include <openclas/k_shortest_path.h>
-#include <openclas/serialization.h>
-#include <openclas/utility.h>
-#include <openclas/viterbi.h>
 
-int main(int argc, const char** argv)
-{
-	//	TODO: more test code
-	return 0;
-}
+#define BOOST_TEST_MODULE OpenCLAS_Unit_Test
+#define BOOST_TEST_MAIN
+
+#include <boost/test/included/unit_test.hpp>
+
+using namespace boost::unit_test;
+
+//#include "unit_test_dictionary.hpp"
+//#include "unit_test_k_shortest_path.hpp"
+//#include "unit_test_segment.hpp"
+//#include "unit_test_serialization.hpp"
+#include "unit_test_utility.hpp"
+//#include "unit_test_viterbi.hpp"
+//
