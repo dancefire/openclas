@@ -1,1 +1,1 @@
-﻿README
+README
