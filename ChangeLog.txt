@@ -1,5 +1,9 @@
 ﻿2009-02-15  Tao Wang  <dancefire@gmail.com>
 
+	Move cpp/src/* to cpp/src/unit_test/*.
+
+2009-02-15  Tao Wang  <dancefire@gmail.com>
+
 	* cpp/include/openclas/segment.h: Add workaround code to undef VC max(a,b) macro.
 	And add global namespace for log() to avoid make it confuse with boost::unit_test::log
 	* cpp/include/openclas/utility.h: Make WORD_TAG_NAME to all little-case
