@@ -50,10 +50,10 @@ SUCH DAMAGE.
 */
 
 #pragma once
-#ifndef _OPENCLAS_DICTIONARY_H_
-#define _OPENCLAS_DICTIONARY_H_
+#ifndef _OPENCLAS_DICTIONARY_HPP_
+#define _OPENCLAS_DICTIONARY_HPP_
 
-#include "common.h"
+#include "common.hpp"
 #include <vector>
 #include <list>
 
@@ -399,4 +399,4 @@ namespace openclas {
 	};	//	class Dictionary
 }	//	namespace openclas
 
-#endif	//	_OPENCLAS_DICTIONARY_H_
+#endif	//	_OPENCLAS_DICTIONARY_HPP_

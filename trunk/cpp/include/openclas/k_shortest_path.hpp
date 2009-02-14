@@ -49,10 +49,10 @@ SUCH DAMAGE.
 *	$Id$
 */
 #pragma once
-#ifndef _OPENCLAS_K_SHORTEST_PATH_H_
-#define _OPENCLAS_K_SHORTEST_PATH_H_
+#ifndef _OPENCLAS_K_SHORTEST_PATH_HPP_
+#define _OPENCLAS_K_SHORTEST_PATH_HPP_
 
-#include "common.h"
+#include "common.hpp"
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/dag_shortest_paths.hpp>
@@ -147,4 +147,4 @@ namespace openclas {
 	}
 }
 
-#endif	//	_OPENCLAS_K_SHORTEST_PATH_H_
+#endif	//	_OPENCLAS_K_SHORTEST_PATH_HPP_

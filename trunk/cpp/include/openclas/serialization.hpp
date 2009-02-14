@@ -50,11 +50,11 @@ SUCH DAMAGE.
 */
 
 #pragma once
-#ifndef _OPENCLAS_SERIALIZATION_H_
-#define _OPENCLAS_SERIALIZATION_H_
+#ifndef _OPENCLAS_SERIALIZATION_HPP_
+#define _OPENCLAS_SERIALIZATION_HPP_
 
-#include "dictionary.h"
-#include "utility.h"
+#include "dictionary.hpp"
+#include "utility.hpp"
 #include <fstream>
 #include <iostream>
 
@@ -417,4 +417,4 @@ namespace openclas {
 	}
 }	//	namespace openclas
 
-#endif	//	_OPENCLAS_SERIALIZATION_H_
+#endif	//	_OPENCLAS_SERIALIZATION_HPP_
