@@ -50,8 +50,8 @@ SUCH DAMAGE.
 */
 
 #pragma once
-#ifndef _OPENCLAS_SEGMENT_H_
-#define _OPENCLAS_SEGMENT_H_
+#ifndef _OPENCLAS_SEGMENT_HPP_
+#define _OPENCLAS_SEGMENT_HPP_
 
 //	workaround for remove VC max(a,b) macro function definition,
 //	which is make std::number_limites<T>::max() not working.
@@ -65,8 +65,8 @@ SUCH DAMAGE.
 #include <limits>
 #include <list>
 #include <vector>
-#include "utility.h"
-#include "dictionary.h"
+#include "utility.hpp"
+#include "dictionary.hpp"
 
 
 namespace openclas {
@@ -338,4 +338,4 @@ namespace openclas {
 	};
 }
 
-#endif	//	_OPENCLAS_SEGMENT_H_
+#endif	//	_OPENCLAS_SEGMENT_HPP_

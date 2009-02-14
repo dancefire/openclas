@@ -54,8 +54,8 @@ SUCH DAMAGE.
 */
 
 #pragma once
-#ifndef _OPENCLAS_VITERBI_H_
-#define _OPENCLAS_VITERBI_H_
+#ifndef _OPENCLAS_VITERBI_HPP_
+#define _OPENCLAS_VITERBI_HPP_
 
 #include <vector>
 #include <iostream>
@@ -165,4 +165,4 @@ namespace openclas {
 	}
 }
 
-#endif	//	_OPENCLAS_VITERBI_H_
+#endif	//	_OPENCLAS_VITERBI_HPP_

@@ -50,12 +50,14 @@ SUCH DAMAGE.
 */
 
 #pragma once
-#ifndef _OPENCLAS_UTILITY_H_
-#define _OPENCLAS_UTILITY_H_
+#ifndef _OPENCLAS_UTILITY_HPP_
+#define _OPENCLAS_UTILITY_HPP_
 
+#ifdef WIN32
 #pragma warning( disable:4996 )
+#endif
 
-#include "common.h"
+#include "common.hpp"
 
 #include <string>
 #include <locale>
@@ -433,4 +435,4 @@ namespace openclas {
 
 }	//	namespace openclas
 
-#endif	//	 _OPENCLAS_UTILITY_H_
+#endif	//	 _OPENCLAS_UTILITY_HPP_

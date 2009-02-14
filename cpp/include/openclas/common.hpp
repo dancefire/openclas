@@ -49,8 +49,8 @@ SUCH DAMAGE.
 *	$Id$
 */
 #pragma once
-#ifndef _OPENCLAS_COMMON_H_
-#define _OPENCLAS_COMMON_H_
+#ifndef _OPENCLAS_COMMON_HPP_
+#define _OPENCLAS_COMMON_HPP_
 
 #include <boost/config.hpp>
 #include <boost/shared_ptr.hpp>
@@ -65,4 +65,4 @@ namespace openclas {
 	using boost::unordered_map;
 }
 
-#endif	//	 _OPENCLAS_COMMON_H_
+#endif	//	 _OPENCLAS_COMMON_HPP_

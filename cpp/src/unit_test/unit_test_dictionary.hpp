@@ -2,7 +2,7 @@
 #ifndef _OPENCLAS_UNIT_TEST_DICTIONARY_HPP_
 #define _OPENCLAS_UNIT_TEST_DICTIONARY_HPP_
 
-#include <openclas/dictionary.h>
+#include <openclas/dictionary.hpp>
 
 BOOST_AUTO_TEST_SUITE( dictionary )
 

@@ -6,7 +6,7 @@
 #pragma warning( disable:4566 )
 #endif
 
-#include <openclas/utility.h>
+#include <openclas/utility.hpp>
 
 
 BOOST_AUTO_TEST_SUITE( utility )

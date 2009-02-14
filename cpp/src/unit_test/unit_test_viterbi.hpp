@@ -2,7 +2,7 @@
 #ifndef _OPENCLAS_UNIT_TEST_VITERBI_HPP_
 #define _OPENCLAS_UNIT_TEST_VITERBI_HPP_
 
-#include <openclas/viterbi.h>
+#include <openclas/viterbi.hpp>
 
 BOOST_AUTO_TEST_SUITE( viterbi )
 

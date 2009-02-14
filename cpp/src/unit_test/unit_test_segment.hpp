@@ -2,7 +2,7 @@
 #ifndef _OPENCLAS_UNIT_TEST_SEGMENT_HPP_
 #define _OPENCLAS_UNIT_TEST_SEGMENT_HPP_
 
-#include <openclas/segment.h>
+#include <openclas/segment.hpp>
 
 BOOST_AUTO_TEST_SUITE( segment )
 

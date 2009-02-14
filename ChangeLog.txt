@@ -1,6 +1,10 @@
+2009-02-15  Tao Wang  <dancefire@gmail.com>
+
+	* Rename cpp/include/openclas/*.h to *.hpp.
+
 ﻿2009-02-15  Tao Wang  <dancefire@gmail.com>
 
-	Move cpp/src/* to cpp/src/unit_test/*.
+	* Move cpp/src/* to cpp/src/unit_test/*.
 
 2009-02-15  Tao Wang  <dancefire@gmail.com>
 
