@@ -1,9 +1,16 @@
 2009-02-15  Tao Wang  <dancefire@gmail.com>
 
+	* cpp/include/openclas/utility.hpp:
+	* cpp/src/unit_test/unit_test_utility.hpp: Remove utf7 support since will never use it.
+	* Add cpp/script/bom.py: to remove/append UTF-8 BOM leading. It need to be removed before
+	compiling under g++, and need to be appended before commit the result to svn repository.
+
+2009-02-15  Tao Wang  <dancefire@gmail.com>
+
 	* Rename cpp/include/openclas/*.h to *.hpp.
 
-﻿2009-02-15  Tao Wang  <dancefire@gmail.com>
-
+2009-02-15  Tao Wang  <dancefire@gmail.com>
+﻿
 	* Move cpp/src/* to cpp/src/unit_test/*.
 
 2009-02-15  Tao Wang  <dancefire@gmail.com>
