@@ -48,6 +48,18 @@ zh_TW.euctw
 zh_TW.utf8
 }}}
 
+=== 如何判断文件是否是使用UTF-8 BOM存储的？ ===
+
+执行下面的命令：
+
+{{{
+$ cat cpp/src/unit_test/unit_test.cpp |hd -n 10
+00000000  ef bb bf 2f 2a 2a 2a 2a  2a 2a                    |.../******|
+0000000a
+}}}
+
+如果开头三个字节分别是 *ef bb bf* ，那么就说明这个文件使用的是UTF-8 with BOM编码，否则就不带BOM（但是否是UTF-8不可确定）。
+
 === 用g++编译的时候碰到UTF-8 BOM错误怎么办？ ===
 
 {{{
