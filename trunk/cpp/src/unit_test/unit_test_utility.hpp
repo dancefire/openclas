@@ -323,7 +323,6 @@ BOOST_AUTO_TEST_CASE( test_locale )
 	BOOST_CHECK_NO_THROW( std::locale loc_ucs2_be(CodePageString[CODEPAGE_UCS2_BE]) );
 	BOOST_CHECK_NO_THROW( std::locale loc_ucs4_le(CodePageString[CODEPAGE_UCS4_LE]) );
 	BOOST_CHECK_NO_THROW( std::locale loc_ucs4_be(CodePageString[CODEPAGE_UCS4_BE]) );
-	BOOST_CHECK_NO_THROW( std::locale loc_utf7(CodePageString[CODEPAGE_UTF7]) );
 	BOOST_CHECK_NO_THROW( std::locale loc_utf8(CodePageString[CODEPAGE_UTF8]) );
 }
 

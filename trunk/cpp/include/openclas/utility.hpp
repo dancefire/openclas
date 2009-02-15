@@ -206,7 +206,6 @@ namespace openclas {
 		CODEPAGE_UCS2_BE,
 		CODEPAGE_UCS4_LE,
 		CODEPAGE_UCS4_BE,
-		CODEPAGE_UTF7,
 		CODEPAGE_UTF8
 	};
 
@@ -222,7 +221,6 @@ namespace openclas {
 		".1201",	//	UCS2_BE
 		".12000",	//	UCS4_LE
 		".12001",	//	UCS4_BE
-		".65000",	//	UTF7
 		".65001"	//	UTF8
 #else
 		/***************************************************
@@ -231,18 +229,17 @@ namespace openclas {
 		*		http://stdcxx.apache.org/doc/stdlibref/codecvt-byname.html
 		*		http://gcc.gnu.org/onlinedocs/libstdc++/manual/codecvt.html
 		****************************************************/
-		"C",		//	C
-		"",			//	ANSI
-		"GB2312",	//	GB2312
-		"GBK",		//	GBK
-		"GB18030",	//	GB18030
-		"BIG5",		//	BIG5
-		"CP1200",	//	UCS2_LE
-		"CP1201",	//	UCS2_BE
-		"CP12000",	//	UCS4_LE
-		"CP12001",	//	UCS4_BE
-		"UTF7",		//	UTF7
-		"UTF8"		//	UTF8
+		"C",			//	C
+		"",				//	ANSI
+		"zh_CN.GB2312",	//	GB2312
+		"zh_CN.GBK",	//	GBK
+		"zh_CN.GB18030",//	GB18030
+		"zh_TW.BIG5",	//	BIG5
+		"zh_CN.CP1200",	//	UCS2_LE
+		"zh_CN.CP1201",	//	UCS2_BE
+		"zh_CN.CP12000",//	UCS4_LE
+		"zh_CN.CP12001",//	UCS4_BE
+		"zh_CN.UTF8"	//	UTF8
 #endif
 	};
 
