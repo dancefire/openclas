@@ -1,5 +1,10 @@
 2009-02-15  Tao Wang  <dancefire@gmail.com>
 
+	Appended UTF-8 BOM as prefix for all source code, so that it can be compiled under windows.
+	Anyone want to compile the project under Linux, need to run 'bom.py' at the cpp/ directory.
+
+2009-02-15  Tao Wang  <dancefire@gmail.com>
+
 	* cpp/include/openclas/utility.hpp:
 	* cpp/src/unit_test/unit_test_utility.hpp: Remove utf7 support since will never use it.
 	* Add cpp/script/bom.py: to remove/append UTF-8 BOM leading. It need to be removed before

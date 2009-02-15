@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #ifndef _OPENCLAS_UNIT_TEST_DICTIONARY_HPP_
 #define _OPENCLAS_UNIT_TEST_DICTIONARY_HPP_
 
