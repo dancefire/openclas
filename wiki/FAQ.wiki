@@ -38,7 +38,10 @@ zh_CN
 zh_CN.gb18030
 zh_CN.gbk
 zh_CN.utf8
+zh_HK
 zh_HK.utf8
+zh_SG
+zh_SG.gbk
 zh_SG.utf8
 zh_TW
 zh_TW.euctw
