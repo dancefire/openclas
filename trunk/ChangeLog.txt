@@ -1,4 +1,18 @@
-2009-02-15  Tao Wang  <dancefire@gmail.com>
+2009-02-17  Tao Wang  <dancefire@gmail.com>
+
+	* cpp/include/openclas/k_shortest_path.hpp:
+		change path_type::nodelist to std::vector.
+		change dag_all_paths() arguments.
+		add code to handle empty graph.
+		fix a bug, didn't add up the edge during the traverse.
+		using property_map<>::const_type.
+	* cpp/include/openclas/utility.hpp: Replace normal pointer with scoped_ptr<T>.
+	* cpp/include/openclas/viterbi.hpp: new lines Unix=>Windows
+	* cpp/src/unit_test/unit_test.cpp: Uncommented test for viterbi and k_shortest_path
+	* cpp/src/unit_test/unit_test_k_shortest_path.hpp: Implemented part of the k_shortest_path testcases.
+	* cpp/src/unit_test/unit_test_viterbi.hpp: Add testcases for viterbi algorithm.
+
+2009-02-16  Tao Wang  <dancefire@gmail.com>
 
 	* cpp/include/openclas/utf8_codecvt_facet.hpp: Merge utf8_codecvt_facet.hpp and utf8_codecvt_facet.cpp,
 	so make the program become header only.

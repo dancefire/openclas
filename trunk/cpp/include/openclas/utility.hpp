@@ -403,7 +403,7 @@ namespace openclas {
 		const codecvt_t& cc = std::use_facet<codecvt_t>(loc);
 
 		int buf_size = static_cast<int>(cc.max_length() * (str.length() + 1));
-		char* buf = new char[buf_size];
+		scoped_array<char> buf(new char[buf_size]);
 
 		mbstate_t state = mbstate_t();
 		const wchar_t* from_next = 0;
@@ -411,16 +411,14 @@ namespace openclas {
 
 		std::codecvt_base::result result = cc.out(state,
 			str.c_str(), str.c_str() + str.length(), from_next,
-			buf, buf + buf_size, to_next);
+			buf.get(), buf.get() + buf_size, to_next);
 
 		if (result == std::codecvt_base::ok)
 		{
-			std::string narrow_string(buf, to_next);
-			delete buf;
+			std::string narrow_string(buf.get(), to_next);
 			return narrow_string;
 		}else{
-			delete buf;
-			return std::string();
+			return std::string(buf.get(), to_next);
 		}
 	}
 
@@ -436,7 +434,7 @@ namespace openclas {
 		const codecvt_t& cc = std::use_facet<codecvt_t>(loc);
 
 		size_t buf_size = str.length() + 1;
-		wchar_t* buf = new wchar_t[buf_size];
+		scoped_array<wchar_t> buf(new wchar_t[buf_size]);
 
 		mbstate_t state = mbstate_t();
 		const char* from_next = 0;
@@ -444,15 +442,13 @@ namespace openclas {
 
 		std::codecvt_base::result result = cc.in(state,
 			str.c_str(), str.c_str() + str.length(), from_next,
-			buf, buf + buf_size, to_next);
+			buf.get(), buf.get() + buf_size, to_next);
 
 		if (result == std::codecvt_base::ok)
 		{
-			std::wstring widen_string(buf, to_next);
-			delete buf;
+			std::wstring widen_string(buf.get(), to_next);
 			return widen_string;
 		}else{
-			delete buf;
 			return std::wstring();
 		}
 	}

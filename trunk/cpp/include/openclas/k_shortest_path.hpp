@@ -66,7 +66,10 @@ namespace openclas {
 
 	struct path_type {
 		double weight;
-		std::list<size_t> nodelist;
+		std::vector<size_t> nodelist;
+		path_type()
+			: weight(0), nodelist()
+		{}
 	};
 
 	inline bool operator < (const path_type& left, const path_type& right)
@@ -79,19 +82,25 @@ namespace openclas {
 	void dag_all_paths(const IncidenceGraph& g, 
 		typename graph_traits<IncidenceGraph>::vertex_descriptor begin, 
 		typename graph_traits<IncidenceGraph>::vertex_descriptor end,
-		std::list<size_t> current_nodelist,
-		std::vector<path_type>& result_paths)
+		std::vector<path_type>& result_paths,
+		path_type current_path = path_type())
 	{
 		function_requires<IncidenceGraphConcept<IncidenceGraph> >();
 
-		current_nodelist.push_back(begin);
+		if (num_vertices(g) == 0)
+			return;	//	return if g is empty
+
+		current_path.nodelist.push_back(begin);
 		if (begin == end) {
-			result_paths.push_back(current_nodelist);
+			result_paths.push_back(current_path);
 		} else {
 			typename graph_traits<IncidenceGraph>::out_edge_iterator ei, ei_end;
 			for (tie(ei, ei_end) = out_edges(begin, g); ei != ei_end; ++ei) {
 				typename graph_traits<IncidenceGraph>::vertex_descriptor v = target(*ei, g);
-				dag_all_paths(g, v, end, current_nodelist, result_paths);
+				typename property_map<IncidenceGraph, edge_weight_t>::const_type
+					w_map = get(edge_weight, g);
+				current_path.weight += w_map[edge(begin, v, g).first];
+				dag_all_paths(g, v, end, result_paths, current_path);
 			}
 		}
 	}
@@ -125,9 +134,9 @@ namespace openclas {
 		typename graph_traits<Graph>::vertex_descriptor end,
 		path_type& result_path)
 	{
-		typename property_map<Graph, vertex_distance_t>::type
+		typename property_map<Graph, vertex_distance_t>::const_type
 			d_map = get(vertex_distance, g);
-		typename property_map<Graph, vertex_predecessor_t>::type
+		typename property_map<Graph, vertex_predecessor_t>::const_type
 			p_map = get(vertex_predecessor, g);
 		dag_shortest_paths(g, begin, distance_map(d_map).predecessor_map(p_map));
 
