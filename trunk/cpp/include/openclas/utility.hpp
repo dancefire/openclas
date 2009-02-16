@@ -53,7 +53,7 @@ SUCH DAMAGE.
 #ifndef _OPENCLAS_UTILITY_HPP_
 #define _OPENCLAS_UTILITY_HPP_
 
-#ifdef WIN32
+#if defined(_MSC_VER)
 #pragma warning( disable:4996 )
 #endif
 
@@ -61,6 +61,21 @@ SUCH DAMAGE.
 
 #include <string>
 #include <locale>
+
+#if defined(_MSC_VER)
+//	Microsoft Visual C++ will need utf8_codecvt_facet.hpp for utf8 encoding.
+#define BOOST_UTF8_BEGIN_NAMESPACE namespace openclas {
+#define BOOST_UTF8_END_NAMESPACE }
+#define BOOST_UTF8_DECL
+
+//#include <boost/detail/utf8_codecvt_facet.hpp>
+#include "utf8_codecvt_facet.hpp"
+
+#undef BOOST_UTF8_BEGIN_NAMESPACE
+#undef BOOST_UTF8_END_NAMESPACE
+#undef BOOST_UTF8_DECL
+
+#endif
 
 namespace openclas {
 	/** Word part-of-speech tag
@@ -195,55 +210,53 @@ namespace openclas {
 	static const wchar_t* NUMBER_PREFIXS = L".-+．－＋";
 	const int MAX_FREQUENCE = 2079997;
 
-	enum CodePage {
-		CODEPAGE_C,
-		CODEPAGE_ANSI,
-		CODEPAGE_GB2312,
-		CODEPAGE_GBK,
-		CODEPAGE_GB18030,
-		CODEPAGE_BIG5,
-		CODEPAGE_UCS2_LE,
-		CODEPAGE_UCS2_BE,
-		CODEPAGE_UCS4_LE,
-		CODEPAGE_UCS4_BE,
-		CODEPAGE_UTF8
+	/** Enumerate several useful character set in this library
+	 *	see reference:
+	 *		http://www.iana.org/assignments/character-sets
+	 *		http://stdcxx.apache.org/doc/stdlibref/codecvt-byname.html#sec7
+	 */
+	enum Charset {
+		CHARSET_ASCII,
+		CHARSET_C,
+		CHARSET_GB2312,
+		CHARSET_GBK,
+		CHARSET_GB18030,
+		CHARSET_BIG5,
+		CHARSET_UTF8
 	};
 
-	static const char* CodePageString[] = {
-#ifdef WIN32
+	static const char* CharsetName[] = {
+#if defined(_MSC_VER)
+		/***************************************************
+		 *	Reference:
+		 *		http://msdn.microsoft.com/en-us/library/dd317756(VS.85).aspx
+		 *
+		 ****************************************************/
+		"",			//	ASCII(1250)
 		"C",		//	C(0)
-		"",			//	ANSI(1250)
 		".20936",	//	GB2312
 		".936",		//	GBK
 		".54936",	//	GB18030
 		".950",		//	BIG5
-		".1200",	//	UCS2_LE
-		".1201",	//	UCS2_BE
-		".12000",	//	UCS4_LE
-		".12001",	//	UCS4_BE
-		".65001"	//	UTF8
+		".65001"	//	UTF8 (not supported by VC STL)
 #else
 		/***************************************************
-		*	Reference:
-		*		http://www.iana.org/assignments/character-sets
-		*		http://stdcxx.apache.org/doc/stdlibref/codecvt-byname.html
-		*		http://gcc.gnu.org/onlinedocs/libstdc++/manual/codecvt.html
-		****************************************************/
+		 *	Reference:
+		 *		http://www.iana.org/assignments/character-sets
+		 *		http://stdcxx.apache.org/doc/stdlibref/codecvt-byname.html
+		 *		http://gcc.gnu.org/onlinedocs/libstdc++/manual/codecvt.html
+		 ****************************************************/
+		"",				//	ASCII
 		"C",			//	C
-		"",				//	ANSI
 		"zh_CN.GB2312",	//	GB2312
 		"zh_CN.GBK",	//	GBK
 		"zh_CN.GB18030",//	GB18030
 		"zh_TW.BIG5",	//	BIG5
-		"zh_CN.CP1200",	//	UCS2_LE
-		"zh_CN.CP1201",	//	UCS2_BE
-		"zh_CN.CP12000",//	UCS4_LE
-		"zh_CN.CP12001",//	UCS4_BE
 		"zh_CN.UTF8"	//	UTF8
 #endif
 	};
 
-	typedef std::codecvt<wchar_t, char, mbstate_t> code_converter_type;
+	typedef std::codecvt<wchar_t, char, mbstate_t> codecvt_t;
 
 	/** Generate special word name
 	*	Just add prefix "$" to WORD_TAG_NAME[WordTag]
@@ -364,6 +377,20 @@ namespace openclas {
 		return false;
 	}
 
+	const std::locale make_locale(enum Charset charset)
+	{
+#if defined(_MSC_VER)
+		if (charset != CHARSET_UTF8){
+			return std::locale(CharsetName[charset]);
+		}else{
+			utf8_codecvt_facet* ptr = new utf8_codecvt_facet();
+			return std::locale(std::locale::classic(), new utf8_codecvt_facet);
+		}
+#else
+		return typename std::locale::locale(CharsetName[charset]);
+#endif
+	}
+
 	/** Convert given wide string to narrow string by given locale object.
 	*  The function is used for converting from wide char string to multibyte string.
 	*	Notice: Visual C++ current cannot support utf-8 locale in STL. So, for alternative
@@ -373,7 +400,7 @@ namespace openclas {
 	*/
 	static std::string narrow(const std::wstring& str, const std::locale& loc)
 	{
-		const code_converter_type& cc = std::use_facet<code_converter_type>(loc);
+		const codecvt_t& cc = std::use_facet<codecvt_t>(loc);
 
 		int buf_size = static_cast<int>(cc.max_length() * (str.length() + 1));
 		char* buf = new char[buf_size];
@@ -406,7 +433,7 @@ namespace openclas {
 	*/
 	static std::wstring widen(const std::string& str, const std::locale& loc)
 	{
-		const code_converter_type& cc = std::use_facet<code_converter_type>(loc);
+		const codecvt_t& cc = std::use_facet<codecvt_t>(loc);
 
 		size_t buf_size = str.length() + 1;
 		wchar_t* buf = new wchar_t[buf_size];

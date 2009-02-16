@@ -55,7 +55,7 @@ SUCH DAMAGE.
 
 //	workaround for remove VC max(a,b) macro function definition,
 //	which is make std::number_limites<T>::max() not working.
-#ifdef max
+#if defined(_MSC_VER) && defined(max)
 #undef max
 #endif	//	max
 
