@@ -313,17 +313,13 @@ BOOST_AUTO_TEST_CASE( test_exist )
 
 BOOST_AUTO_TEST_CASE( test_locale )
 {
-	BOOST_CHECK_NO_THROW( std::locale loc_c(CodePageString[CODEPAGE_C]) );
-	BOOST_CHECK_NO_THROW( std::locale loc_ansi(CodePageString[CODEPAGE_ANSI]) );
-	BOOST_CHECK_NO_THROW( std::locale loc_gb2312(CodePageString[CODEPAGE_GB2312]) );
-	BOOST_CHECK_NO_THROW( std::locale loc_gbk(CodePageString[CODEPAGE_GBK]) );
-	BOOST_CHECK_NO_THROW( std::locale loc_gb18030(CodePageString[CODEPAGE_GB18030]) );
-	BOOST_CHECK_NO_THROW( std::locale loc_big5(CodePageString[CODEPAGE_BIG5]) );
-	BOOST_CHECK_NO_THROW( std::locale loc_ucs2_le(CodePageString[CODEPAGE_UCS2_LE]) );
-	BOOST_CHECK_NO_THROW( std::locale loc_ucs2_be(CodePageString[CODEPAGE_UCS2_BE]) );
-	BOOST_CHECK_NO_THROW( std::locale loc_ucs4_le(CodePageString[CODEPAGE_UCS4_LE]) );
-	BOOST_CHECK_NO_THROW( std::locale loc_ucs4_be(CodePageString[CODEPAGE_UCS4_BE]) );
-	BOOST_CHECK_NO_THROW( std::locale loc_utf8(CodePageString[CODEPAGE_UTF8]) );
+	BOOST_CHECK_NO_THROW( make_locale(CHARSET_C) );
+	BOOST_CHECK_NO_THROW( make_locale(CHARSET_ASCII) );
+	BOOST_CHECK_NO_THROW( make_locale(CHARSET_GB2312) );
+	BOOST_CHECK_NO_THROW( make_locale(CHARSET_GBK) );
+	BOOST_CHECK_NO_THROW( make_locale(CHARSET_GB18030) );
+	BOOST_CHECK_NO_THROW( make_locale(CHARSET_BIG5) );
+	BOOST_CHECK_NO_THROW( make_locale(CHARSET_UTF8) );
 }
 
 void test_encoding(const std::locale& loc, const wchar_t* wide_string, const char* narrow_string)
@@ -334,32 +330,52 @@ void test_encoding(const std::locale& loc, const wchar_t* wide_string, const cha
 
 BOOST_AUTO_TEST_CASE( test_locale_gb2312 )
 {
-	std::locale loc(CodePageString[CODEPAGE_GB2312]);
+	std::locale loc;
+	BOOST_REQUIRE_NO_THROW( loc = make_locale(CHARSET_GB2312) );
 	test_encoding(loc, L"", "");
 	test_encoding(loc, L"a", "a");
 	test_encoding(loc, L"std::locale loc 1234567", "std::locale loc 1234567");
+	test_encoding(loc, L"朱基,朱基,光,繁体字,codepage", "\xd6\xec\xbb\xf9\x2c\xd6\xec\xbb\xf9\x2c\xb9\xe2\x2c\xb7\xb1\xcc\xe5\xd7\xd6\x2c\x63\x6f\x64\x65\x70\x61\x67\x65");
 }
 
 BOOST_AUTO_TEST_CASE( test_locale_gbk )
 {
-	std::locale loc(CodePageString[CODEPAGE_GBK]);
+	std::locale loc;
+	BOOST_REQUIRE_NO_THROW( loc = make_locale(CHARSET_GBK) );
 	test_encoding(loc, L"", "");
 	test_encoding(loc, L"a", "a");
 	test_encoding(loc, L"std::locale loc 1234567", "std::locale loc 1234567");
+	test_encoding(loc, L"朱镕基,朱鎔基,光緒,繁体字,codepage", "\xd6\xec\xe9\x46\xbb\xf9\x2c\xd6\xec\xe6\x67\xbb\xf9\x2c\xb9\xe2\xbe\x77\x2c\xb7\xb1\xcc\xe5\xd7\xd6\x2c\x63\x6f\x64\x65\x70\x61\x67\x65");
 }
 
 BOOST_AUTO_TEST_CASE( test_locale_gb18030 )
 {
-	std::locale loc(CodePageString[CODEPAGE_GB18030]);
+	std::locale loc;
+	BOOST_REQUIRE_NO_THROW( loc = make_locale(CHARSET_GB18030) );
 	test_encoding(loc, L"", "");
 	test_encoding(loc, L"a", "a");
 	test_encoding(loc, L"std::locale loc 1234567", "std::locale loc 1234567");
+	test_encoding(loc, L"朱镕基,朱鎔基,光緒,繁体字,codepage", "\xd6\xec\xe9\x46\xbb\xf9\x2c\xd6\xec\xe6\x67\xbb\xf9\x2c\xb9\xe2\xbe\x77\x2c\xb7\xb1\xcc\xe5\xd7\xd6\x2c\x63\x6f\x64\x65\x70\x61\x67\x65");
+}
+
+BOOST_AUTO_TEST_CASE( test_locale_big5 )
+{
+	std::locale loc;
+	BOOST_REQUIRE_NO_THROW( loc = make_locale(CHARSET_BIG5) );
+	test_encoding(loc, L"", "");
+	test_encoding(loc, L"a", "a");
+	test_encoding(loc, L"std::locale loc 1234567", "std::locale loc 1234567");
+	test_encoding(loc, L"朱基,朱鎔基,光緒,繁体字,codepage", "\xa6\xb6\xb0\xf2\x2c\xa6\xb6\xc2\xe8\xb0\xf2\x2c\xa5\xfa\xba\xfc\x2c\xc1\x63\xca\x5e\xa6\x72\x2c\x63\x6f\x64\x65\x70\x61\x67\x65");
 }
 
 BOOST_AUTO_TEST_CASE( test_locale_utf8 )
 {
-	//std::locale loc(CodePageString[CODEPAGE_UTF8]);
-	//test_encoding(loc, L"", "");
+	std::locale loc;
+	BOOST_REQUIRE_NO_THROW( loc = make_locale(CHARSET_UTF8) );
+	test_encoding(loc, L"", "");
+	test_encoding(loc, L"a", "a");
+	test_encoding(loc, L"std::locale loc 1234567", "std::locale loc 1234567");
+	test_encoding(loc, L"朱镕基,朱鎔基,光緒,繁体字,codepage", "\xe6\x9c\xb1\xe9\x95\x95\xe5\x9f\xba\x2c\xe6\x9c\xb1\xe9\x8e\x94\xe5\x9f\xba\x2c\xe5\x85\x89\xe7\xb7\x92\x2c\xe7\xb9\x81\xe4\xbd\x93\xe5\xad\x97\x2c\x63\x6f\x64\x65\x70\x61\x67\x65");
 }
 
 BOOST_AUTO_TEST_SUITE_END()

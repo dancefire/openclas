@@ -8,12 +8,14 @@ import sys
 import os
 
 def usage(prog):
-	print >>sys.stderr, 'usage: %s -[append|remove] <filename>' % prog
+	print >>sys.stderr, 'usage: %s <option>' % prog
+	print >>sys.stderr, '-a,    --append : Append UTF-8 BOM as the prefix of all C/C++ files recursivly from current directory'
+	print >>sys.stderr, '-r,    --remove : Remove UTF-8 BOM prefix of all C/C++ files recursivly from current directory'
 	sys.exit(1)
 
 def bomer(filename, encoding):
 	import codecs
-	infile = codecs.open( filename, "r", "utf-8-sig" )
+	infile = codecs.open( filename, "r", "utf-8-sig" )	# 'utf-8-sig' encoding requires Python 2.5 or higher
 	u = infile.read() # Returns a Unicode string from the UTF-8 bytes in the file
 	infile.close()
 	outfile = codecs.open( filename, "w", encoding)
