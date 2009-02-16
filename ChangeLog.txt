@@ -1,5 +1,10 @@
 2009-02-15  Tao Wang  <dancefire@gmail.com>
 
+	* cpp/include/openclas/utf8_codecvt_facet.hpp: Merge utf8_codecvt_facet.hpp and utf8_codecvt_facet.cpp,
+	so make the program become header only.
+
+2009-02-15  Tao Wang  <dancefire@gmail.com>
+
 	* cpp/include/openclas/common.hpp: Fix inconsistance new line(Unix->Windows)
 	* cpp/include/openclas/segment.hpp:
 	* cpp/include/openclas/utility.hpp:
