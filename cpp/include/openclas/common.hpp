@@ -52,6 +52,11 @@ SUCH DAMAGE.
 #ifndef _OPENCLAS_COMMON_HPP_
 #define _OPENCLAS_COMMON_HPP_
 
+//	workaround for remove VC min(a,b) and max(a,b) macro function definition,
+#if defined(_MSC_VER)
+#define NOMINMAX
+#endif
+
 #include <boost/config.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/shared_array.hpp>

@@ -1,3 +1,12 @@
+2009-02-18  Tao Wang  <dancefire@gmail.com>
+
+	* include/openclas/common.hpp: Add define NOMINMAX for MSVC
+	* include/openclas/k_shortest_path.hpp:
+		Add undef min. 
+		Remove const of Graph arguments.
+		Add empty graph process.
+	* src/unit_test/unit_test_k_shortest_path.hpp: Complete the testcases for k_shortest_path.hpp.
+
 2009-02-17  Tao Wang  <dancefire@gmail.com>
 
 	* cpp/include/openclas/k_shortest_path.hpp:
