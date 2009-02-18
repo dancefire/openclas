@@ -61,13 +61,11 @@ SUCH DAMAGE.
 #include <boost/shared_ptr.hpp>
 #include <boost/shared_array.hpp>
 #include <boost/scoped_array.hpp>
-#include <boost/unordered_map.hpp>
 
 namespace openclas {
 	using boost::shared_ptr;
 	using boost::shared_array;
 	using boost::scoped_array;
-	using boost::unordered_map;
 }
 
 #endif	//	 _OPENCLAS_COMMON_HPP_

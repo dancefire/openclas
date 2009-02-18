@@ -1,3 +1,13 @@
+2009-02-19  Tao Wang  <dancefire@gmail.com>
+
+	* cpp/include/openclas/common.hpp: Remove unordered_map
+	* cpp/include/openclas/dictionary.hpp: Replace unordered_map with std::map
+	* cpp/include/openclas/serialization.hpp: Fix bug about global variable locale_{gbk,utf8}
+	* cpp/include/openclas/utility.hpp: Remove a test code.
+	* cpp/src/unit_test/unit_test.cpp: remove all uncomments.
+	* cpp/src/unit_test/unit_test_dictionary.hpp:
+	* cpp/src/unit_test/unit_test_serialization.hpp: Add empty testcases.
+
 2009-02-18  Tao Wang  <dancefire@gmail.com>
 
 	* include/openclas/common.hpp: Add define NOMINMAX for MSVC

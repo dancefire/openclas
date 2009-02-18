@@ -383,7 +383,6 @@ namespace openclas {
 		if (charset != CHARSET_UTF8){
 			return std::locale(CharsetName[charset]);
 		}else{
-			utf8_codecvt_facet* ptr = new utf8_codecvt_facet();
 			return std::locale(std::locale::classic(), new utf8_codecvt_facet);
 		}
 #else
