@@ -96,7 +96,7 @@ namespace openclas {
 
 		const int SPECIAL_WORD_COUNT = 10;
 		const int GB2312_COUNT = 6768;
-		const std::locale locale_gbk(CodePageString[CODEPAGE_GBK]);
+		const std::locale locale_gbk(CharsetName[CHARSET_GBK]);
 
 		static enum WordTag get_special_word_tag(const std::wstring& word)
 		{
@@ -304,7 +304,7 @@ namespace openclas {
 		int weight;
 	};
 
-	const std::locale locale_utf8(CodePageString[CODEPAGE_UTF8]);
+	const std::locale locale_utf8(std::locale::classic(), new utf8_codecvt_facet);
 
 	static void save_to_file(Dictionary& dict, const char* filename)
 	{
@@ -348,7 +348,7 @@ namespace openclas {
 				out.write(reinterpret_cast<const char*>(&tag), sizeof(TagItem));
 			}
 			//	Word Transit
-			for (unordered_map<std::wstring, double>::iterator it = (*iter)->forward.begin(); it != (*iter)->forward.end(); ++it)
+			for (DictEntry::transit_type::iterator it = (*iter)->forward.begin(); it != (*iter)->forward.end(); ++it)
 			{
 				std::string narrow_transit_word = narrow(it->first, locale_utf8);
 				TransitHeader transit_header;

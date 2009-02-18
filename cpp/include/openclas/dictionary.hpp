@@ -83,11 +83,13 @@ namespace openclas {
 
 	class DictEntry{
 	public:
+		typedef std::map<std::wstring, double> transit_type;
+
 		std::wstring word;
 		std::vector<TagEntry> tags;
 		//	transit table
-		unordered_map<std::wstring, double> backward;
-		unordered_map<std::wstring, double> forward;
+		transit_type backward;
+		transit_type forward;
 	public:
 		void add(int tag, int weight)
 		{
@@ -109,7 +111,7 @@ namespace openclas {
 
 		double get_forward_weight(const std::wstring& word) const
 		{
-			unordered_map<std::wstring, double>::const_iterator iter = forward.find(word);
+			transit_type::const_iterator iter = forward.find(word);
 			if (iter != forward.end())
 			{
 				return iter->second;
@@ -120,7 +122,7 @@ namespace openclas {
 
 		double get_backward_weight(const std::wstring& word) const
 		{
-			unordered_map<std::wstring, double>::const_iterator iter = backward.find(word);
+			transit_type::const_iterator iter = backward.find(word);
 			if (iter != backward.end())
 			{
 				return iter->second;
@@ -138,6 +140,8 @@ namespace openclas {
 
 	class WordIndexer {
 	public:
+		typedef std::map<wchar_t, WordIndexer*> map_type;
+	public:
 		WordIndexer()
 			: m_entry_ptr(0)
 		{
@@ -145,7 +149,7 @@ namespace openclas {
 
 		virtual ~WordIndexer()
 		{
-			for(unordered_map<wchar_t, WordIndexer*>::iterator iter = m_table.begin(); iter != m_table.end(); ++iter)
+			for(map_type::iterator iter = m_table.begin(); iter != m_table.end(); ++iter)
 			{
 				if (iter->second)
 					delete iter->second;
@@ -162,7 +166,7 @@ namespace openclas {
 				return;
 			}
 
-			unordered_map<wchar_t, WordIndexer*>::iterator it = m_table.find(*iter);
+			map_type::iterator it = m_table.find(*iter);
 			if (it == m_table.end())
 			{
 				//	not existed in table
@@ -183,7 +187,7 @@ namespace openclas {
 				return;
 			}
 
-			unordered_map<wchar_t, WordIndexer*>::iterator it = m_table.find(*iter);
+			map_type::iterator it = m_table.find(*iter);
 			if (it == m_table.end())
 			{
 				return;
@@ -202,7 +206,7 @@ namespace openclas {
 			if (iter == end)
 				return m_entry_ptr;
 
-			unordered_map<wchar_t, WordIndexer*>::const_iterator it = m_table.find(*iter);
+			map_type::const_iterator it = m_table.find(*iter);
 			if (it == m_table.end())
 			{
 				//	not existed in table
@@ -223,7 +227,7 @@ namespace openclas {
 				return;
 			}
 
-			unordered_map<wchar_t, WordIndexer*>::const_iterator it = m_table.find(*iter);
+			map_type::const_iterator it = m_table.find(*iter);
 			if (it != m_table.end())
 			{
 				it->second->find_prefixes(iter+1, end, entry_list);
@@ -232,7 +236,7 @@ namespace openclas {
 
 	protected:
 		DictEntry* m_entry_ptr;
-		unordered_map <wchar_t, WordIndexer*> m_table;
+		map_type m_table;
 	};
 
 	/*******************************************************************
