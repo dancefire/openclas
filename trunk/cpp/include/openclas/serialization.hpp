@@ -365,7 +365,7 @@ namespace openclas {
 
 	const std::locale locale_utf8(std::locale::classic(), new utf8_codecvt_facet);
 
-	static void save_to_file(Dictionary& dict, const char* filename)
+	static void save_to_file(const Dictionary& dict, const char* filename)
 	{
 		std::ofstream out(filename, std::ios_base::out | std::ios_base::binary);
 
@@ -384,6 +384,7 @@ namespace openclas {
 		//		tag transit
 		scoped_array<int> tags_transit(new int[dict.tags_transit().size()]);
 		std::copy(dict.tags_transit().begin(), dict.tags_transit().end(), tags_transit.get());
+
 		out.write(reinterpret_cast<const char*>(tags_transit.get()), static_cast<int>(sizeof(int) * dict.tags_transit().size()));
 		//	Write all words
 		for (Dictionary::word_dict_type::const_iterator iter = dict.words().begin(); iter != dict.words().end(); ++iter)
@@ -430,6 +431,7 @@ namespace openclas {
 			return;
 
 		//	Read all tags
+		dict.init_tag_dict(header.tag_count);
 		//		tag
 		scoped_array<int> tags(new int[header.tag_count]);
 		in.read(reinterpret_cast<char*>(tags.get()), header.tag_count);
@@ -445,7 +447,7 @@ namespace openclas {
 		{
 			dict.add_tag_transit_weight(i, tags_transit[i]);
 		}
-		//	Write all words
+		//	Read all words
 		for (Dictionary::word_dict_type::const_iterator iter = dict.words().begin(); iter != dict.words().end(); ++iter)
 		{
 			//	Word Header
