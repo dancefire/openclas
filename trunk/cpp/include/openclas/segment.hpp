@@ -182,8 +182,8 @@ namespace openclas {
 			for (size_t i = atom_begin; i < atom_end; ++i)
 			{
 				word_type* atom = m_wordlist[i];
-				std::list<DictEntry*> entries = m_dict.find_prefixes(m_sentence.begin() + atom->offset, m_sentence.end());
-				for(std::list<DictEntry*>::iterator iter = entries.begin(); iter != entries.end(); ++iter)
+				std::vector<DictEntry*> entries = m_dict.prefix(m_sentence.begin() + atom->offset, m_sentence.end());
+				for(std::vector<DictEntry*>::iterator iter = entries.begin(); iter != entries.end(); ++iter)
 				{
 					if ((*iter)->word.length() >= atom->length 
 						&& m_offset_array[atom->offset + (*iter)->word.length()].size() > 0)
