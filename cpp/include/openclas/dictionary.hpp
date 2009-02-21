@@ -150,18 +150,18 @@ namespace openclas {
 		virtual ~WordIndexer()
 		{
 			for(map_type::iterator iter = m_table.begin(); iter != m_table.end(); ++iter)
-			{
-				if (iter->second)
-					delete iter->second;
-			}
+				delete iter->second;
+		}
+
+		void add(const std::wstring& word, DictEntry* entry)
+		{
+			add(word.begin(), word.end(), entry);
 		}
 
 		void add(std::wstring::const_iterator& iter, std::wstring::const_iterator& end, DictEntry* entry_ptr)
 		{
 			if (iter == end)
 			{
-				if (m_entry_ptr)
-					delete m_entry_ptr;
 				m_entry_ptr = entry_ptr;
 				return;
 			}
@@ -171,19 +171,23 @@ namespace openclas {
 			{
 				//	not existed in table
 				WordIndexer* node = new WordIndexer();
-				m_table[it->first] = node;
+				m_table[*iter] = node;
 				node->add(iter+1, end, entry_ptr);
 			}else{
 				it->second->add(iter+1, end, entry_ptr);
 			}
 		}
 
+		void remove(const std::wstring& word)
+		{
+			remove(word.begin(), word.end());
+		}
+
 		void remove(std::wstring::const_iterator& iter, std::wstring::const_iterator& end)
 		{
 			if (iter == end)
 			{
-				if (m_entry_ptr)
-					delete m_entry_ptr;
+				m_entry_ptr = 0;
 				return;
 			}
 
@@ -193,12 +197,18 @@ namespace openclas {
 				return;
 			}else{
 				it->second->remove(iter+1, end);
-				if (it->second->m_table.size() == 0)
+				//	remove the sub-branch if the branch is empty and current pointer is 0.
+				if (it->second->m_entry_ptr == 0 && it->second->m_table.size() == 0)
 				{
 					delete it->second;
 					m_table.erase(it);
 				}
 			}
+		}
+
+		DictEntry* get(const std::wstring& word) const
+		{
+			return get(word.begin(), word.end());
 		}
 
 		DictEntry* get(std::wstring::const_iterator& iter, std::wstring::const_iterator& end) const
@@ -216,8 +226,24 @@ namespace openclas {
 			}
 		}
 
-		//		const DictEntry* get(std::wstring::const_iterator& iter, std::wstring::const_iterator& end) const;
-		void find_prefixes(std::wstring::const_iterator& iter, std::wstring::const_iterator& end, std::list<DictEntry*>& entry_list) const
+		std::vector<DictEntry*> prefix(const std::wstring& word) const
+		{
+			return prefix(word.begin(), word.end());
+		}
+
+		std::vector<DictEntry*> prefix(std::wstring::const_iterator& iter, std::wstring::const_iterator& end) const
+		{
+			std::vector<DictEntry*> prefix_list;
+			prefix(iter, end, prefix_list);
+			return prefix_list;
+		}
+
+		void prefix(const std::wstring& word, std::vector<DictEntry*>& entry_list) const
+		{
+			prefix(word.begin(), word.end(), entry_list);
+		}
+
+		void prefix(std::wstring::const_iterator& iter, std::wstring::const_iterator& end, std::vector<DictEntry*>& entry_list) const
 		{
 			if (m_entry_ptr)
 				entry_list.push_back(m_entry_ptr);
@@ -230,11 +256,12 @@ namespace openclas {
 			map_type::const_iterator it = m_table.find(*iter);
 			if (it != m_table.end())
 			{
-				it->second->find_prefixes(iter+1, end, entry_list);
+				it->second->prefix(iter+1, end, entry_list);
 			}
 		}
 
 	protected:
+		//	this point is hold for reference purpose, so WordIndexer class should never try to delete this pointer.
 		DictEntry* m_entry_ptr;
 		map_type m_table;
 	};
@@ -297,6 +324,11 @@ namespace openclas {
 			}
 		}
 
+		DictEntry* get_word(const std::wstring& word)
+		{
+			return get_word(word.begin(), word.end());
+		}
+
 		DictEntry* get_word(std::wstring::const_iterator& iter, std::wstring::const_iterator& end)
 		{
 			return m_word_indexer.get(iter, end);
@@ -307,11 +339,14 @@ namespace openclas {
 			return m_word_indexer.get(iter, end);
 		}
 
-		std::list<DictEntry*> find_prefixes(std::wstring::const_iterator& iter, std::wstring::const_iterator& end) const
+		std::vector<DictEntry*> prefix(const std::wstring& word)
 		{
-			std::list<DictEntry*> entry_list;
-			m_word_indexer.find_prefixes(iter, end, entry_list);
-			return entry_list;
+			return prefix(word.begin(), word.end());
+		}
+
+		std::vector<DictEntry*> prefix(std::wstring::const_iterator& iter, std::wstring::const_iterator& end) const
+		{
+			return m_word_indexer.prefix(iter, end);
 		}
 
 		const word_dict_type words() const

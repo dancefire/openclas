@@ -1,3 +1,19 @@
+2009-02-22  Tao Wang  <dancefire@gmail.com>
+
+	* cpp/include/openclas/dictionary.hpp:
+		Rename find_prefixes() to prefix() of both class WordIndexer and class Dictionary.
+		Add 3 overload prefix() for WordIndexer.
+		Add 1 overload add() for WordIndexer.
+		Add 1 overload get() for WordIndexer.
+		Add 1 overload prefix() for Dictionary.
+		Change prefix() return result type from std::list<T> to std::vector<T>.
+		Add 1 overload get_word().
+		Fix a bug in WordIndexer::add().
+		Fix a bug in WordIndexer::remove().
+	* cpp/include/openclas/segment.hpp: Modified corresponding to the rename from find_prefixex() to prefix().
+	* cpp/src/unit_test/OpenClas_VS2008.vcproj: minor changes on optimization of Release version.
+	* cpp/src/unit_test/unit_test_dictionary.hpp: Implemented Dictionary and related class testcases.
+
 2009-02-19  Tao Wang  <dancefire@gmail.com>
 
 	* cpp/include/openclas/common.hpp: Remove unordered_map
