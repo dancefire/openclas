@@ -108,7 +108,7 @@ namespace openclas {
 			return WORD_TAG_UNKNOWN;
 		}
 
-		static enum WordTag get_tag_from_pos_value(int pos)
+		static std::string get_name_from_pos(int pos)
 		{
 			if (pos > 'a' * 0x100 * 100){
 				std::cerr << "Error in pos to tag convertion. 'cc+d' format found" << std::endl;
@@ -123,7 +123,13 @@ namespace openclas {
 				buf[1] = pos % 0x100;
 				buf[2] = 0;
 			}
-			std::wstring tag_string(widen(buf, locale_gbk));
+			return std::string(buf);
+		}
+
+		static enum WordTag get_tag_from_pos(int pos)
+		{
+			std::string pos_name = get_name_from_pos(pos);
+			std::wstring tag_string(widen(pos_name, locale_gbk));
 			for (int i = 0; i < WORD_TAG_COUNT; ++i)
 			{
 				if (tag_string == WORD_TAG_NAME[i]){
@@ -131,7 +137,7 @@ namespace openclas {
 				}
 			}
 			//	cannot find the tag
-			std::cerr << "Cannot the find the corresponding tag. [" << buf << "]" << std::endl;
+			std::cerr << "Cannot the find the corresponding tag. [" << pos_name << "]" << std::endl;
 			return WORD_TAG_UNKNOWN;
 		}
 
@@ -163,6 +169,15 @@ namespace openclas {
 
 			shared_array<wchar_t> GB2312_ARRAY = get_gb2312_array();
 
+#ifdef _DEBUG
+			struct unknown_tag_t{
+				int pos;
+				std::string name;
+				std::vector<std::wstring> wordlist;
+				unknown_tag_t() : pos(0), name(), wordlist() {}
+			};
+			std::map<int, unknown_tag_t> data;
+#endif
 			for (int id = 0; id < GB2312_COUNT; ++id)
 			{
 				//	read the number of words begin with {id}
@@ -195,7 +210,8 @@ namespace openclas {
 							std::cerr << "Error raised during reading of the word content." << std::endl;
 							return;
 						}
-						word_content.append(buf_ptr.get(), buf_ptr.get() + header.length);
+						std::string gb2312_word(buf_ptr.get(), buf_ptr.get() + header.length);
+						word_content.append(widen(gb2312_word, locale_gbk));
 					}
 
 					if (is_transit)
@@ -225,15 +241,58 @@ namespace openclas {
 							std::cerr << "Cannot find '@' in the word content." << std::endl;
 						}
 					}else{
+#ifdef _DEBUG
+						std::wstring word_from_dict = word_content;
+#endif
+						int special_tag = WORD_TAG_UNKNOWN;
 						if (word_content.find(L'#') != std::wstring::npos)
-							word_content = get_special_word_string(get_special_word_tag(word_content));
+						{
+							special_tag = get_special_word_tag(word_content);
+							word_content = get_special_word_string(static_cast<enum WordTag>(special_tag));
+						}
 
 						DictEntry* entry = dict.add_word(word_content);
 						if (entry)
-							entry->add(get_tag_from_pos_value(header.pos), header.weight);
+						{
+							int tag;
+							if (special_tag == WORD_TAG_UNKNOWN)
+								tag = get_tag_from_pos(header.pos);
+							else
+								tag = special_tag;
+
+							if (tag != WORD_TAG_UNKNOWN)
+							{
+								entry->add(tag, header.weight);
+							}else{
+								//	Found unknown POS
+								std::cerr << "Found unknown POS tag(" << tag << ", " << header.weight << ") from dictionary entry [" << narrow(entry->word, locale_gbk) << "]" << std::endl;
+#ifdef _DEBUG
+								if (data[header.pos].pos == 0)
+								{
+									data[header.pos].pos = header.pos;
+									data[header.pos].name = get_name_from_pos(header.pos);
+								}
+								data[header.pos].wordlist.push_back(word_from_dict);
+#endif
+							}
+						}
 					}
 				}
 			}
+
+#ifdef _DEBUG
+			for(std::map<int, unknown_tag_t>::iterator iter = data.begin(); iter != data.end(); ++iter)
+			{
+				std::cerr << "POS = " << iter->second.pos << ", name = \"" << iter->second.name << "\", Words = {";
+				for (std::vector<std::wstring>::iterator it = iter->second.wordlist.begin(); it != iter->second.wordlist.end(); ++it)
+				{
+					if (it != iter->second.wordlist.begin())
+						std::cerr << ",";
+					std::cerr << narrow(*it, locale_gbk);
+				}
+				std::cerr << "}" << std::endl;
+			}
+#endif
 		}
 
 		static void load_words_from_dct(Dictionary& dict, const char* filename)

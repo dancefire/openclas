@@ -1,5 +1,14 @@
 2009-02-22  Tao Wang  <dancefire@gmail.com>
 
+	* cpp/include/openclas/serialization.hpp:
+		Split get_tag_from_pos_value() to get_tag_from_pos() and get_name_from_pos().
+		Add debug in openclas::ict::load_from_dct() for unknown tag.
+		Fix a bug which forgot convert gb2312 to Unicode.
+		Fix a bug for handling special word entries.
+	* cpp/src/unit_test/unit_test_serialization.hpp: Implemented testcases for Serialization.
+
+2009-02-22  Tao Wang  <dancefire@gmail.com>
+
 	* cpp/include/openclas/dictionary.hpp:
 		Rename find_prefixes() to prefix() of both class WordIndexer and class Dictionary.
 		Add 3 overload prefix() for WordIndexer.
