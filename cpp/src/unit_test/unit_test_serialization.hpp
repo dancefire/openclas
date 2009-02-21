@@ -127,15 +127,16 @@ BOOST_AUTO_TEST_CASE( test_Serialization )
 	BOOST_CHECK_EQUAL( dict2.get_tag_weight(1), 231 );
 	BOOST_CHECK_EQUAL( dict2.get_tag_transit_weight(1, 2), 123 );
 
+	BOOST_CHECK_EQUAL( dict2.words().size(), 2 );
 	DictEntry* entry1 = dict2.get_word(L"ABCD");
-	BOOST_CHECK_NE( entry1, static_cast<DictEntry*>(0) );
-	BOOST_CHECK_EQUAL( entry1->tags.size(), 1 );
+	BOOST_REQUIRE_NE( entry1, static_cast<DictEntry*>(0) );
+	BOOST_REQUIRE_EQUAL( entry1->tags.size(), 1 );
 	BOOST_CHECK_EQUAL( entry1->tags[0].tag, 0 );
 	BOOST_CHECK_EQUAL( entry1->tags[0].weight, 100 );
 	
 	DictEntry* entry2 = dict2.get_word(L"AB");
-	BOOST_CHECK_NE( entry2, static_cast<DictEntry*>(0) );
-	BOOST_CHECK_EQUAL( entry2->tags.size(), 1 );
+	BOOST_REQUIRE_NE( entry2, static_cast<DictEntry*>(0) );
+	BOOST_REQUIRE_EQUAL( entry2->tags.size(), 1 );
 	BOOST_CHECK_EQUAL( entry2->tags[0].tag, 1 );
 	BOOST_CHECK_EQUAL( entry2->tags[0].weight, 200 );
 	BOOST_CHECK_EQUAL( entry2->forward[L"ABCD"], 1013 );

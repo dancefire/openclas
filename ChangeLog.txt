@@ -1,5 +1,12 @@
 2009-02-22  Tao Wang  <dancefire@gmail.com>
 
+	* cpp/include/openclas/dictionary.hpp: Fix a bug in class Dictionary words(), tags(), tags_transit(), 
+		which should return reference.
+	* cpp/include/openclas/serialization.hpp: Fix a bug of missing initialize tags of Dictionary in load_from_file().
+	* cpp/src/unit_test/unit_test_serialization.hpp: Change some CHECK to REQUIRE.
+
+2009-02-22  Tao Wang  <dancefire@gmail.com>
+
 	* cpp/include/openclas/serialization.hpp:
 		Split get_tag_from_pos_value() to get_tag_from_pos() and get_name_from_pos().
 		Add debug in openclas::ict::load_from_dct() for unknown tag.

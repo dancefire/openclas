@@ -349,7 +349,7 @@ namespace openclas {
 			return m_word_indexer.prefix(iter, end);
 		}
 
-		const word_dict_type words() const
+		const word_dict_type& words() const
 		{
 			return m_word_dict;
 		}
@@ -385,7 +385,7 @@ namespace openclas {
 				return 0;
 		}
 
-		const tag_dict_type tags() const
+		const tag_dict_type& tags() const
 		{
 			return m_tag_dict;
 		}
@@ -420,7 +420,7 @@ namespace openclas {
 			return m_tag_transit_dict.at(index);
 		}
 
-		const tag_transit_dict_type tags_transit() const
+		const tag_transit_dict_type& tags_transit() const
 		{
 			return m_tag_transit_dict;
 		}
