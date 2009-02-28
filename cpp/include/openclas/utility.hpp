@@ -113,7 +113,7 @@ namespace openclas {
 		WORD_TAG_NS,	//	地名		名词代码n和处所词代码s并在一起。
 		WORD_TAG_NT,	//	机构团体	“团”的声母为t，名词代码n和t并在一起。
 		WORD_TAG_NX,	//	非汉字串
-		WORD_TAG_NZ,	//	其他专名	“专”的声母的第1个字母为z，名词代码n和z并在一起。 
+		WORD_TAG_NZ,	//	其他专名	“专”的声母的第1个字母为z，名词代码n和z并在一起。
 		WORD_TAG_O,	//	 拟声词	取英语拟声词onomatopoeia的第1个字母。
 		WORD_TAG_P,	//	介词		取英语介词prepositional的第1个字母。
 		WORD_TAG_Q,	//	量词		取英语quantity的第1个字母。
@@ -126,7 +126,7 @@ namespace openclas {
 		WORD_TAG_V,	//	动词		取英语动词verb的第一个字母。
 		WORD_TAG_VD,	//	副动词	直接作状语的动词。动词和副词的代码并在一起。
 		WORD_TAG_VN,	//	名动词	指具有名词功能的动词。动词和名词的代码并在一起。
-		WORD_TAG_W,	//	标点符号   
+		WORD_TAG_W,	//	标点符号
 		WORD_TAG_X,	//	非语素字	非语素字只是一个符号，字母x通常用于代表未知数、符号。
 		WORD_TAG_Y,	//	语气词	取汉字“语”的声母。
 		WORD_TAG_Z,	//	状态词	取汉字“状”的声母的前一个字母。
@@ -147,7 +147,7 @@ namespace openclas {
 	*		北京大学现代汉语语料库基本加工规范, 俞士汶 段慧明 朱学锋 孙斌
 	*		http://www.chineseldc.org/EN/doc/CLDC-LAC-2003-002/label.htm
 	*/
-	static const wchar_t* WORD_TAG_NAME[] = 
+	static const wchar_t* WORD_TAG_NAME[] =
 	{
 		L"",
 		L"ag",	//	形语素	形容词性语素。形容词代码为a，语素代码g前面置以A。
@@ -173,7 +173,7 @@ namespace openclas {
 		L"ns",	//	地名		名词代码n和处所词代码s并在一起。
 		L"nt",	//	机构团体	“团”的声母为t，名词代码n和t并在一起。
 		L"nx",	//	非汉字串
-		L"nz",	//	其他专名	“专”的声母的第1个字母为z，名词代码n和z并在一起。 
+		L"nz",	//	其他专名	“专”的声母的第1个字母为z，名词代码n和z并在一起。
 		L"o",	//	 拟声词	取英语拟声词onomatopoeia的第1个字母。
 		L"p",	//	介词		取英语介词prepositional的第1个字母。
 		L"q",	//	量词		取英语quantity的第1个字母。
@@ -186,7 +186,7 @@ namespace openclas {
 		L"v",	//	动词		取英语动词verb的第一个字母。
 		L"vd",	//	副动词	直接作状语的动词。动词和副词的代码并在一起。
 		L"vn",	//	名动词	指具有名词功能的动词。动词和名词的代码并在一起。
-		L"w",	//	标点符号   
+		L"w",	//	标点符号
 		L"x",	//	非语素字	非语素字只是一个符号，字母x通常用于代表未知数、符号。
 		L"y",	//	语气词	取汉字“语”的声母。
 		L"z",	//	状态词	取汉字“状”的声母的前一个字母。
@@ -289,7 +289,7 @@ namespace openclas {
 	static enum SymbolType get_symbol_type(wchar_t symbol) {
 		//	the range might be able to merge to increase the performance a little,
 		//	however, the seperated ranges make defination of the ranges more clear.
-		if (in_range(symbol, 0x4E00, 0x9FFF)	//	CJK Unified Ideographs 
+		if (in_range(symbol, 0x4E00, 0x9FFF)	//	CJK Unified Ideographs
 		|| in_range(symbol, 0x3400, 0x4DBF)	//	CJK Unified Ideographs Extension A
 		|| in_range(symbol, 0xF900, 0xFAFF)	//	CJK Compatibility Ideographs
 		|| in_range(symbol, 0x2E80, 0x2EFF)	//	CJK Radicals Supplement
@@ -300,7 +300,7 @@ namespace openclas {
 		}
 
 		if (in_range(symbol, 0x2460, 0x24FF)	//	Enclosed Alphanumerics
-			|| in_range(symbol, 0x3200, 0x32FF)	//	Enclosed CJK Letters and Months 
+			|| in_range(symbol, 0x3200, 0x32FF)	//	Enclosed CJK Letters and Months
 			|| in_range(symbol, 0x2160, 0x218F)	//	Number Forms (except 0x2150-215F)
 			|| in_range(symbol, 0x2776, 0x2793)	//	Dingbats
 			)
@@ -386,7 +386,7 @@ namespace openclas {
 			return std::locale(std::locale::classic(), new utf8_codecvt_facet);
 		}
 #else
-		return typename std::locale::locale(CharsetName[charset]);
+		return std::locale::locale(CharsetName[charset]);
 #endif
 	}
 

@@ -130,7 +130,7 @@ namespace openclas {
 		{
 			std::string pos_name = get_name_from_pos(pos);
 			std::wstring tag_string(widen(pos_name, locale_gbk));
-			for (int i = 0; i < WORD_TAG_COUNT; ++i)
+			for (size_t i = 0; i < WORD_TAG_COUNT; ++i)
 			{
 				if (tag_string == WORD_TAG_NAME[i]){
 					return static_cast<enum WordTag>(i);
@@ -363,7 +363,11 @@ namespace openclas {
 		int weight;
 	};
 
-	const std::locale locale_utf8(std::locale::classic(), new utf8_codecvt_facet);
+#ifdef _MSC_VER
+	const std::locale locale_utf8(std::locale::classic(), new utf8_codecvt_facet());
+#else
+    const std::locale locale_utf8(CharsetName[CHARSET_UTF8]);
+#endif
 
 	static void save_to_file(const Dictionary& dict, const char* filename)
 	{
@@ -463,7 +467,8 @@ namespace openclas {
 			{
 				TagItem tag;
 				in.read(reinterpret_cast<char*>(&tag), sizeof(TagItem));
-				dict.add_tag_weight(tag.tag, tag.weight);
+				entry->add(tag.tag, tag.weight);
+				//dict.add_tag_weight(tag.tag, tag.weight);
 			}
 			//	Word Transit
 			for (int i = 0; i < word_header.transit_count; ++i)
@@ -473,6 +478,7 @@ namespace openclas {
 				scoped_array<char> transit_word_ptr(new char[transit_header.length]);
 				in.read(reinterpret_cast<char*>(transit_word_ptr.get()), sizeof(transit_header.length));
 				std::wstring transit_word = widen(transit_word_ptr.get(), locale_utf8);
+				entry->forward[transit_word] = transit_header.weight;
 			}
 		}
 	}
