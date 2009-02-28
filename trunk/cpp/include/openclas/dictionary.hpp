@@ -153,12 +153,12 @@ namespace openclas {
 				delete iter->second;
 		}
 
-		void add(const std::wstring& word, DictEntry* entry)
+		void add(const std::wstring& word, DictEntry* entry_ptr)
 		{
-			add(word.begin(), word.end(), entry);
+			add(word.begin(), word.end(), entry_ptr);
 		}
 
-		void add(std::wstring::const_iterator& iter, std::wstring::const_iterator& end, DictEntry* entry_ptr)
+		void add(std::wstring::const_iterator iter, std::wstring::const_iterator end, DictEntry* entry_ptr)
 		{
 			if (iter == end)
 			{
@@ -183,7 +183,7 @@ namespace openclas {
 			remove(word.begin(), word.end());
 		}
 
-		void remove(std::wstring::const_iterator& iter, std::wstring::const_iterator& end)
+		void remove(std::wstring::const_iterator iter, std::wstring::const_iterator end)
 		{
 			if (iter == end)
 			{
@@ -211,7 +211,7 @@ namespace openclas {
 			return get(word.begin(), word.end());
 		}
 
-		DictEntry* get(std::wstring::const_iterator& iter, std::wstring::const_iterator& end) const
+		DictEntry* get(std::wstring::const_iterator iter, std::wstring::const_iterator end) const
 		{
 			if (iter == end)
 				return m_entry_ptr;
@@ -231,7 +231,7 @@ namespace openclas {
 			return prefix(word.begin(), word.end());
 		}
 
-		std::vector<DictEntry*> prefix(std::wstring::const_iterator& iter, std::wstring::const_iterator& end) const
+		std::vector<DictEntry*> prefix(std::wstring::const_iterator iter, std::wstring::const_iterator end) const
 		{
 			std::vector<DictEntry*> prefix_list;
 			prefix(iter, end, prefix_list);
@@ -243,7 +243,7 @@ namespace openclas {
 			prefix(word.begin(), word.end(), entry_list);
 		}
 
-		void prefix(std::wstring::const_iterator& iter, std::wstring::const_iterator& end, std::vector<DictEntry*>& entry_list) const
+		void prefix(std::wstring::const_iterator iter, std::wstring::const_iterator end, std::vector<DictEntry*>& entry_list) const
 		{
 			if (m_entry_ptr)
 				entry_list.push_back(m_entry_ptr);
@@ -329,12 +329,12 @@ namespace openclas {
 			return get_word(word.begin(), word.end());
 		}
 
-		DictEntry* get_word(std::wstring::const_iterator& iter, std::wstring::const_iterator& end)
+		DictEntry* get_word(std::wstring::const_iterator iter, std::wstring::const_iterator end)
 		{
 			return m_word_indexer.get(iter, end);
 		}
 
-		const DictEntry* get_word(std::wstring::const_iterator& iter, std::wstring::const_iterator& end) const
+		const DictEntry* get_word(std::wstring::const_iterator iter, std::wstring::const_iterator end) const
 		{
 			return m_word_indexer.get(iter, end);
 		}
@@ -344,7 +344,7 @@ namespace openclas {
 			return prefix(word.begin(), word.end());
 		}
 
-		std::vector<DictEntry*> prefix(std::wstring::const_iterator& iter, std::wstring::const_iterator& end) const
+		std::vector<DictEntry*> prefix(std::wstring::const_iterator iter, std::wstring::const_iterator end) const
 		{
 			return m_word_indexer.prefix(iter, end);
 		}

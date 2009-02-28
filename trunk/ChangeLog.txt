@@ -1,3 +1,11 @@
+2009-02-28  Tao Wang  <dancefire@gmail.com>
+
+	* cpp/include/openclas/serialization.hpp:
+	  Fix missing locale_utf8 for Linux.
+	  Fix a bug which should read the tag to entry other than dict.
+	* cpp/include/openclas/dictionary.hpp:
+	  Remove reference for all iterator arguments.
+
 2009-02-22  Tao Wang  <dancefire@gmail.com>
 
 	* cpp/include/openclas/dictionary.hpp: Fix a bug in class Dictionary words(), tags(), tags_transit(), 

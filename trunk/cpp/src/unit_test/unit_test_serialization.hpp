@@ -17,12 +17,12 @@ using namespace openclas::ict;
 
 static const char* core_dict_name = "data\\coreDict.dct";
 static const char* bigram_dict_name = "data\\BigramDict.dct";
-static const char* core_tag_name = "data\\lexical.dct";
-static const char* people_dict_basename = "data\\nr";
-static const char* place_dict_basename = "data\\ns";
-static const char* org_dict_basename = "data\\tr";
-static const char* dict_ext = ".dct";
-static const char* tag_ext = ".ctx";
+//static const char* core_tag_name = "data\\lexical.dct";
+//static const char* people_dict_basename = "data\\nr";
+//static const char* place_dict_basename = "data\\ns";
+//static const char* org_dict_basename = "data\\tr";
+//static const char* dict_ext = ".dct";
+//static const char* tag_ext = ".ctx";
 
 BOOST_AUTO_TEST_CASE( test_Serialization_ICT_get_special_word_tag )
 {
@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE( test_Serialization_ICT_get_gb2312_array )
 BOOST_AUTO_TEST_CASE( test_Serialization_ICT_load_from_dct )
 {
 	Dictionary dict;
-	
+
 	BOOST_CHECK_EQUAL( dict.words().size(), 0 );
 	load_words_from_dct(dict, core_dict_name);
 	BOOST_CHECK_NE( dict.words().size(), 0 );
@@ -72,11 +72,11 @@ BOOST_AUTO_TEST_CASE( test_Serialization_ICT_load_tags_from_ctx )
 
 BOOST_AUTO_TEST_CASE( test_Serialization_ICT_load_from_file )
 {
-	//Dictionary dict;
-	//
-	//BOOST_CHECK_EQUAL( dict.words().size(), 0 );
-	//ict::load_from_file(dict, core_tag_name, core_dict_name, bigram_dict_name);
-	//BOOST_CHECK_NE( dict.words().size(), 0 );
+//	Dictionary dict;
+//
+//	BOOST_CHECK_EQUAL( dict.words().size(), 0 );
+//	ict::load_from_file(dict, core_tag_name, core_dict_name, bigram_dict_name);
+//	BOOST_CHECK_NE( dict.words().size(), 0 );
 }
 
 BOOST_AUTO_TEST_CASE( test_Serialization_ICT_save_words_to_dct )
@@ -133,7 +133,7 @@ BOOST_AUTO_TEST_CASE( test_Serialization )
 	BOOST_REQUIRE_EQUAL( entry1->tags.size(), 1 );
 	BOOST_CHECK_EQUAL( entry1->tags[0].tag, 0 );
 	BOOST_CHECK_EQUAL( entry1->tags[0].weight, 100 );
-	
+
 	DictEntry* entry2 = dict2.get_word(L"AB");
 	BOOST_REQUIRE_NE( entry2, static_cast<DictEntry*>(0) );
 	BOOST_REQUIRE_EQUAL( entry2->tags.size(), 1 );
