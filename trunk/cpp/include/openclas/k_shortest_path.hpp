@@ -101,11 +101,12 @@ namespace openclas {
 			result_paths.push_back(current_path);
 		} else {
 			typename graph_traits<IncidenceGraph>::out_edge_iterator ei, ei_end;
+			typename property_map<IncidenceGraph, edge_weight_t>::type
+				w_map = get(edge_weight, g);
+			double original_weight = current_path.weight;
 			for (tie(ei, ei_end) = out_edges(begin, g); ei != ei_end; ++ei) {
 				typename graph_traits<IncidenceGraph>::vertex_descriptor v = target(*ei, g);
-				typename property_map<IncidenceGraph, edge_weight_t>::type
-					w_map = get(edge_weight, g);
-				current_path.weight += w_map[edge(begin, v, g).first];
+				current_path.weight = original_weight + w_map[edge(begin, v, g).first];
 				dag_all_paths(g, v, end, result_paths, current_path);
 			}
 		}
@@ -150,21 +151,26 @@ namespace openclas {
 			d_map = get(vertex_distance, g);
 		typename property_map<Graph, vertex_predecessor_t>::type
 			p_map = get(vertex_predecessor, g);
-		dag_shortest_paths(g, begin, distance_map(d_map).predecessor_map(p_map));
 
-		if (end == p_map[end])	//	[begin] is not connected with [end]
-			return;
+		if (begin == end) {
+			result_path.nodelist.push_back(begin);
+		} else {
+			dag_shortest_paths(g, begin, distance_map(d_map).predecessor_map(p_map));
 
-		result_path.weight = d_map[end];
-		result_path.nodelist.push_back(end);
+			if (end == p_map[end])	//	[begin] is not connected with [end]
+				return;
 
-		size_t current = end;
-		while(current != begin)
-		{
-			current = p_map[current];
-			result_path.nodelist.push_back(current);
+			result_path.weight = d_map[end];
+			result_path.nodelist.push_back(end);
+
+			size_t current = end;
+			while(current != begin)
+			{
+				current = p_map[current];
+				result_path.nodelist.push_back(current);
+			}
+			std::reverse(result_path.nodelist.begin(), result_path.nodelist.end());
 		}
-		std::reverse(result_path.nodelist.begin(), result_path.nodelist.end());
 	}
 }
 

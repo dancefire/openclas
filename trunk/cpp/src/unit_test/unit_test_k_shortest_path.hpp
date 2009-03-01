@@ -39,8 +39,8 @@ WordGraph generate_test_graph(enum TestGraphKind kind)
 		{
 			WordGraph g(4);
 			add_edge(0, 1, 100, g);
-			add_edge(1, 2, 100, g);
-			add_edge(2, 3, 100, g);
+			add_edge(1, 2, 20, g);
+			add_edge(2, 3, 3, g);
 			return g;
 		}
 	case GRAPH_SIMPLE:
@@ -156,7 +156,7 @@ BOOST_AUTO_TEST_CASE( test_ksp_all_paths_single_path )
 	dag_all_paths(g, 0, 3, result);
 
 	BOOST_REQUIRE_EQUAL( result.size(), 1 );
-	BOOST_CHECK_CLOSE( result[0].weight, 300., 0.00001 );
+	BOOST_CHECK_CLOSE( result[0].weight, 123., 0.00001 );
 	BOOST_REQUIRE_EQUAL( result[0].nodelist.size(), 4 );
 	BOOST_CHECK_EQUAL( result[0].nodelist[0], 0 );
 	BOOST_CHECK_EQUAL( result[0].nodelist[1], 1 );
@@ -335,7 +335,7 @@ BOOST_AUTO_TEST_CASE( test_ksp_k_shortest_paths_single_path )
 	dag_k_shortest_paths(g, 0, 3, result, 1);
 
 	BOOST_REQUIRE_EQUAL( result.size(), 1 );
-	BOOST_CHECK_CLOSE( result[0].weight, 300., 0.00001 );
+	BOOST_CHECK_CLOSE( result[0].weight, 123., 0.00001 );
 	BOOST_REQUIRE_EQUAL( result[0].nodelist.size(), 4 );
 	BOOST_CHECK_EQUAL( result[0].nodelist[0], 0 );
 	BOOST_CHECK_EQUAL( result[0].nodelist[1], 1 );
@@ -468,7 +468,7 @@ BOOST_AUTO_TEST_CASE( test_ksp_shortest_paths_single_path )
 		w_map = get(edge_weight, g);
 	dag_shortest_path(g, 0, 3, result);
 
-	BOOST_CHECK_CLOSE( result.weight, 300., 0.00001 );
+	BOOST_CHECK_CLOSE( result.weight, 123., 0.00001 );
 	BOOST_REQUIRE_EQUAL( result.nodelist.size(), 4 );
 	BOOST_CHECK_EQUAL( result.nodelist[0], 0 );
 	BOOST_CHECK_EQUAL( result.nodelist[1], 1 );
