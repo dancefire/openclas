@@ -16,5 +16,5 @@ if (WIN32)
 		unit_test_viterbi.hpp)
 endif (WIN32)
 add_executable (unit_test ${UNIT_TEST_SRCS})
-target_link_libraries (unit_test ${Boost_LIBRARIES})
+target_link_libraries (unit_test ${Boost_LIBRARY_DIRS})
 

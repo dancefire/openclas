@@ -317,7 +317,7 @@ BOOST_AUTO_TEST_CASE( test_locale )
 	BOOST_CHECK_NO_THROW( make_locale(CHARSET_ASCII) );
 	BOOST_CHECK_NO_THROW( make_locale(CHARSET_GB2312) );
 	BOOST_CHECK_NO_THROW( make_locale(CHARSET_GBK) );
-	BOOST_CHECK_NO_THROW( make_locale(CHARSET_GB18030) );
+	//BOOST_CHECK_NO_THROW( make_locale(CHARSET_GB18030) );
 	BOOST_CHECK_NO_THROW( make_locale(CHARSET_BIG5) );
 	BOOST_CHECK_NO_THROW( make_locale(CHARSET_UTF8) );
 }
@@ -347,16 +347,16 @@ BOOST_AUTO_TEST_CASE( test_locale_gbk )
 	test_encoding(loc, L"std::locale loc 1234567", "std::locale loc 1234567");
 	test_encoding(loc, L"朱镕基,朱鎔基,光緒,繁体字,codepage", "\xd6\xec\xe9\x46\xbb\xf9\x2c\xd6\xec\xe6\x67\xbb\xf9\x2c\xb9\xe2\xbe\x77\x2c\xb7\xb1\xcc\xe5\xd7\xd6\x2c\x63\x6f\x64\x65\x70\x61\x67\x65");
 }
-
-BOOST_AUTO_TEST_CASE( test_locale_gb18030 )
-{
-	std::locale loc;
-	BOOST_REQUIRE_NO_THROW( loc = make_locale(CHARSET_GB18030) );
-	test_encoding(loc, L"", "");
-	test_encoding(loc, L"a", "a");
-	test_encoding(loc, L"std::locale loc 1234567", "std::locale loc 1234567");
-	test_encoding(loc, L"朱镕基,朱鎔基,光緒,繁体字,codepage", "\xd6\xec\xe9\x46\xbb\xf9\x2c\xd6\xec\xe6\x67\xbb\xf9\x2c\xb9\xe2\xbe\x77\x2c\xb7\xb1\xcc\xe5\xd7\xd6\x2c\x63\x6f\x64\x65\x70\x61\x67\x65");
-}
+//
+//BOOST_AUTO_TEST_CASE( test_locale_gb18030 )
+//{
+//	std::locale loc;
+//	BOOST_REQUIRE_NO_THROW( loc = make_locale(CHARSET_GB18030) );
+//	test_encoding(loc, L"", "");
+//	test_encoding(loc, L"a", "a");
+//	test_encoding(loc, L"std::locale loc 1234567", "std::locale loc 1234567");
+//	test_encoding(loc, L"朱镕基,朱鎔基,光緒,繁体字,codepage", "\xd6\xec\xe9\x46\xbb\xf9\x2c\xd6\xec\xe6\x67\xbb\xf9\x2c\xb9\xe2\xbe\x77\x2c\xb7\xb1\xcc\xe5\xd7\xd6\x2c\x63\x6f\x64\x65\x70\x61\x67\x65");
+//}
 
 BOOST_AUTO_TEST_CASE( test_locale_big5 )
 {

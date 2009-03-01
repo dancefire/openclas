@@ -419,7 +419,7 @@ namespace openclas {
 				transit_header.length = static_cast<int>(narrow_transit_word.length());
 				transit_header.weight = static_cast<int>(it->second);
 				out.write(reinterpret_cast<const char*>(&transit_header), sizeof(TransitHeader));
-				out.write(reinterpret_cast<const char*>(narrow_transit_word.c_str()), sizeof(narrow_transit_word.length()));
+				out.write(narrow_transit_word.c_str(), narrow_transit_word.length());
 			}
 		}
 	}
@@ -438,7 +438,7 @@ namespace openclas {
 		dict.init_tag_dict(header.tag_count);
 		//		tag
 		scoped_array<int> tags(new int[header.tag_count]);
-		in.read(reinterpret_cast<char*>(tags.get()), header.tag_count);
+		in.read(reinterpret_cast<char*>(tags.get()), header.tag_count * sizeof(int) );
 		for (int i = 0; i < header.tag_count; ++i)
 		{
 			dict.add_tag_weight(i, tags[i]);
@@ -446,13 +446,13 @@ namespace openclas {
 		//		tag transit
 		int tag_transit_count = header.tag_count * header.tag_count;
 		scoped_array<int> tags_transit(new int[tag_transit_count]);
-		in.read(reinterpret_cast<char*>(tags_transit.get()), static_cast<int>(tag_transit_count));
+		in.read(reinterpret_cast<char*>(tags_transit.get()), static_cast<int>(tag_transit_count) * sizeof(int) );
 		for (int i = 0; i < tag_transit_count; ++i)
 		{
 			dict.add_tag_transit_weight(i, tags_transit[i]);
 		}
 		//	Read all words
-		for (Dictionary::word_dict_type::const_iterator iter = dict.words().begin(); iter != dict.words().end(); ++iter)
+		for (int i = 0; i < header.word_count; ++i)
 		{
 			//	Word Header
 			WordHeader word_header;
@@ -476,8 +476,9 @@ namespace openclas {
 				TransitHeader transit_header;
 				in.read(reinterpret_cast<char*>(&transit_header), sizeof(TransitHeader));
 				scoped_array<char> transit_word_ptr(new char[transit_header.length]);
-				in.read(reinterpret_cast<char*>(transit_word_ptr.get()), sizeof(transit_header.length));
-				std::wstring transit_word = widen(transit_word_ptr.get(), locale_utf8);
+				in.read(transit_word_ptr.get(), transit_header.length);
+				std::string narrow_word(transit_word_ptr.get(), transit_word_ptr.get() + transit_header.length);
+				std::wstring transit_word = widen(narrow_word, locale_utf8);
 				entry->forward[transit_word] = transit_header.weight;
 			}
 		}

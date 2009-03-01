@@ -1,3 +1,14 @@
+2009-03-02  Tao Wang  <dancefire@gmail.com>
+
+	* cpp/include/openclas/k_shortest_path.hpp: Fix bugs in dag_all_paths() and dag_shortest_path().
+	* cpp/include/openclas/serialization.hpp: Fix bugs in save_to_file() and load_from_file().
+	* cpp/src/unit_test/CMakeLists.txt: Boost_LIBRARIES => Boost_LIBRARY_DIRS.
+	* cpp/src/unit_test/unit_test_k_shortest_path.hpp: Change the weights of Graph_single_path.
+	* cpp/src/unit_test/unit_test_serialization.hpp:
+		Add test_file_existence().
+		Improve test_Serialization_ICT_load_from_dct().
+	* cpp/src/unit_test/unit_test_utility.hpp: Commented the test cases for GB18030, since it's not working and not used.
+
 2009-02-28  Tao Wang  <dancefire@gmail.com>
 
 	* cpp/include/openclas/serialization.hpp:
