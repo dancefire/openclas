@@ -1,5 +1,9 @@
 2009-03-02  Tao Wang  <dancefire@gmail.com>
 
+	Add License information at the begining of each file in cpp/src/unit_test/*.hpp
+
+2009-03-02  Tao Wang  <dancefire@gmail.com>
+
 	* cpp/include/openclas/k_shortest_path.hpp: Fix bugs in dag_all_paths() and dag_shortest_path().
 	* cpp/include/openclas/serialization.hpp: Fix bugs in save_to_file() and load_from_file().
 	* cpp/src/unit_test/CMakeLists.txt: Boost_LIBRARIES => Boost_LIBRARY_DIRS.
