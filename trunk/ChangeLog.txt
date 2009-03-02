@@ -1,5 +1,11 @@
 2009-03-03  Tao Wang  <dancefire@gmail.com>
 
+	* cpp/include/openclas/serialization.hpp: Minor modification on type cast.
+	* cpp/src/unit_test/OpenClas_VS2008.vcproj
+	* cpp/src/unit_test/unit_test_serialization.hpp: Add code to save .ocd format of ICT core dictionary.
+
+2009-03-03  Tao Wang  <dancefire@gmail.com>
+
 	Add cpp/include/openclas/segment.hpp for general segmentation.
 	Add cpp/src/unit_test/unit_test_segment.hpp.
 	Move the comment for include-guard before #endif.
