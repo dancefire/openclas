@@ -1,3 +1,21 @@
+2009-03-03  Tao Wang  <dancefire@gmail.com>
+
+	* cpp/include/openclas/builder.hpp:
+	* cpp/include/openclas/segment.hpp：
+		Rename segment.hpp to builder.hpp。
+		Make all member function static.
+		Rename struct Word to WordInformation, and add DictEntry* entry.
+		Add create() for create graph based on given text and dictionary
+		Rename generate_atoms() to split_atoms().
+		Rename generate_offset_array() to create_out_table().
+		Rename generate_graph() to create_graph().
+		Add create_graphs() for create multiple sub-graph based on the out_table() to increase the performance.
+		Add vertex_desc_t property for VertexProperty, so do not need wordlist any more.
+	* cpp/src/unit_test/OpenClas_VS2008.vcproj:
+	* cpp/src/unit_test/OpenClas_VS2005.vcproj:
+	* cpp/src/unit_test/unit_test_builder.hpp:
+		Rename unit_test_segment.hpp to unit_test_builder.hpp
+
 2009-03-02  Tao Wang  <dancefire@gmail.com>
 
 	Add License information at the begining of each file in cpp/src/unit_test/*.hpp
