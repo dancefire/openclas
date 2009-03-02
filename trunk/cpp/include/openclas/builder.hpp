@@ -50,8 +50,8 @@ SUCH DAMAGE.
 */
 
 #pragma once
-#ifndef _OPENCLAS_SEGMENT_HPP_
-#define _OPENCLAS_SEGMENT_HPP_
+#ifndef _OPENCLAS_BUILDER_HPP_
+#define _OPENCLAS_BUILDER_HPP_
 
 //	workaround for remove VC max(a,b) macro function definition,
 //	which is make std::number_limites<T>::max() not working.
@@ -68,68 +68,70 @@ SUCH DAMAGE.
 #include "utility.hpp"
 #include "dictionary.hpp"
 
+namespace boost {
+	enum vertex_desc_t { vertex_desc };
+	BOOST_INSTALL_PROPERTY(vertex, desc);
+}
 
 namespace openclas {
 
 	using namespace boost;
 
-	struct Word {
+	struct WordInformation {
 		enum WordTag tag;
 		double weight;
 		size_t offset;
 		size_t length;
 		bool is_recorded;
 		size_t index;
-		Word()
-			: tag(WORD_TAG_UNKNOWN), weight(0), offset(0), length(0), is_recorded(false), index(0)
+		DictEntry*	entry;
+		WordInformation()
+			: tag(WORD_TAG_UNKNOWN), weight(0), offset(0), length(0), is_recorded(false), index(0), entry(0)
 		{}
 	};
 
 	typedef property<vertex_index_t, size_t,
 		property<vertex_distance_t, double, 
-		property<vertex_predecessor_t, size_t> > > VertexProperty;
+		property<vertex_predecessor_t, size_t,
+		property<vertex_desc_t, WordInformation> > > > VertexProperty;
+
 	typedef property<edge_weight_t, double> EdgeProperty;
 
 	typedef adjacency_list<vecS, vecS, directedS, VertexProperty, EdgeProperty> WordGraph;
 
-	class Segment{
+	class Builder{
 	public:
-		typedef WordGraph graph_type;
-		typedef Word word_type;
-		typedef std::vector<Word *> wordlist_type;
-		typedef std::list<Word *> offset_array_list_type;
+		typedef std::map< size_t, std::vector<WordInformation> > out_table_type;
 	public:
-		Segment(const wstring& sentence, const Dictionary& dict)
-			: m_sentence(sentence), m_dict(dict), m_graph(0), m_wordlist(), m_offset_array(0)
-		{
-			//	put [begin] to m_wordlist at the very first place
-			word_type* word_begin = new word_type();
-			word_begin->tag = WORD_TAG_BEGIN;
-			m_wordlist.push_back(word_begin);
-		}
 
-		virtual ~Segment()
+		static std::vector<WordGraph> create(const wstring& text, const Dictionary& dict)
 		{
-			delete m_graph;
-			for (wordlist_type::iterator iter = m_wordlist.begin(); iter != m_wordlist.end(); ++iter)
-				delete *iter;
-			delete[] m_offset_array;
-		}
+			std::vector<WordInformation> atoms;
+			split_atoms(text, atoms);
 
+			out_table_type out_table;
+			create_out_table(text, dict, atoms, out_table);
+
+			std::vector<WordGraph> graph_list;
+			create_graphs(text, dict, out_table, graph_list);
+			return graph_list;
+		}
 
 	protected:
-		void generate_atoms()
+		///	Input:	text,
+		///	Output:	atoms
+		static void split_atoms(const wstring& text, std::vector<WordInformation>& atoms)
 		{
-			//	Add sentence.
-			size_t			index_begin = 0;
+			//	Add text.
+			size_t		index_begin = 0;
 			wchar_t		current_symbol = wchar_t();
 			enum SymbolType	current_type = SYMBOL_TYPE_UNKNOWN;
 
-			for(size_t i = 0; i < m_sentence.size(); ++i)
+			for(size_t i = 0; i < text.size(); ++i)
 			{
 				wchar_t		previous_symbol = current_symbol;
 				enum SymbolType	previous_type = current_type;
-				current_symbol = m_sentence[i];
+				current_symbol = text[i];
 				current_type = get_symbol_type(current_symbol);
 
 				if (i != 0) {
@@ -143,21 +145,22 @@ namespace openclas {
 						pending = true;
 
 					if (!pending) {
-						word_type* word = create_word(previous_type, index_begin, i - index_begin);
-						m_wordlist.push_back(word);
+						WordInformation word = create_word(previous_type, index_begin, i - index_begin);
+						atoms.push_back(word);
 						index_begin = i;
 					}
 				}
 
-				if (i == m_sentence.size() - 1)
+				if (i == text.size() - 1)
 				{
-					word_type* word = create_word(current_type, index_begin, i - index_begin + 1);
-					m_wordlist.push_back(word);
+					WordInformation word = create_word(current_type, index_begin, i - index_begin + 1);
+					atoms.push_back(word);
 				}
 			}
 		}
 
-		void merge_atoms()
+
+		static void merge_atoms(const wstring& /*text*/, std::vector<WordInformation>& /*atoms*/)
 		{
 			//	TODO: implement the following:
 			//		[may be better adjust it by dict's weight]
@@ -165,105 +168,146 @@ namespace openclas {
 			//	get_continue_case_1(): 	([0-9０-９]+[年月])/([末内中底前间初])
 		}
 
-		void generate_offset_array()
+		///	Input:	text, dict, atoms
+		///	Output:	out_table_type
+		static void create_out_table(const wstring& text, const Dictionary& dict, const std::vector<WordInformation>& atoms, out_table_type& out_table)
 		{
-			if (m_offset_array)
-				delete[] m_offset_array;
-
-			m_offset_array = new offset_array_list_type[m_sentence.size()+1];
 			//	initialize from atoms
-			for (wordlist_type::iterator iter = m_wordlist.begin(); iter != m_wordlist.end(); ++iter)
-				if ((*iter)->tag != WORD_TAG_BEGIN && (*iter)->tag != WORD_TAG_END)
-					m_offset_array[(*iter)->offset].push_back(*iter);
+			for (size_t i = 0; i < atoms.size(); ++i)
+			{
+				WordInformation atom = atoms[i];
+				atom.index = i;
+				out_table[atoms[i].offset].push_back(atom);
+			}
 
 			//	initialize from dictionary
-			size_t atom_begin = 1;
-			size_t atom_end = m_wordlist.size();
-			for (size_t i = atom_begin; i < atom_end; ++i)
+			size_t max_index = atoms.size();
+			for (size_t i = 0; i < atoms.size(); ++i)
 			{
-				word_type* atom = m_wordlist[i];
-				std::vector<DictEntry*> entries = m_dict.prefix(m_sentence.begin() + atom->offset, m_sentence.end());
+				const WordInformation& atom = atoms[i];
+				//	look up dictionary for prefixes of given sequence.
+				std::vector<DictEntry*> entries = dict.prefix(text.begin() + atom.offset, text.end());
 				for(std::vector<DictEntry*>::iterator iter = entries.begin(); iter != entries.end(); ++iter)
 				{
-					if ((*iter)->word.length() >= atom->length 
-						&& m_offset_array[atom->offset + (*iter)->word.length()].size() > 0)
+					//	find the word list of the given offset.
+					size_t word_length = (*iter)->word.length();
+					out_table_type::iterator it = out_table.find(atom.offset + word_length);
+					if (word_length >= atom.length && it != out_table.end())
 					{
 						//	Construct the word
-						word_type* item;
+						WordInformation new_word;
+						WordInformation& item = new_word;
 
-						if ((*iter)->word.length() == atom->length)
-							item = atom;
-						else
-							item = new word_type();
+						//	replace the reference to the atom, if the atom exists.
+						if (word_length == atom.length)
+							item = it->second.at(0);	//	The first is the atom.
 
-						item->weight = 0;
+						//	attach the Dictionary entry
+						item.entry = *iter;
+						//	calculate the weight
+						item.weight = 0;
 						//	sum all tags weights as the item's weight
 						for(size_t i = 0; i < (*iter)->tags.size(); ++i)
-							item->weight += (*iter)->tags[i].weight;
+							item.weight += (*iter)->tags[i].weight;
 
 						//	use the tag if the word has the only tag
 						if ((*iter)->tags.size() == 1)
-							item->tag = static_cast<enum WordTag>((*iter)->tags[0].tag);
+							item.tag = static_cast<enum WordTag>((*iter)->tags[0].tag);
 
-						item->is_recorded = true;
-						item->offset = atom->offset;
-						item->length = (*iter)->word.length();
+						item.is_recorded = true;
+						item.offset = atom.offset;
+						item.length = word_length;
 
-						if (item->length != atom->offset)
+						if (item.length != atom.offset)
 						{
 							//	add new word to both offset array and wordlist
-							m_offset_array[atom->offset].push_back(item);
-							m_wordlist.push_back(item);
+							item.index = max_index++;
+							out_table[atom.offset].push_back(item);
 						}
 					}
 				}
 			}
-			//	add the [end] as the last node
-			word_type* word_end = new word_type();
-			word_end->tag = WORD_TAG_END;
-			m_wordlist.push_back(word_end);
-			//	add the [end] to the last list of offset array
-			m_offset_array[m_sentence.length()].push_back(word_end);
-
-			//	assign index to each word
-			for (size_t i = 0; i < m_wordlist.size(); ++i)
-				m_wordlist[i]->index = i;
 		}
 
-		void generate_graph()
+		///	Input:	text, dict, out_table
+		///	Output:	graph_list
+		static void create_graphs(const wstring& text, const Dictionary& dict, const out_table_type& out_table, std::vector<WordGraph>& graph_list)
 		{
-			//	all vertices information are stored in m_wordlist,
-			//	so, it's not necessary to at more information on vertices.
-			m_graph = new WordGraph(m_wordlist.size());
-			//	adding edges
-			for (size_t i = 0; i < m_wordlist.size()-1; ++i)
+			graph_list.push_back(create_graph(text, dict, out_table, out_table.begin(), out_table.end()));
+		}
+
+		///	Input:	text, dict, out_table, (begin, end)
+		///	Output:	graph
+		static WordGraph create_graph(const wstring& text, const Dictionary& dict, const out_table_type& out_table, out_table_type::const_iterator begin, out_table_type::const_iterator end)
+		{
+			//	create graph
+			size_t word_count = 0;
+			for (out_table_type::const_iterator iter = begin; iter != end; ++iter)
 			{
-				size_t next_offset = m_wordlist[i]->offset + m_wordlist[i]->length;
-				offset_array_list_type& next_wordlist = m_offset_array[next_offset];
+				word_count += iter->second.size();
+			}
+			WordGraph graph(word_count + 2);	//	Word count + [Begin] + [End]
+			//	attach vertex information
+			property_map<WordGraph, vertex_desc_t>::type
+				vprop_map = get(vertex_desc, graph);
+
+			//	put [begin] to graph as the first node
+			size_t index_begin = 0;
+			WordInformation word_begin;
+			word_begin.tag = WORD_TAG_BEGIN;
+			word_begin.index = index_begin;
+			vprop_map[index_begin] = word_begin;
+
+			//	put [end] to graph as the last node
+			size_t index_end = num_vertices(graph) - 1;
+			WordInformation word_end;
+			word_end.tag = WORD_TAG_END;
+			word_end.index = index_end;
+			vprop_map[index_end] = word_end;
+
+			for (out_table_type::const_iterator iter = begin; iter != end; ++iter)
+			{
+				for (std::vector<WordInformation>::const_iterator it = iter->second.begin(); it != iter->second.end(); ++it)
+				{
+					vprop_map[it->index + 1] = *it;
+					vprop_map[it->index + 1].index += 1;
+				}
+			}
+
+			//	adding edges
+			property_map<WordGraph, vertex_index_t>::type
+				vindex_map = get(vertex_index, graph);
+
+			for (size_t i = 0; i < num_vertices(graph); ++i)
+			{
+				WordInformation& prop = vprop_map[i];
+				size_t next_offset = prop.offset + prop.length;
+				out_table_type::const_iterator iter_out_next = out_table.find(next_offset);
+				const std::vector<WordInformation>& next_wordlist = iter_out_next->second;
 				//	Get dictionary entry of current word
 				const DictEntry* current_entry;
-				if (m_wordlist[i]->is_recorded)
+				if (prop.is_recorded)
 				{
 					//	get normal word
-					current_entry = m_dict.get_word(m_sentence.begin() + m_wordlist[i]->offset, m_sentence.begin() + m_wordlist[i]->offset + m_wordlist[i]->length);
+					current_entry = dict.get_word(text.begin() + prop.offset, text.begin() + prop.offset + prop.length);
 				}
 				else
 				{
 					//	get special word
-					std::wstring special_word = get_special_word_string(m_wordlist[i]->tag);
-					current_entry = m_dict.get_word(special_word.begin(), special_word.end());
+					std::wstring special_word = get_special_word_string(prop.tag);
+					current_entry = dict.get_word(special_word.begin(), special_word.end());
 				}
-				double current_weight = m_wordlist[i]->weight;
+				double current_weight = prop.weight;
 
 				//	add all edges begin from the end of current word
-				for (offset_array_list_type::iterator iter = next_wordlist.begin(); iter != next_wordlist.end(); ++iter)
+				for (std::vector<WordInformation>::const_iterator iter = next_wordlist.begin(); iter != next_wordlist.end(); ++iter)
 				{
 					//	get next word or use the special word
 					std::wstring next_word;
-					if ((*iter)->is_recorded)
-						next_word = m_sentence.substr((*iter)->offset, (*iter)->length);
+					if (iter->is_recorded)
+						next_word = text.substr(iter->offset, iter->length);
 					else
-						next_word = get_special_word_string((*iter)->tag);
+						next_word = get_special_word_string(iter->tag);
 
 					//	get transit weight
 					double adjacency_weight = current_entry->get_forward_weight(next_word);
@@ -271,18 +315,20 @@ namespace openclas {
 					//	add the edge with weight
 					graph_traits<WordGraph>::edge_descriptor edge_desc;
 					bool inserted;
-					tie(edge_desc, inserted) = add_edge(m_wordlist[i]->index, (*iter)->index, weight, *m_graph);
+					tie(edge_desc, inserted) = add_edge(prop.index, iter->index, weight, graph);
 				}
 			}
+
+			return graph;
 		}
 
+		///	Calculate the possibility
+		///	0 < smoothing < 1
+		///		A = smoothing * P(Ci-1)
+		///		B = (1-smoothing) * P(Ci|Ci-1)
+		///		frequency = - Log( A + B );
 		static double calculate_transit_weight(double current_weight, double adjacency_weight, double smoothing = 0.1)
 		{
-			//	Calculate the possibility
-			//	0 < smoothing < 1
-			//		A = smoothing * P(Ci-1)
-			//		B = (1-smoothing) * P(Ci|Ci-1)
-			//		frequency = - Log( A + B );
 			double P1 = (1 + current_weight) / (MAX_FREQUENCE+80000);
 			double A = smoothing * P1;
 
@@ -294,48 +340,41 @@ namespace openclas {
 			return weight;
 		}
 
-		static word_type* create_word(enum SymbolType type, size_t offset, size_t length)
+		static WordInformation create_word(enum SymbolType type, size_t offset, size_t length)
 		{
-			word_type* word = new word_type();
-			word->offset = offset;
-			word->length = length;
+			WordInformation word;
+			word.offset = offset;
+			word.length = length;
 			if (type != SYMBOL_TYPE_CHINESE)
 			{
-				word->weight = 0;
+				word.weight = 0;
 				switch(type){
 	case SYMBOL_TYPE_INDEX:
 	case SYMBOL_TYPE_NUMBER:
 		//	number
-		word->tag = WORD_TAG_M;
-		word->is_recorded = false;
+		word.tag = WORD_TAG_M;
+		word.is_recorded = false;
 		break;
 	case SYMBOL_TYPE_LETTER:
 	case SYMBOL_TYPE_SINGLE:
 		//	nouns of english, or etc.
-		word->tag = WORD_TAG_NX;
-		word->is_recorded = false;
+		word.tag = WORD_TAG_NX;
+		word.is_recorded = false;
 		break;
 	case SYMBOL_TYPE_PUNCTUATION:
 		//	punctuation
-		word->tag = WORD_TAG_W;
-		word->is_recorded = true;
-		word->weight = std::numeric_limits<double>::max();
+		word.tag = WORD_TAG_W;
+		word.is_recorded = true;
+		word.weight = std::numeric_limits<double>::max();
 		break;
 	default:
-		word->tag = WORD_TAG_UNKNOWN;
+		word.tag = WORD_TAG_UNKNOWN;
 		break;
 				}
 			}
 			return word;
 		}
-
-	protected:
-		const wstring m_sentence;
-		const Dictionary& m_dict;
-		WordGraph* m_graph;
-		wordlist_type m_wordlist;
-		offset_array_list_type* m_offset_array;
 	};
 }
-
-#endif	//	_OPENCLAS_SEGMENT_HPP_
+//	_OPENCLAS_BUILDER_HPP_
+#endif
