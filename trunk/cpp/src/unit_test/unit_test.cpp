@@ -59,7 +59,7 @@ using namespace boost::unit_test;
 #include "unit_test_builder.hpp"
 #include "unit_test_dictionary.hpp"
 #include "unit_test_k_shortest_path.hpp"
-//#include "unit_test_segment.hpp"
+#include "unit_test_segment.hpp"
 #include "unit_test_serialization.hpp"
 #include "unit_test_utility.hpp"
 #include "unit_test_viterbi.hpp"

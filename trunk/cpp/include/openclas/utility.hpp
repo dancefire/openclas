@@ -454,4 +454,5 @@ namespace openclas {
 
 }	//	namespace openclas
 
-#endif	//	 _OPENCLAS_UTILITY_HPP_
+//	 _OPENCLAS_UTILITY_HPP_
+#endif

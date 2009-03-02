@@ -438,4 +438,5 @@ namespace openclas {
 	};	//	class Dictionary
 }	//	namespace openclas
 
-#endif	//	_OPENCLAS_DICTIONARY_HPP_
+//	_OPENCLAS_DICTIONARY_HPP_
+#endif

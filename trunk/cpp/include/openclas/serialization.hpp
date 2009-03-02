@@ -485,4 +485,5 @@ namespace openclas {
 	}
 }	//	namespace openclas
 
-#endif	//	_OPENCLAS_SERIALIZATION_HPP_
+//	_OPENCLAS_SERIALIZATION_HPP_
+#endif

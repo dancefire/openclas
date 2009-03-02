@@ -68,4 +68,5 @@ namespace openclas {
 	using boost::scoped_array;
 }
 
-#endif	//	 _OPENCLAS_COMMON_HPP_
+//	 _OPENCLAS_COMMON_HPP_
+#endif

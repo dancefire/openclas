@@ -565,4 +565,5 @@ BOOST_AUTO_TEST_CASE( test_ksp_shortest_paths_complex_graph )
 
 BOOST_AUTO_TEST_SUITE_END()
 
-#endif //	_OPENCLAS_UNIT_TEST_K_SHORTEST_PATH_HPP_
+//	_OPENCLAS_UNIT_TEST_K_SHORTEST_PATH_HPP_
+#endif
