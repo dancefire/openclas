@@ -165,4 +165,5 @@ namespace openclas {
 	}
 }
 
-#endif	//	_OPENCLAS_VITERBI_HPP_
+//	_OPENCLAS_VITERBI_HPP_
+#endif

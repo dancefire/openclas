@@ -174,4 +174,5 @@ namespace openclas {
 	}
 }
 
-#endif	//	_OPENCLAS_K_SHORTEST_PATH_HPP_
+//	_OPENCLAS_K_SHORTEST_PATH_HPP_
+#endif
