@@ -121,7 +121,7 @@ BOOST_AUTO_TEST_CASE( test_Serialization_ICT_load_from_dct )
 	load_words_from_dct(dict, core_dict_name);
 	BOOST_CHECK_EQUAL( dict.words().size(), 85604 );
 	//	count tags
-	int word_tag_count = 0;
+	size_t word_tag_count = 0;
 	for (Dictionary::word_dict_type::const_iterator iter = dict.words().begin(); iter != dict.words().end(); ++iter)
 	{
 		word_tag_count += (*iter)->tags.size();
@@ -131,8 +131,31 @@ BOOST_AUTO_TEST_CASE( test_Serialization_ICT_load_from_dct )
 	test_file_existence(bigram_dict_name);
 	load_words_transit_from_dct(dict, bigram_dict_name);
 	//	count word transit
-	int transit_count = 0;
+	size_t transit_count = 0;
 	for (Dictionary::word_dict_type::const_iterator iter = dict.words().begin(); iter != dict.words().end(); ++iter)
+	{
+		transit_count += (*iter)->forward.size();
+	}
+	BOOST_CHECK_EQUAL( transit_count, 408960 );
+
+	/*
+	 *		Test .ocd format (save and load)
+	 */
+	const char* core_name = "data\\core.ocd";
+	save_to_file(dict, core_name);
+
+	Dictionary dict_ocd;
+	load_from_file(dict_ocd, core_name);
+	BOOST_CHECK_EQUAL( dict_ocd.words().size(), 85604 );
+	word_tag_count = 0;
+	for (Dictionary::word_dict_type::const_iterator iter = dict_ocd.words().begin(); iter != dict_ocd.words().end(); ++iter)
+	{
+		word_tag_count += (*iter)->tags.size();
+	}
+	BOOST_CHECK_EQUAL( word_tag_count, 104413 );	//	104455
+
+	transit_count = 0;
+	for (Dictionary::word_dict_type::const_iterator iter = dict_ocd.words().begin(); iter != dict_ocd.words().end(); ++iter)
 	{
 		transit_count += (*iter)->forward.size();
 	}

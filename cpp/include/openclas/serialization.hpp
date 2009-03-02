@@ -419,7 +419,7 @@ namespace openclas {
 				transit_header.length = static_cast<int>(narrow_transit_word.length());
 				transit_header.weight = static_cast<int>(it->second);
 				out.write(reinterpret_cast<const char*>(&transit_header), sizeof(TransitHeader));
-				out.write(narrow_transit_word.c_str(), narrow_transit_word.length());
+				out.write(narrow_transit_word.c_str(), static_cast<std::streamsize>(narrow_transit_word.length()));
 			}
 		}
 	}

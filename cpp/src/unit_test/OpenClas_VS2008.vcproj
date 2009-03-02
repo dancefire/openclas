@@ -25,6 +25,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				ExcludedFromBuild="true"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -171,6 +172,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="$(TargetDir)\$(TargetFileName)"
+				ExcludedFromBuild="true"
 			/>
 		</Configuration>
 	</Configurations>
