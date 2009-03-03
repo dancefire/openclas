@@ -57,6 +57,26 @@ SUCH DAMAGE.
 
 BOOST_AUTO_TEST_SUITE( segment )
 
+using namespace std;
+
+static const wchar_t* sample[] = {
+	L"",
+	L"English Words",
+	L"他说的确实在理。",
+	L"19９5年底ｇoｏgｌｅ在1月份大会上说的确实在理。",
+	L"这个门的把手坏了好几天了",
+	L"你把手抬高一点儿",
+	L"这个动作的要领其实很简单",
+	L"下午我要领工资，恐怕赶不回去",
+	L"办独生子女证，一对夫妻一次性交一百元钱",
+	L"我知道你不知道我知道你不知道我知道你不知道",
+	L"已经分房和尚未分房的同志",
+	L"馆内陈列着周恩来和邓颖超生前使用过的物品",
+	L"张华平喜欢看书"
+};
+
+const int sample_count = 13;
+
 //BOOST_AUTO_TEST_CASE( test_get_special_word )
 //{
 //    BOOST_FAIL( "Test is not ready yet" );

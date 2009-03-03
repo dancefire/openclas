@@ -329,6 +329,11 @@ namespace openclas {
 			return get_word(word.begin(), word.end());
 		}
 
+		const DictEntry* get_word(const std::wstring& word) const
+		{
+			return get_word(word.begin(), word.end());
+		}
+
 		DictEntry* get_word(std::wstring::const_iterator iter, std::wstring::const_iterator end)
 		{
 			return m_word_indexer.get(iter, end);

@@ -256,7 +256,16 @@ namespace openclas {
 #endif
 	};
 
+#ifdef _MSC_VER
+	const std::locale locale_utf8(std::locale::classic(), new utf8_codecvt_facet());
+#else
+    const std::locale locale_utf8(CharsetName[CHARSET_UTF8]);
+#endif
+
+	const std::locale locale_gbk(CharsetName[CHARSET_GBK]);
+
 	typedef std::codecvt<wchar_t, char, mbstate_t> codecvt_t;
+
 
 	/** Generate special word name
 	*	Just add prefix "$" to WORD_TAG_NAME[WordTag]
