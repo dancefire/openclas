@@ -1,3 +1,24 @@
+2009-03-04  Tao Wang  <dancefire@gmail.com>
+
+	* cpp/include/openclas/builder.hpp:
+		Reorganize the headers.
+		Add const to WordInformation.entry.
+		Add code for handling empty text in create().
+		Add code for handling non-recoreded atom in create_out_table().
+		Implemented create_graphs().
+		Add code for handling DictEntry* current_entry == 0.
+	* cpp/include/openclas/common.hpp:
+		Add code handling remove min()/max() macro in MSVC
+	* cpp/include/openclas/dictionary.hpp:
+		Add const DictEntry* get_word() const.
+	* cpp/include/openclas/serialization.hpp:
+	* cpp/include/openclas/utility.hpp:
+		Move locale_gbk and locale_utf8 from serialization.hpp to utility.hpp.
+	* cpp/src/unit_test/unit_test_builder.hpp:
+		Implemented testcases for class Builder::create(). Not finished yet.
+	* cpp/src/unit_test/unit_test_segment.hpp:
+		Add sample texts for unit test of segment.hpp.
+
 2009-03-03  Tao Wang  <dancefire@gmail.com>
 
 	* cpp/include/openclas/serialization.hpp: Minor modification on type cast.

@@ -54,14 +54,126 @@ SUCH DAMAGE.
 #define _OPENCLAS_UNIT_TEST_BUILDER_HPP_
 
 #include <openclas/builder.hpp>
+#include <openclas/dictionary.hpp>
 
 BOOST_AUTO_TEST_SUITE( builder )
 
-//BOOST_AUTO_TEST_CASE( test_get_special_word )
-//{
-//    BOOST_FAIL( "Test is not ready yet" );
-//}
+using namespace openclas;
 
+void construct_dictionary(Dictionary& dict)
+{
+	DictEntry* entry = 0;
+
+	entry = dict.add_word(get_special_word_string(WORD_TAG_BEGIN));
+	entry->add(WORD_TAG_BEGIN, 50610);
+
+	entry = dict.add_word(get_special_word_string(WORD_TAG_END));
+	entry->add(WORD_TAG_END, 50610);
+
+	entry = dict.add_word(get_special_word_string(WORD_TAG_NX));
+	entry->add(WORD_TAG_NX, 459);	//	String
+
+	entry = dict.add_word(get_special_word_string(WORD_TAG_NS));
+	entry->add(WORD_TAG_NS, 964);	//	Place
+
+	entry = dict.add_word(get_special_word_string(WORD_TAG_NR));
+	entry->add(WORD_TAG_NR, 16294);	//	Person Name
+
+	entry = dict.add_word(get_special_word_string(WORD_TAG_T));
+	entry->add(WORD_TAG_T, 9716);	//	Date/Time
+
+	entry = dict.add_word(get_special_word_string(WORD_TAG_M));
+	entry->add(WORD_TAG_M, 17316);	//	Number
+
+	entry = dict.add_word(get_special_word_string(WORD_TAG_N));
+	entry->add(WORD_TAG_N, 4537);	//	Item name
+
+	entry = dict.add_word(get_special_word_string(WORD_TAG_NT));
+	entry->add(WORD_TAG_NT, 285);	//	Organization Name
+
+	entry = dict.add_word(get_special_word_string(WORD_TAG_NZ));
+	entry->add(WORD_TAG_NZ, 804);	//	Terminology
+
+
+}
+
+BOOST_AUTO_TEST_CASE( test_Builder_create_empty )
+{
+    Dictionary dict;
+	construct_dictionary(dict);
+
+	const wchar_t* empty_text = L"";
+	std::vector<WordGraph> empty_graph_list = Builder::create(empty_text, dict);
+	BOOST_CHECK_EQUAL( empty_graph_list.size(), 0 );
+}
+
+BOOST_AUTO_TEST_CASE( test_Builder_create_english_string )
+{
+    Dictionary dict;
+	construct_dictionary(dict);
+
+	const wchar_t* text = L"English Words";
+	std::vector<WordGraph> graph_list = Builder::create(text, dict);
+	BOOST_REQUIRE_EQUAL( graph_list.size(), 1 );
+	WordGraph& graph = graph_list.at(0);
+	BOOST_REQUIRE_EQUAL( num_vertices(graph), 5 );
+
+	property_map<WordGraph, vertex_desc_t>::type vprop_map = get(vertex_desc, graph);
+
+	BOOST_CHECK_EQUAL( vprop_map[0].tag, WORD_TAG_BEGIN );
+	BOOST_CHECK_EQUAL( vprop_map[1].tag, WORD_TAG_NX );
+	BOOST_CHECK_EQUAL( vprop_map[1].offset, 0 );
+	BOOST_CHECK_EQUAL( vprop_map[1].length, 7 );
+	BOOST_CHECK_EQUAL( vprop_map[2].tag, WORD_TAG_W );
+	BOOST_CHECK_EQUAL( vprop_map[2].offset, 7 );
+	BOOST_CHECK_EQUAL( vprop_map[2].length, 1 );
+	BOOST_CHECK_EQUAL( vprop_map[3].tag, WORD_TAG_NX );
+	BOOST_CHECK_EQUAL( vprop_map[3].offset, 8 );
+	BOOST_CHECK_EQUAL( vprop_map[3].length, 5 );
+	BOOST_CHECK_EQUAL( vprop_map[4].tag, WORD_TAG_END );
+	BOOST_CHECK_EQUAL( vprop_map[4].offset, 13 );
+}
+
+BOOST_AUTO_TEST_CASE( test_Builder_create_single_sentence )
+{
+    Dictionary dict;
+	construct_dictionary(dict);
+
+	const wchar_t* text = L"他说的确实在理。";
+	property_map<WordGraph, vertex_desc_t>::type vprop_map;
+
+	std::vector<WordGraph> graph_list = Builder::create(text, dict);
+	BOOST_REQUIRE_EQUAL( graph_list.size(), 2 );
+
+	WordGraph& graph = graph_list.at(0);
+	vprop_map = get(vertex_desc, graph);
+	BOOST_REQUIRE_EQUAL( num_vertices(graph), 3 );
+
+	BOOST_CHECK_EQUAL( vprop_map[0].tag, WORD_TAG_BEGIN );
+	BOOST_CHECK_EQUAL( vprop_map[1].tag, WORD_TAG_UNKNOWN );
+	BOOST_CHECK_EQUAL( vprop_map[1].offset, 0 );
+	BOOST_CHECK_EQUAL( vprop_map[1].length, 1 );
+	BOOST_CHECK_EQUAL( vprop_map[2].tag, WORD_TAG_UNKNOWN );
+	BOOST_CHECK_EQUAL( vprop_map[2].offset, 1 );
+	BOOST_CHECK_EQUAL( vprop_map[2].length, 1 );
+
+	graph = graph_list.at(1);
+	vprop_map = get(vertex_desc, graph);
+	BOOST_REQUIRE_EQUAL( num_vertices(graph), 12 );
+
+	//BOOST_CHECK_EQUAL( vprop_map[0].tag, WORD_TAG_BEGIN );
+	//BOOST_CHECK_EQUAL( vprop_map[1].tag, WORD_TAG_NX );
+	//BOOST_CHECK_EQUAL( vprop_map[1].offset, 0 );
+	//BOOST_CHECK_EQUAL( vprop_map[1].length, 7 );
+	//BOOST_CHECK_EQUAL( vprop_map[2].tag, WORD_TAG_W );
+	//BOOST_CHECK_EQUAL( vprop_map[2].offset, 7 );
+	//BOOST_CHECK_EQUAL( vprop_map[2].length, 1 );
+	//BOOST_CHECK_EQUAL( vprop_map[3].tag, WORD_TAG_NX );
+	//BOOST_CHECK_EQUAL( vprop_map[3].offset, 8 );
+	//BOOST_CHECK_EQUAL( vprop_map[3].length, 5 );
+	//BOOST_CHECK_EQUAL( vprop_map[4].tag, WORD_TAG_END );
+	//BOOST_CHECK_EQUAL( vprop_map[4].offset, 13 );
+}
 
 BOOST_AUTO_TEST_SUITE_END()
 

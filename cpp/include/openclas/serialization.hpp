@@ -96,7 +96,6 @@ namespace openclas {
 
 		const int SPECIAL_WORD_COUNT = 10;
 		const int GB2312_COUNT = 6768;
-		const std::locale locale_gbk(CharsetName[CHARSET_GBK]);
 
 		static enum WordTag get_special_word_tag(const std::wstring& word)
 		{
@@ -362,12 +361,6 @@ namespace openclas {
 		int length;
 		int weight;
 	};
-
-#ifdef _MSC_VER
-	const std::locale locale_utf8(std::locale::classic(), new utf8_codecvt_facet());
-#else
-    const std::locale locale_utf8(CharsetName[CHARSET_UTF8]);
-#endif
 
 	static void save_to_file(const Dictionary& dict, const char* filename)
 	{
