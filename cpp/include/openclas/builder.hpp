@@ -66,8 +66,10 @@ SUCH DAMAGE.
 #include <stdexcept>	//	for std::logic_error
 
 namespace boost {
-	enum vertex_desc_t { vertex_desc };
+	enum vertex_desc_t { vertex_desc = 1000 };
+	enum graph_terminal_t { graph_terminal = 3000 };
 	BOOST_INSTALL_PROPERTY(vertex, desc);
+	BOOST_INSTALL_PROPERTY(graph, terminal);
 }
 
 namespace openclas {
@@ -94,20 +96,24 @@ namespace openclas {
 
 	typedef property<edge_weight_t, double> EdgeProperty;
 
-	typedef adjacency_list<vecS, vecS, directedS, VertexProperty, EdgeProperty> WordGraph;
+	typedef property<graph_terminal_t, std::pair<size_t, size_t> > GraphProperty;
+
+	typedef adjacency_list<vecS, vecS, directedS, 
+		VertexProperty, EdgeProperty, GraphProperty> WordGraph;
 
 	class Builder{
 	public:
 		typedef std::map< size_t, std::vector<WordInformation> > out_table_type;
+		typedef std::vector<shared_ptr<WordGraph> > graph_list_type;
 	public:
 
-		static std::vector<WordGraph> create(const wstring& text, const Dictionary& dict)
+		static graph_list_type create(const wstring& text, const Dictionary& dict)
 		{
-			std::vector<WordGraph> graph_list;
+			graph_list_type sub_graphs;
 
 			//	return empty graph list if the text is empty.
 			if (text.empty())
-				return graph_list;
+				return sub_graphs;
 
 			std::vector<WordInformation> atoms;
 			split_atoms(text, atoms);
@@ -116,8 +122,8 @@ namespace openclas {
 			create_out_table(text, dict, atoms, out_table);
 
 
-			create_graphs(text, dict, out_table, graph_list);
-			return graph_list;
+			create_graphs(text, dict, out_table, sub_graphs);
+			return sub_graphs;
 		}
 
 	protected:
@@ -179,12 +185,10 @@ namespace openclas {
 			for (size_t i = 0; i < atoms.size(); ++i)
 			{
 				WordInformation atom = atoms[i];
-				atom.index = i;
 				out_table[atoms[i].offset].push_back(atom);
 			}
 
 			//	initialize from dictionary
-			size_t max_index = atoms.size();
 			for (size_t i = 0; i < atoms.size(); ++i)
 			{
 				const WordInformation& atom = atoms[i];
@@ -226,7 +230,6 @@ namespace openclas {
 							if (item.length != atom.length)
 							{
 								//	add new word to both offset array and wordlist
-								item.index = max_index++;
 								out_table[atom.offset].push_back(item);
 							}
 						}
@@ -245,136 +248,165 @@ namespace openclas {
 					}
 				}
 			}
-
-			//	Add the [End] to the last offset
-			WordInformation word_end;
-			word_end.tag = WORD_TAG_END;
-			word_end.index = max_index++;
-			word_end.offset = text.size();
-			word_end.length = 0;
-			word_end.is_recorded = false;
-			out_table[word_end.offset].push_back(word_end);
 		}
 
 		///	Input:	text, dict, out_table
 		///	Output:	graph_list
-		static void create_graphs(const wstring& text, const Dictionary& dict, const out_table_type& out_table, std::vector<WordGraph>& graph_list)
+		static void create_graphs(const wstring& text, const Dictionary& dict, out_table_type& out_table, graph_list_type& sub_graphs)
 		{
-			//	candidate graph (out_table) into several sub-graph.
-			//	The split point should be the node with multiple out-edges.
-			out_table_type::const_iterator prev_iter = out_table.begin();
+			//	split candidate graph (out_table) into several sub-graphs.
+			//	The split point should be the node with multiple out-edges, and no edge cross over the node.
+			out_table_type::iterator prev_iOut = out_table.begin();
 			size_t max_offset = 0;
-			for (out_table_type::const_iterator iter = ++out_table.begin(); iter != out_table.end(); ++iter)
+			for (out_table_type::iterator iOut = out_table.begin(); iOut != out_table.end(); ++iOut)
 			{
-				if (iter->second.size() > 1 && max_offset <= iter->first)
+				//	Get the next iterator
+				out_table_type::iterator iNext = iOut;
+				++iNext;
+
+				if (iOut != out_table.begin()	//	never split the first node
+					&& max_offset == iOut->first	//	no over edge
+					&& iOut->second.size() == 1	//	current offset only have a single word
+					&& (iNext != out_table.end() && iNext->second.size() > 1)	//	next offset have more than one words.
+					)
 				{
-					//	multiple out-edges, so split here
-					graph_list.push_back(create_graph(text, dict, out_table, prev_iter, iter));
-					prev_iter = iter;
+					//	multiple out-edges, and no over edge, so split here
+					create_graph(text, dict, out_table, prev_iOut, iOut, sub_graphs);
+					prev_iOut = iOut;
 				}
 
-				for (std::vector<WordInformation>::const_iterator it = iter->second.begin(); it != iter->second.end(); ++it)
+				for (std::vector<WordInformation>::iterator iWord = iOut->second.begin(); iWord != iOut->second.end(); ++iWord)
 				{
-					if (it->offset > max_offset)
-						max_offset = it->offset;
+					size_t target_offset = iWord->offset + iWord->length;
+					if (target_offset > max_offset)
+						max_offset = target_offset;
 				}
 			}
 			//	reach the last node
-			graph_list.push_back(create_graph(text, dict, out_table, prev_iter, out_table.end()));
+			create_graph(text, dict, out_table, prev_iOut, out_table.end(), sub_graphs);
 		}
 
 		///	Input:	text, dict, out_table, (begin, end)
 		///	Output:	graph
-		static WordGraph create_graph(const wstring& text, const Dictionary& dict, const out_table_type& out_table, out_table_type::const_iterator begin, out_table_type::const_iterator end)
+		static void create_graph(const wstring& text, const Dictionary& dict, 
+			out_table_type& out_table, 
+			out_table_type::iterator begin, out_table_type::iterator end,
+			graph_list_type& sub_graphs)
 		{
 			//	create graph
 			size_t word_count = 0;
-			for (out_table_type::const_iterator iter = begin; iter != end; ++iter)
+			for (out_table_type::iterator iter = begin; iter != end; ++iter)
 			{
 				word_count += iter->second.size();
 			}
-			WordGraph graph(word_count + 1);	//	Word count + [Begin] + [End]
+
+			if (begin == out_table.begin())
+				++word_count;	//	One more node for [Begin] for first sub-graph
+
+			++word_count;	//	One more node for the last node, it will be either end, or [End] of whole graph
+
+			shared_ptr<WordGraph> graph_ptr(new WordGraph(word_count));
+			WordGraph& graph = *graph_ptr;
+
 			//	attach vertex information
 			property_map<WordGraph, vertex_desc_t>::type
 				vprop_map = get(vertex_desc, graph);
 
-			//	put [begin] to graph as the first node
-			size_t index_begin = 0;
-			WordInformation word_begin;
-			word_begin.tag = WORD_TAG_BEGIN;
-			word_begin.index = index_begin;
-			vprop_map[index_begin] = word_begin;
-
-			////	put [end] to graph as the last node
-			//size_t index_end = num_vertices(graph) - 1;
-			//WordInformation word_end;
-			//word_end.tag = WORD_TAG_END;
-			//word_end.index = index_end;
-			//vprop_map[index_end] = word_end;
-
-			for (out_table_type::const_iterator iter = begin; iter != end; ++iter)
+			size_t current_index = 0;
+			//		[Begin]
+			if (begin == out_table.begin())
 			{
-				for (std::vector<WordInformation>::const_iterator it = iter->second.begin(); it != iter->second.end(); ++it)
+				//	put [begin] to graph as the first node
+				WordInformation word_begin;
+				word_begin.tag = WORD_TAG_BEGIN;
+				//	the index of other nodes should increase one, since [Begin] is insert into the first one.
+				word_begin.index = current_index++;
+				word_begin.entry = 0;
+				vprop_map[word_begin.index] = word_begin;
+			}
+			//		Internal node
+			for (out_table_type::iterator iter = begin; iter != end; ++iter)
+			{
+				for (std::vector<WordInformation>::iterator it = iter->second.begin(); it != iter->second.end(); ++it)
 				{
-					vprop_map[it->index + 1] = *it;
-					vprop_map[it->index + 1].index += 1;
+					size_t index = current_index++;
+					vprop_map[index] = *it;
+					vprop_map[index].index = index;
+					it->index = index;
 				}
+			}
+			//		[End]
+			if (end == out_table.end()) {
+				//	put [End] to graph as the last node
+				WordInformation word_end;
+				word_end.tag = WORD_TAG_END;
+				word_end.index = current_index++;
+				word_end.offset = text.size();
+				word_end.entry = 0;
+				vprop_map[word_end.index] = word_end;
+			}else{
+				//	put 'end' to graph as the last node.
+				WordInformation& word_end = end->second.front();
+				word_end.index = current_index++;
+				vprop_map[word_end.index] = word_end;
+				vprop_map[word_end.index].index = word_end.index;
 			}
 
 			//	adding edges
 			property_map<WordGraph, vertex_index_t>::type
 				vindex_map = get(vertex_index, graph);
 
-			for (size_t i = 0; i < num_vertices(graph); ++i)
+			for (size_t i = 0; i < num_vertices(graph) - 1; ++i)
 			{
-				WordInformation& prop = vprop_map[i];
+				WordInformation prop = vprop_map[i];
 				size_t next_offset = prop.offset + prop.length;
-				out_table_type::const_iterator iter_out_next = out_table.find(next_offset);
-				const std::vector<WordInformation>& next_wordlist = iter_out_next->second;
-				//	Get dictionary entry of current word
-				const DictEntry* current_entry;
-				if (prop.is_recorded)
-				{
-					//	get normal word
-					current_entry = dict.get_word(text.begin() + prop.offset, text.begin() + prop.offset + prop.length);
-				}
-				else
-				{
-					//	get special word
-					std::wstring special_word = get_special_word_string(prop.tag);
-					current_entry = dict.get_word(special_word.begin(), special_word.end());
-					if (current_entry == 0) {
-						std::ostringstream out;
-						out << "Dictionary does not contain the entry for special word \"" << narrow(special_word, locale_utf8) << "\"";
-						throw std::logic_error(out.str());
-					}
-				}
-				double current_weight = prop.weight;
 
 				//	add all edges begin from the end of current word
-				for (std::vector<WordInformation>::const_iterator iter = next_wordlist.begin(); iter != next_wordlist.end(); ++iter)
+				if (next_offset < text.size())
 				{
-					//	get next word or use the special word
-					std::wstring next_word;
-					if (iter->is_recorded)
-						next_word = text.substr(iter->offset, iter->length);
-					else
-						next_word = get_special_word_string(iter->tag);
-
-					//	get transit weight
-					double adjacency_weight = 0;
-					if (current_entry)
-						adjacency_weight = current_entry->get_forward_weight(next_word);
-
-					double weight = calculate_transit_weight(current_weight, adjacency_weight);
-					//	add the edge with weight
-					graph_traits<WordGraph>::edge_descriptor edge_desc;
-					bool inserted;
-					tie(edge_desc, inserted) = add_edge(prop.index, iter->index, weight, graph);
+					out_table_type::iterator iter_out_next = out_table.find(next_offset);
+					std::vector<WordInformation>& next_wordlist = iter_out_next->second;
+					for (std::vector<WordInformation>::iterator iter = next_wordlist.begin(); iter != next_wordlist.end(); ++iter)
+					{
+						add_edge_to_graph(prop, *iter, graph, text);
+					}
+				}else{
+					//	next_offset == text.size()
+					WordInformation& prop_end = vprop_map[num_vertices(graph)-1];
+					add_edge_to_graph(prop, prop_end, graph, text);
 				}
 			}
 
-			return graph;
+			//	graph terminal
+			graph_property<WordGraph, graph_terminal_t>::type&
+				gterminal = get_property(graph, graph_terminal);
+
+			gterminal.first = 0;
+			if (end == out_table.end()) {
+				gterminal.second = num_vertices(graph) - 1;
+			}else{
+				gterminal.second = end->second.front().index;
+			}
+
+			sub_graphs.push_back(graph_ptr);
+		}
+
+		static void add_edge_to_graph(const WordInformation& prop, const WordInformation& prop_next, WordGraph& graph, const std::wstring& text)
+		{
+			std::wstring next_word;
+			if (prop_next.is_recorded)
+				next_word = text.substr(prop_next.offset, prop_next.length);
+			else
+				next_word = get_special_word_string(prop_next.tag);
+
+			double adjacency_weight = 0;
+			if (prop.entry)
+				adjacency_weight = prop.entry->get_forward_weight(next_word);
+
+			double weight = calculate_transit_weight(prop.weight, adjacency_weight);
+
+			//	add the edge with weight
+			add_edge(prop.index, prop_next.index, weight, graph);
 		}
 
 		///	Calculate the possibility
@@ -420,7 +452,7 @@ namespace openclas {
 	case SYMBOL_TYPE_PUNCTUATION:
 		//	punctuation
 		word.tag = WORD_TAG_W;
-		word.is_recorded = true;
+		word.is_recorded = false;
 		word.weight = std::numeric_limits<double>::max();
 		break;
 	default:

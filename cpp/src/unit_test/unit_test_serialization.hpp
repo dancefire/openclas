@@ -67,12 +67,12 @@ BOOST_AUTO_TEST_SUITE( serialization )
 using namespace openclas;
 using namespace openclas::ict;
 
-static const char* core_dict_name = "data\\coreDict.dct";
-static const char* bigram_dict_name = "data\\BigramDict.dct";
-//static const char* core_tag_name = "data\\lexical.dct";
-//static const char* people_dict_basename = "data\\nr";
-//static const char* place_dict_basename = "data\\ns";
-//static const char* org_dict_basename = "data\\tr";
+static const char* core_dict_name = "data/coreDict.dct";
+static const char* bigram_dict_name = "data/BigramDict.dct";
+//static const char* core_tag_name = "data/lexical.dct";
+//static const char* people_dict_basename = "data/nr";
+//static const char* place_dict_basename = "data/ns";
+//static const char* org_dict_basename = "data/tr";
 //static const char* dict_ext = ".dct";
 //static const char* tag_ext = ".ctx";
 
@@ -81,6 +81,37 @@ void test_file_existence(const char* filename)
 	//	Test file existence
 	std::ifstream in(filename);
 	BOOST_REQUIRE_MESSAGE( in , "File is not exist." );
+}
+
+void output_part_dict(std::wofstream& out, Dictionary& dict, const std::wstring& text)
+{
+	for (std::wstring::const_iterator iter = text.begin(); iter != text.end(); ++iter)
+	{
+		std::vector<DictEntry*> entries = dict.prefix(iter, text.end());
+		for (std::vector<DictEntry*>::iterator iEntry = entries.begin(); iEntry != entries.end(); ++iEntry)
+		{
+			DictEntry* entry = *iEntry;
+			out << entry->word << std::endl;
+			out << "\t";
+			for (std::vector<TagEntry>::iterator iTag = entry->tags.begin(); iTag != entry->tags.end(); ++iTag)
+			{
+				if (iTag != entry->tags.begin())
+					out << ",";
+				out << "{" << WORD_TAG_NAME[iTag->tag] << " = " << iTag->weight << "}";
+			}
+			out << std::endl;
+			if (iter + 1 != text.end())
+			{
+				std::vector<DictEntry*> next_entries = dict.prefix(iter+1, text.end());
+				for(std::vector<DictEntry*>::iterator iNextEntry = next_entries.begin(); iNextEntry != next_entries.end(); ++iNextEntry)
+				{
+					DictEntry::transit_type::iterator iForward = entry->forward.find((*iNextEntry)->word);
+					if (iForward != entry->forward.end())
+						out << "\t" << iForward->first << ", weight = " << iForward->second << std::endl;
+				}
+			}
+		}
+	}
 }
 
 BOOST_AUTO_TEST_CASE( test_Serialization_ICT_get_special_word_tag )
@@ -141,7 +172,7 @@ BOOST_AUTO_TEST_CASE( test_Serialization_ICT_load_from_dct )
 	/*
 	 *		Test .ocd format (save and load)
 	 */
-	const char* core_name = "data\\core.ocd";
+	const char* core_name = "data/core.ocd";
 	save_to_file(dict, core_name);
 
 	Dictionary dict_ocd;
@@ -160,7 +191,15 @@ BOOST_AUTO_TEST_CASE( test_Serialization_ICT_load_from_dct )
 		transit_count += (*iter)->forward.size();
 	}
 	BOOST_CHECK_EQUAL( transit_count, 408960 );
+
+	//	output part of the dictionary.
+	std::wofstream out("data/part_dict.txt");
+	out.imbue(locale_utf8);
+	output_part_dict(out, dict, L"19９5年底ｇoｏgｌｅ在1月份大会上说的确实在理。");
+	//output_part_dict(out, dict, L"下午我要领工资，恐怕赶不回去。");
+	//output_part_dict(out, dict, L"办独生子女证，一对夫妻一次性交一百元钱");
 }
+
 //
 //BOOST_AUTO_TEST_CASE( test_Serialization_ICT_load_tags_from_ctx )
 //{

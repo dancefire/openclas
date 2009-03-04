@@ -334,17 +334,12 @@ namespace openclas {
 			return get_word(word.begin(), word.end());
 		}
 
-		DictEntry* get_word(std::wstring::const_iterator iter, std::wstring::const_iterator end)
+		DictEntry* get_word(std::wstring::const_iterator iter, std::wstring::const_iterator end) const
 		{
 			return m_word_indexer.get(iter, end);
 		}
 
-		const DictEntry* get_word(std::wstring::const_iterator iter, std::wstring::const_iterator end) const
-		{
-			return m_word_indexer.get(iter, end);
-		}
-
-		std::vector<DictEntry*> prefix(const std::wstring& word)
+		std::vector<DictEntry*> prefix(const std::wstring& word) const
 		{
 			return prefix(word.begin(), word.end());
 		}
