@@ -1,6 +1,25 @@
 2009-03-04  Tao Wang  <dancefire@gmail.com>
 
 	* cpp/include/openclas/builder.hpp:
+		Add graph_terminal_t for graph property.
+		Define GraphProperty.
+		Change std::vector<WordGraph> to std::vector<shared_ptr<WordGraph> >.
+		Remove lines for setting index in create_out_table.
+		Put all [Begin], [End] related code to create_graph().
+		Rewrite create_graphs() and create_graph().
+		Add add_edge_to_graph().
+		Change WORD_TAG_W kind of atom to special word.	
+	* cpp/include/openclas/dictionary.hpp
+		Minor changes for some const function in Dictionary.
+	* cpp/src/unit_test/unit_test_builder.hpp:
+		Completed testcases for Builder.
+	* cpp/src/unit_test/unit_test_serialization.hpp:
+		Change the path name to unix-style. "\\" => "/", so both Windows and Unix can share same filename.
+		Add output_part_dict() for output some particular entry information in dictionary.
+
+2009-03-04  Tao Wang  <dancefire@gmail.com>
+
+	* cpp/include/openclas/builder.hpp:
 		Reorganize the headers.
 		Add const to WordInformation.entry.
 		Add code for handling empty text in create().
