@@ -196,10 +196,6 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\unit_test_builder.hpp"
-				>
-			</File>
-			<File
 				RelativePath=".\unit_test_dictionary.hpp"
 				>
 			</File>

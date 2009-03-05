@@ -1,3 +1,24 @@
+2009-03-05  Tao Wang  <dancefire@gmail.com>
+
+	* cpp/include/openclas/builder.hpp:
+	* cpp/include/openclas/segment.hpp:
+		Remove segment.hpp and rename builder.hpp to segment.hpp.
+		Rename class Builder to Segment.
+		Add bool WordInformation::operator==().
+		Add 3 overload segment_to_string().
+		Add segment().
+		Add get_words_from_path().
+		Add find_k_best_segments().
+		Rename create() to create_graphs().
+	* cpp/src/unit_test/OpenClas_VS2005.vcproj:
+	* cpp/src/unit_test/OpenClas_VS2008.vcproj:
+		Remove the link to unit_test_builder
+	* cpp/src/unit_test/unit_test_builder.hpp:
+	* cpp/src/unit_test/unit_test_segment.hpp:
+		Remove unit_test_segment.hpp and rename unit_test_builder.hpp to unit_test_segment.hpp
+		Add partial testcases for Segment::segment().
+
+
 2009-03-04  Tao Wang  <dancefire@gmail.com>
 
 	* cpp/include/openclas/builder.hpp:
