@@ -306,10 +306,74 @@ namespace openclas {
 
 		static void load_tags_from_ctx(Dictionary& dict, const char* filename)
 		{
+			std::ifstream in(filename, ios_base::in | ios_base::binary);
+			if (in.bad())
+				throw std::runtime_error("Cannot open .ctx file.");
+
+			int symbol_count = 0;
+			in.read(reinterpret_cast<char*>(&symbol_count), sizeof(int));
+			if (in.bad())
+				throw std::runtime_error("Cannot read symbol_count.");
+
+			scoped_array<int> symbol_table(new int[symbol_count]);
+			scoped_array<int> tag_freq(new int[symbol_count]);
+			scoped_array<int> tag_transit_freq(new int[symbol_count * symbol_count]);
+			
+			int key = 0;
+			int total_frequency = 0;
+
+			in.read(reinterpret_cast<char*>(symbol_table.get()), sizeof(int) * symbol_count);
+			if (in.bad())
+				throw std::runtime_error("Cannot read symbol table.");
+
+			in.read(reinterpret_cast<char*>(&key), sizeof(int));
+			if (in.bad())
+				throw std::runtime_error("Cannot read key.");
+
+			in.read(reinterpret_cast<char*>(&total_frequency), sizeof(int));
+			if (in.bad())
+				throw std::runtime_error("Cannot read total_frequency.");
+
+			in.read(reinterpret_cast<char*>(tag_freq.get()), sizeof(int) * symbol_count);
+			if (in.bad())
+				throw std::runtime_error("Cannot read tag_freq.");
+
+			in.read(reinterpret_cast<char*>(tag_transit_freq.get()), sizeof(int) * symbol_count * symbol_count);
+			if (in.bad())
+				throw std::runtime_error("Cannot read tag_transit_freq.");
+
+			
+			dict.init_tag_dict(symbol_count);
+			dict.set_tag_total_weight(total_frequency);
+			for (int i = 0; i < symbol_count; ++i)
+			{
+				dict.add_tag_weight(i, tag_freq[i]);
+				int offset = i * symbol_count;
+				for (int j = 0; j < symbol_count; ++j)
+				{
+					dict.add_tag_transit_weight(i, j, tag_transit_freq[offset + j]);
+				}
+			}
+
+			for (int i = 0; i < symbol_count; ++i)
+			{
+				if (symbol_table[i] > 256) {
+					enum WordTag tag = get_tag_from_pos(symbol_table[i]);
+					if (tag != WORD_TAG_UNKNOWN)
+					{
+						std::cerr << get_name_from_pos(symbol_table[i]);
+					}else{
+						//	Found unknown POS
+						std::cerr << symbol_table[i];
+					}
+					std::cerr << " ";
+				}
+			}
+			std::cerr << endl;
 		}
 
 
-		static void load_from_file(Dictionary& dict, const char* tag_filename, const char* words_filename, const char* words_transit_filename)
+		static void load_from_ict_file(Dictionary& dict, const char* tag_filename, const char* words_filename, const char* words_transit_filename)
 		{
 			load_words_from_dct(dict, words_filename);
 			if (words_transit_filename)
@@ -329,7 +393,7 @@ namespace openclas {
 		{
 		}
 
-		static void save_to_file(Dictionary& dict, const char* tag_filename, const char* words_filename, const char* words_transit_filename)
+		static void save_to_ict_file(Dictionary& dict, const char* tag_filename, const char* words_filename, const char* words_transit_filename)
 		{
 			save_words_to_dct(dict, words_filename);
 			if (words_transit_filename)
@@ -362,7 +426,7 @@ namespace openclas {
 		int weight;
 	};
 
-	static void save_to_file(const Dictionary& dict, const char* filename)
+	static void save_to_ocd_file(const Dictionary& dict, const char* filename)
 	{
 		std::ofstream out(filename, std::ios_base::out | std::ios_base::binary);
 
@@ -417,7 +481,7 @@ namespace openclas {
 		}
 	}
 
-	static void load_from_file(Dictionary& dict, const char* filename)
+	static void load_from_ocd_file(Dictionary& dict, const char* filename)
 	{
 		std::ifstream in(filename, std::ios_base::in | std::ios_base::binary);
 
