@@ -306,6 +306,10 @@ namespace openclas {
 				ptr->word = word;
 				m_word_dict.push_back(ptr);
 				m_word_indexer.add(word.begin(), word.end(), ptr);
+				
+				if (m_longest_word_length < word.length())
+					m_longest_word_length = word.length();
+
 				return ptr;
 			}
 		}
@@ -349,6 +353,11 @@ namespace openclas {
 			return m_word_indexer.prefix(iter, end);
 		}
 
+		size_t longest_word_length()
+		{
+			return m_longest_word_length;
+		}
+
 		const word_dict_type& words() const
 		{
 			return m_word_dict;
@@ -363,6 +372,16 @@ namespace openclas {
 			//	initialize tag transit table
 			m_tag_transit_dict.clear();
 			m_tag_transit_dict.resize(size*size, 0);
+		}
+
+		int get_tag_total_weight()
+		{
+			return m_tag_total_weight;
+		}
+
+		void set_tag_total_weight(int weight)
+		{
+			m_tag_total_weight = weight;
 		}
 
 		void add_tag_weight(int tag, int weight)
@@ -429,10 +448,11 @@ namespace openclas {
 	protected:
 		//	word
 		word_dict_type m_word_dict;
-		//transit_dict_type m_word_transit_dict;
+		size_t m_longest_word_length;
 		//	tag
 		tag_dict_type m_tag_dict;
 		tag_transit_dict_type m_tag_transit_dict;
+		int m_tag_total_weight;
 		//	indexer
 		word_indexer_type m_word_indexer;
 	};	//	class Dictionary

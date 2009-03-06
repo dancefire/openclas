@@ -69,7 +69,7 @@ using namespace openclas::ict;
 
 static const char* core_dict_name = "data/coreDict.dct";
 static const char* bigram_dict_name = "data/BigramDict.dct";
-//static const char* core_tag_name = "data/lexical.dct";
+static const char* core_tag_name = "data/lexical.ctx";
 //static const char* people_dict_basename = "data/nr";
 //static const char* place_dict_basename = "data/ns";
 //static const char* org_dict_basename = "data/tr";
@@ -169,14 +169,18 @@ BOOST_AUTO_TEST_CASE( test_Serialization_ICT_load_from_dct )
 	}
 	BOOST_CHECK_EQUAL( transit_count, 408960 );
 
+	//	load from .ctx
+	load_tags_from_ctx(dict, core_tag_name);
+
+
 	/*
 	 *		Test .ocd format (save and load)
 	 */
 	const char* core_name = "data/core.ocd";
-	save_to_file(dict, core_name);
+	save_to_ocd_file(dict, core_name);
 
 	Dictionary dict_ocd;
-	load_from_file(dict_ocd, core_name);
+	load_from_ocd_file(dict_ocd, core_name);
 	BOOST_CHECK_EQUAL( dict_ocd.words().size(), 85604 );
 	word_tag_count = 0;
 	for (Dictionary::word_dict_type::const_iterator iter = dict_ocd.words().begin(); iter != dict_ocd.words().end(); ++iter)
@@ -244,7 +248,7 @@ BOOST_AUTO_TEST_CASE( test_Serialization_ICT_load_from_dct )
 
 static const char* dict_name = "dict.ocd";
 
-BOOST_AUTO_TEST_CASE( test_Serialization )
+BOOST_AUTO_TEST_CASE( test_Serialization_ocd )
 {
 	Dictionary dict;
 	dict.init_tag_dict(10);
@@ -254,11 +258,11 @@ BOOST_AUTO_TEST_CASE( test_Serialization )
 	dict.add_word(L"AB")->add(1, 200);
 	dict.get_word(L"AB")->forward[L"ABCD"] = 1013;
 
-	openclas::save_to_file(dict, dict_name);
+	openclas::save_to_ocd_file(dict, dict_name);
 
 	test_file_existence(dict_name);
 	Dictionary dict2;
-	openclas::load_from_file(dict2, dict_name);
+	openclas::load_from_ocd_file(dict2, dict_name);
 
 	BOOST_CHECK_EQUAL( dict2.tags().size(), 10 );
 	BOOST_CHECK_EQUAL( dict2.get_tag_weight(1), 231 );
