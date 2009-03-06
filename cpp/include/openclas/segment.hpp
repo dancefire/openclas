@@ -117,29 +117,17 @@ namespace openclas {
 	public:
 		typedef std::map< size_t, std::vector<WordInformation> > out_table_type;
 		typedef std::vector<shared_ptr<WordGraph> > graph_list_type;
+		typedef struct {
+			double weight;
+			std::vector<WordInformation> words;
+		} segment_type;
 	public:
-		static std::vector<std::wstring> segment_to_string(const std::wstring& text, Dictionary& dict, int k = 1)
-		{
-			return segment_to_string(text, segment(text, dict, k));
-		}
-
-		static std::vector<std::wstring> segment_to_string(const std::wstring& text, std::vector<std::vector<WordInformation> >& segments_list)
-		{
-			std::vector<std::wstring> results;
-			for (size_t i = 0; i < segments_list.size(); ++i)
-			{
-				std::wstring result(segment_to_string(text, segments_list[i]));
-				results.push_back(result);
-			}
-			return results;
-		}
-
-		static std::wstring segment_to_string(const std::wstring& text, std::vector<WordInformation>& segs)
+		static std::wstring segment_to_string(const std::wstring& text, segment_type& seg)
 		{
 			std::wostringstream oss;
-			for(std::vector<WordInformation>::iterator iSeg = segs.begin(); iSeg != segs.end(); ++iSeg)
+			for(std::vector<WordInformation>::iterator iSeg = seg.words.begin(); iSeg != seg.words.end(); ++iSeg)
 			{
-				if (iSeg != segs.begin())
+				if (iSeg != seg.words.begin())
 					oss << " ";
 				if (iSeg->tag != WORD_TAG_BEGIN && iSeg->tag != WORD_TAG_END) {
 					std::wstring word(text.begin() + iSeg->offset, text.begin() + iSeg->offset + iSeg->length);
@@ -149,65 +137,23 @@ namespace openclas {
 			return oss.str();
 		}
 
-		static std::vector<std::vector<WordInformation> > segment(const std::wstring& text, const Dictionary& dict, int k = 1)
-		{
-			graph_list_type graphs = create(text, dict);
-			std::vector<std::vector<WordInformation> > final_segments_list(k);
 
-			//	TODO: find the overall next path, currently just to show something different.
+		static std::vector<segment_type> segment(const std::wstring& text, const Dictionary& dict, int k = 1)
+		{
+			//	create sub-graphs based on given text.
+			graph_list_type graphs = create_graphs(text, dict);
+
+			return segment(graphs, k);
+		}
+
+		static std::vector<segment_type> segment(graph_list_type& graphs, int k = 1)
+		{
+			//	calculate k-shortest paths for each graph.
+			std::vector<std::vector<path_type> > subgraph_path_lists(graphs.size());
 			for (size_t i = 0; i < graphs.size(); ++i)
 			{
-				std::vector<std::vector<WordInformation> > segments_list(find_k_best_segments(*graphs[i], k));
-				for (int j = 0; j < k; ++j)
-				{
-					std::vector<WordInformation>& final_segments = final_segments_list.at(j);
-					std::vector<WordInformation>& segments = segments_list.at(0);
-					if (j < static_cast<int>(segments_list.size()))
-						segments = segments_list.at(j);
-					else
-						segments = segments_list.at(segments_list.size()-1);	//	last one
-
-					final_segments.insert(final_segments.end(), segments.begin(), segments.end());
-				}
-			}
-
-			int list_count = static_cast<int>(final_segments_list.size());
-			for (int i = list_count-1; i > 0; --i)
-			{
-				if (final_segments_list[i] == final_segments_list[i-1])
-					final_segments_list.erase(final_segments_list.begin()+i);
-			}
-
-			return final_segments_list;
-		}
-
-		static std::vector<WordInformation> get_words_from_path(WordGraph& graph, path_type& result)
-		{
-			std::vector<WordInformation> segments;
-			//	get the WordInformation
-			property_map<WordGraph, vertex_desc_t>::type
-				vprop_map = get(vertex_desc, graph);
-			for (std::vector<size_t>::iterator iPath = result.nodelist.begin(); iPath != result.nodelist.end(); ++iPath)
-			{
-				std::vector<size_t>::iterator iNextPath = iPath;
-				if (++iNextPath != result.nodelist.end())
-					segments.push_back(vprop_map[*iPath]);
-			}
-			return segments;
-		}
-
-		static std::vector<std::vector<WordInformation>> find_k_best_segments(WordGraph& graph, int k = 1)
-		{
-			std::vector<std::vector<WordInformation>> segments_list;
-
-			if (k == 1) {
-				//	get the best path
-				graph_property<WordGraph, graph_terminal_t>::type
-					gterminal = get_property(graph, graph_terminal);
-				path_type result;
-				dag_shortest_path(graph, gterminal.first, gterminal.second, result);
-				segments_list.push_back(get_words_from_path(graph, result));
-			}else{
+				std::vector<path_type>& segments_list = subgraph_path_lists[i];
+				WordGraph& graph = *graphs[i];
 				//	get the k best path
 				graph_property<WordGraph, graph_terminal_t>::type
 					gterminal = get_property(graph, graph_terminal);
@@ -217,11 +163,38 @@ namespace openclas {
 				//	Get words for each result
 				for (std::vector<path_type>::iterator iPath = results.begin(); iPath != results.end(); ++iPath)
 				{
-					segments_list.push_back(get_words_from_path(graph, *iPath));
+					segments_list.push_back(*iPath);
 				}
 			}
 
-			return segments_list;
+			//	construct overall k-shortest paths.
+			std::vector<std::vector<path_type> > overall_k_shortest_paths = get_overall_k_shortest_path(subgraph_path_lists, k);
+
+			//	construct k-shortest path in segment_type list;
+			std::vector<segment_type> segs;
+			for(size_t i = 0; i < overall_k_shortest_paths.size(); ++i)
+			{
+				segment_type seg;
+				seg.weight = 0;
+				for (size_t j = 0; j < overall_k_shortest_paths[i].size(); ++j)
+				{
+					path_type& path = overall_k_shortest_paths[i][j];
+					seg.weight += path.weight;
+
+					//	get the WordInformation
+					property_map<WordGraph, vertex_desc_t>::type
+						vprop_map = get(vertex_desc, *graphs[j]);
+					for (std::vector<size_t>::iterator iPath = path.nodelist.begin(); iPath != path.nodelist.end(); ++iPath)
+					{
+						std::vector<size_t>::iterator iNextPath = iPath;
+						if (++iNextPath != path.nodelist.end())
+							seg.words.push_back(vprop_map[*iPath]);
+					}
+				}
+				segs.push_back(seg);
+			}
+
+			return segs;
 		}
 
 		static graph_list_type create_graphs(const wstring& text, const Dictionary& dict)
@@ -576,6 +549,42 @@ namespace openclas {
 			}
 			return word;
 		}
+		static std::vector<std::vector<path_type> > get_overall_k_shortest_path(std::vector<std::vector<path_type> >& subgraph_path_lists, int k = 1)
+		{
+			std::vector<std::vector<path_type> > overall_k_shortest_paths;
+			size_t subgraph_count = subgraph_path_lists.size();
+			std::vector<size_t> index_list(subgraph_count, 0);
+
+			for (int a = 0; a < k; ++a)
+			{
+				double min_weight = std::numeric_limits<double>::max();
+				size_t min_index = 0;
+				bool found_next = false;
+				//	fill the j-th best path in
+				std::vector<path_type> path_list;
+				for (size_t i = 0; i < subgraph_count; ++i)
+				{
+					size_t index = index_list[i];
+					path_list.push_back(subgraph_path_lists[i][index]);
+					//	find which sub-graph contains the next candidate path.
+					if ((index+1) < subgraph_path_lists[i].size() && subgraph_path_lists[i][index+1].weight < min_weight)
+					{
+						min_weight = subgraph_path_lists[i][index+1].weight;
+						min_index = i;
+						found_next = true;
+					}
+				}
+				overall_k_shortest_paths.push_back(path_list);
+				//	if nothing found, then there is no more candidates path.
+				if (found_next) {
+					++index_list[min_index];
+				}else{
+					break;
+				}
+			}
+			return overall_k_shortest_paths;
+		}
+
 	};
 }
 //	_OPENCLAS_SEGMENT_HPP_

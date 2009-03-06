@@ -54,7 +54,7 @@ SUCH DAMAGE.
 #define _OPENCLAS_UNIT_TEST_K_SHORTEST_PATH_HPP_
 
 #include <openclas/k_shortest_path.hpp>
-#include <openclas/builder.hpp>
+#include <openclas/segment.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/test/floating_point_comparison.hpp>
 
