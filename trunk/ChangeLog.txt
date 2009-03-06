@@ -1,3 +1,17 @@
+2009-03-06  Tao Wang  <dancefire@gmail.com>
+
+	* cpp/include/openclas/segment.hpp:
+		Add Segment::segment_type.
+		Rewrite segment_to_string().
+		Rewrite segment() with 2 overloads.
+		Change get_overall_k_shortest_path() to protected.
+	* cpp/src/unit_test/unit_test.cpp: Remove include of unit_test_builder.hpp.
+	* cpp/src/unit_test/unit_test_k_shortest_path.hpp: Should include segment.hpp, rather than builder.hpp.
+	* cpp/src/unit_test/unit_test_segment.hpp:
+		Minor modification of test_segment().
+		Add new testcases for Segment::segment() and Segment::segment_to_string().
+	* cpp/src/unit_test/unit_test_utility.hpp: Commented testcases for locale GB2312, which is never used.
+
 2009-03-05  Tao Wang  <dancefire@gmail.com>
 
 	* cpp/include/openclas/builder.hpp:

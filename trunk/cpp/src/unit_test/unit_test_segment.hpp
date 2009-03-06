@@ -101,12 +101,12 @@ void dict_add_special_word(Dictionary& dict, enum WordTag tag, int weight)
 
 void test_segment(std::wofstream& out, Dictionary& dict, int k, const std::wstring& text)
 {
-	std::vector<std::wstring> results = Segment::segment_to_string(text, dict, k);
-
+	std::vector<Segment::segment_type> segs = Segment::segment(text, dict, k);
+	
 	out << "Original text: " << text << std::endl;
-	for (size_t i = 0; i < results.size(); ++i)
+	for (size_t i = 0; i < segs.size(); ++i)
 	{
-		out << "[" << i << "] Segment text : " << results[i] << std::endl;
+		out << "[" << i << "] Segment text : " << Segment::segment_to_string(text, segs[i]) << "\t(" << segs[i].weight << ")" << std::endl;
 	}
 	out << std::endl;
 }
@@ -271,7 +271,7 @@ BOOST_AUTO_TEST_CASE( test_Segment_create_empty )
 	construct_dictionary(dict);
 
 	const wchar_t* empty_text = L"";
-	Segment::graph_list_type empty_graph_list = Segment::create(empty_text, dict);
+	Segment::graph_list_type empty_graph_list = Segment::create_graphs(empty_text, dict);
 	BOOST_CHECK_EQUAL( empty_graph_list.size(), 0 );
 }
 
@@ -281,7 +281,7 @@ BOOST_AUTO_TEST_CASE( test_Segment_create_english_string )
 	construct_dictionary(dict);
 
 	const wchar_t* text = L"English Words";
-	Segment::graph_list_type graph_list = Segment::create(text, dict);
+	Segment::graph_list_type graph_list = Segment::create_graphs(text, dict);
 	BOOST_REQUIRE_EQUAL( graph_list.size(), 1 );
 	WordGraph& graph = *graph_list.at(0);
 	BOOST_REQUIRE_EQUAL( num_vertices(graph), 5 );
@@ -311,7 +311,7 @@ BOOST_AUTO_TEST_CASE( test_Segment_create_single_sentence )
 	property_map<WordGraph, vertex_desc_t>::type vprop_map;
 	graph_property<WordGraph, graph_terminal_t>::type gterminal;
 
-	Segment::graph_list_type graph_list = Segment::create(text, dict);
+	Segment::graph_list_type graph_list = Segment::create_graphs(text, dict);
 	BOOST_REQUIRE_EQUAL( graph_list.size(), 3 );
 
 	//	"19９5年底ｇoｏgｌｅ在1"
@@ -368,6 +368,34 @@ BOOST_AUTO_TEST_CASE( test_Segment_create_single_sentence )
 	BOOST_CHECK_EQUAL( vprop_map[1].length, 1 );
 	//	[End]
 	BOOST_CHECK_EQUAL( vprop_map[gterminal.second].tag, WORD_TAG_END );
+
+	/***************************************************************
+	 *
+	 *		Test segment(graphs, k) and segment_to_string()
+	 *
+	 ***************************************************************/
+	std::vector<Segment::segment_type> segs = Segment::segment(graph_list, 3);
+	BOOST_REQUIRE_EQUAL( segs.size(), 3 );
+
+	BOOST_CHECK_CLOSE( segs[0].weight, 0., 0.00001 );
+	BOOST_CHECK( Segment::segment_to_string(text, segs[0]) ==
+		L"19９5/m 年底/ ｇoｏgｌｅ/nx 在/ 1/m 月份/n 大会/n 上/ 说/ 的确/d 实在/ 理/ 。/w" );
+
+	BOOST_CHECK_CLOSE( segs[1].weight, 0., 0.00001 );
+	BOOST_CHECK( Segment::segment_to_string(text, segs[1]) ==
+		L"19９5/m 年底/ ｇoｏgｌｅ/nx 在/ 1/m 月份/n 大会/n 上/ 说/ 的/ 确实/ 在理/a 。/w" );
+
+	BOOST_CHECK_CLOSE( segs[2].weight, 0., 0.00001 );
+	BOOST_CHECK( Segment::segment_to_string(text, segs[2]) ==
+		L"19９5/m 年底/ ｇoｏgｌｅ/nx 在/ 1/m 月份/n 大会/n 上/ 说/ 的确/d 实/ 在理/a 。/w" );
+
+	wcout.imbue(locale_utf8);
+	wcout << "Original text: " << text << std::endl;
+	for (size_t i = 0; i < segs.size(); ++i)
+	{
+		wcout << "[" << i << "] Segment text : " << Segment::segment_to_string(text, segs[i]) << "\t(" << segs[i].weight << ")" << std::endl;
+	}
+	wcout << std::endl;
 }
 
 BOOST_AUTO_TEST_CASE( test_Segment_segment_single_sentence )
