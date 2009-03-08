@@ -58,6 +58,9 @@ SUCH DAMAGE.
 #include <fstream>
 #include <iostream>
 
+//#include <boost/iostreams/filtering_stream.hpp>
+//#include <boost/iostreams/filter/gzip.hpp>
+
 namespace openclas {
 
 	namespace ict {
@@ -127,6 +130,12 @@ namespace openclas {
 
 		static enum WordTag get_tag_from_pos(int pos)
 		{
+			if (pos == 1 || pos == 100)
+				return WORD_TAG_BEGIN;
+
+			if (pos == 4 || pos == 101)
+				return WORD_TAG_END;
+
 			std::string pos_name = get_name_from_pos(pos);
 			std::wstring tag_string(widen(pos_name, locale_gbk));
 			for (size_t i = 0; i < WORD_TAG_COUNT; ++i)
@@ -322,6 +331,8 @@ namespace openclas {
 			int key = 0;
 			int total_frequency = 0;
 
+			//	Read the data
+
 			in.read(reinterpret_cast<char*>(symbol_table.get()), sizeof(int) * symbol_count);
 			if (in.bad())
 				throw std::runtime_error("Cannot read symbol table.");
@@ -342,34 +353,30 @@ namespace openclas {
 			if (in.bad())
 				throw std::runtime_error("Cannot read tag_transit_freq.");
 
-			
+
+			//	Get symbol tag mapping
+			scoped_array<int> tags_index(new int[symbol_count]);
+			for (int i = 0; i < symbol_count; ++i)
+			{
+				enum WordTag tag = get_tag_from_pos(symbol_table[i]);
+				std::cout << "[" << i << "] " << symbol_table[i] << " : " << narrow(WORD_TAG_NAME[tag], locale_gbk) << std::endl;
+				tags_index[i] = tag;
+			}
+
+			//	Fill in the dictionary
 			dict.init_tag_dict(symbol_count);
 			dict.set_tag_total_weight(total_frequency);
 			for (int i = 0; i < symbol_count; ++i)
 			{
-				dict.add_tag_weight(i, tag_freq[i]);
+				int tag_i = tags_index[i];
+				dict.add_tag_weight(tag_i, tag_freq[i]);
 				int offset = i * symbol_count;
 				for (int j = 0; j < symbol_count; ++j)
 				{
-					dict.add_tag_transit_weight(i, j, tag_transit_freq[offset + j]);
+					int tag_j = tags_index[j];
+					dict.add_tag_transit_weight(tag_i, tag_j, tag_transit_freq[offset + j]);
 				}
 			}
-
-			for (int i = 0; i < symbol_count; ++i)
-			{
-				if (symbol_table[i] > 256) {
-					enum WordTag tag = get_tag_from_pos(symbol_table[i]);
-					if (tag != WORD_TAG_UNKNOWN)
-					{
-						std::cerr << get_name_from_pos(symbol_table[i]);
-					}else{
-						//	Found unknown POS
-						std::cerr << symbol_table[i];
-					}
-					std::cerr << " ";
-				}
-			}
-			std::cerr << endl;
 		}
 
 
@@ -403,6 +410,12 @@ namespace openclas {
 	}	//	namespace ict
 
 	const unsigned short DICT_MAGIC_CODE = 'D' << 8 | 'C';
+
+	const char* unigram_type_name = ".unigram";
+	const char* bigram_type_name = ".bigram";
+	const char* tag_type_name = ".tag";
+	const char* text_ext_name = ".txt";
+	const char* gzip_ext_name = ".gz";
 
 	struct DictHeader{
 		unsigned short magic_code;
@@ -540,6 +553,239 @@ namespace openclas {
 			}
 		}
 	}
+
+	static void save_to_txt_stream(const Dictionary& dict, std::wostream& tag_out, std::wostream& unigram_out, std::wostream& bigram_out, bool save_bigram = true)
+	{
+		//	write tag
+		{
+			//	tag count
+			size_t tag_count = dict.tags().size();
+			tag_out << tag_count << std::endl;
+			//	unigram tag weight
+
+			for (size_t i = 0; i < tag_count; ++i)
+			{
+				if (i != 0)
+					tag_out << " ";
+				tag_out << static_cast<int>(dict.get_tag_weight(i));
+			}
+			tag_out << std::endl;
+			//	bigram tag weight
+			for (size_t i = 0; i < tag_count; ++i)
+			{
+				for (size_t j = 0; j < tag_count; ++j)
+				{
+					if (j != 0)
+						tag_out << " ";
+					tag_out << static_cast<int>(dict.get_tag_transit_weight(i, j));
+				}
+				tag_out << std::endl;
+			}
+		}
+		//	write unigram & bigram
+		{
+			size_t word_count = dict.words().size();
+			for (size_t i = 0; i < word_count; ++i)
+			{
+				DictEntry* entry = dict.words().at(i);
+				for (std::vector<TagEntry>::iterator iter = entry->tags.begin(); iter != entry->tags.end(); ++iter)
+				{
+					unigram_out << entry->word << " " << iter->tag << " " << iter->weight << std::endl;
+				}
+				if (save_bigram)
+				{
+					for (DictEntry::transit_type::iterator iter = entry->forward.begin(); iter != entry->forward.end(); ++iter)
+					{
+						bigram_out << entry->word << " " << iter->first << " " << static_cast<int>(iter->second) << std::endl;
+					}
+				}
+			}
+		}
+	}
+
+	static void load_from_txt_stream(Dictionary& dict, std::wistream& tag_in, std::wistream& unigram_in, std::wistream& bigram_in, bool load_bigram = true)
+	{
+		//	load tag
+		{
+			//	tag count
+			size_t tag_count;
+			tag_in >> tag_count;
+			dict.init_tag_dict(tag_count);
+
+			//	unigram tag weight
+			for (size_t i = 0; i < tag_count; ++i)
+			{
+				int weight;
+				tag_in >> weight;
+				dict.add_tag_weight(i, weight);
+			}
+			//	bigram tag weight
+			for (size_t i = 0; i < tag_count; ++i)
+			{
+				for (size_t j = 0; j < tag_count; ++j)
+				{
+					int weight;
+					tag_in >> weight;
+					dict.add_tag_transit_weight(i, j, weight);
+				}
+			}
+		}
+		//	load unigram & bigram
+		{
+			while (unigram_in.good())
+			{
+				std::wstring word;
+				int tag;
+				int weight;
+
+				unigram_in >> word;
+				unigram_in >> tag;
+				unigram_in >> weight;
+
+				DictEntry* entry = dict.add_word(word);
+				entry->add(tag, weight);
+			}
+		}
+		if (load_bigram) {
+			while (bigram_in.good())
+			{
+				std::wstring word1;
+				std::wstring word2;
+				int weight;
+
+				bigram_in >> word1;
+				bigram_in >> word2;
+				bigram_in >> weight;
+
+				DictEntry* entry = dict.add_word(word1);
+				entry->forward[word2] = weight;
+			}
+		}
+	}
+
+	static void save_to_txt_file(const Dictionary& dict, const char* base_name, bool save_bigram = true)
+	{
+		std::wofstream tag_out;
+		{
+			std::ostringstream oss;
+			oss << base_name << tag_type_name << text_ext_name;
+			tag_out.open(oss.str().c_str(), ios::out);
+			tag_out.imbue(locale_utf8);
+		}
+		std::wofstream unigram_out;
+		{
+			std::ostringstream oss;
+			oss << base_name << unigram_type_name << text_ext_name;
+			unigram_out.open(oss.str().c_str(), ios::out);
+			unigram_out.imbue(locale_utf8);
+		}
+		std::wofstream bigram_out;
+		if (save_bigram) {
+			std::ostringstream oss;
+			oss << base_name << bigram_type_name << text_ext_name;
+			bigram_out.open(oss.str().c_str(), ios::out);
+			bigram_out.imbue(locale_utf8);
+		}
+
+		save_to_txt_stream(dict, tag_out, unigram_out, bigram_out, save_bigram);
+	}
+
+	static void load_from_txt_file(Dictionary& dict, const char* base_name, bool load_bigram = true)
+	{
+		std::wifstream tag_in;
+		{
+			std::ostringstream oss;
+			oss << base_name << tag_type_name << text_ext_name;
+			tag_in.open(oss.str().c_str(), ios::in);
+			tag_in.imbue(locale_utf8);
+		}
+		std::wifstream unigram_in;
+		{
+			std::ostringstream oss;
+			oss << base_name << unigram_type_name << text_ext_name;
+			unigram_in.open(oss.str().c_str(), ios::in);
+			unigram_in.imbue(locale_utf8);
+		}
+		std::wifstream bigram_in;
+		if (load_bigram) {
+			std::ostringstream oss;
+			oss << base_name << bigram_type_name << text_ext_name;
+			bigram_in.open(oss.str().c_str(), ios::in);
+			bigram_in.imbue(locale_utf8);
+		}
+
+		load_from_txt_stream (dict, tag_in, unigram_in, bigram_in, load_bigram);
+	}
+
+	//static void save_to_gz_file(const Dictionary& dict, std::string base_name, bool save_bigram = true)
+	//{
+	//	using namespace boost::iostreams;
+
+	//	std::string tag_filename;
+	//	std::string unigram_filename;
+	//	std::string bigram_filename;
+	//	{
+	//		std::ostringstream oss;
+	//		oss << base_name << tag_type_name << text_ext_name;
+	//		tag_filename = oss.str();
+	//		oss.clear();
+	//		oss << base_name << unigram_type_name << text_ext_name;
+	//		unigram_filename = oss.str();
+	//		oss << base_name << bigram_type_name << text_ext_name;
+	//		bigram_filename = oss.str();
+	//	}
+
+	//	std::ofstream tag_file(tag_filename.c_str(), ios::out | ios::binary);
+	//	filtering_ostream tag_out;
+	//	//tag_out.imbue(locale_utf8);
+	//	tag_out.push(gzip_compressor());
+	//	tag_out.push(tag_file);
+
+	//	std::wofstream unigram_file(unigram_filename.c_str(), ios::out | ios::binary);
+	//	filtering_wostream unigram_out;
+	//	unigram_out.imbue(locale_utf8);
+	//	unigram_out.push(gzip_compressor());
+	//	unigram_out.push(unigram_file);
+	//
+	//	std::wofstream bigram_file(bigram_filename.c_str(), ios::out | ios::binary);
+	//	filtering_wostream bigram_out;
+	//	bigram_out.imbue(locale_utf8);
+	//	bigram_out.push(gzip_compressor());
+	//	bigram_out.push(bigram_file);
+	//
+	//	save_to_txt_stream(dict, tag_out, unigram_out, bigram_out, save_bigram);
+
+	//}
+
+	//static void load_from_gz_file(Dictionary& dict, const char* base_name, bool load_bigram = true)
+	//{
+	//	using namespace boost::iostreams;
+
+	//	std::wifstream tag_in;
+	//	{
+	//		std::ostringstream oss;
+	//		oss << base_name << tag_type_name << text_ext_name;
+	//		tag_in.open(oss.str().c_str(), ios::in);
+	//		tag_in.imbue(locale_utf8);
+	//	}
+	//	std::wifstream unigram_in;
+	//	{
+	//		std::ostringstream oss;
+	//		oss << base_name << unigram_type_name << text_ext_name;
+	//		unigram_in.open(oss.str().c_str(), ios::in);
+	//		unigram_in.imbue(locale_utf8);
+	//	}
+	//	std::wifstream bigram_in;
+	//	if (load_bigram) {
+	//		std::ostringstream oss;
+	//		oss << base_name << bigram_type_name << text_ext_name;
+	//		bigram_in.open(oss.str().c_str(), ios::in);
+	//		bigram_in.imbue(locale_utf8);
+	//	}
+
+	//	load_from_txt_stream (dict, tag_in, unigram_in, bigram_in, load_bigram);
+	//}
+
 }	//	namespace openclas
 
 //	_OPENCLAS_SERIALIZATION_HPP_

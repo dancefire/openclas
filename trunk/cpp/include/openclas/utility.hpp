@@ -82,6 +82,7 @@ namespace openclas {
 	*
 	*  Use PKU Tag definition with minor modification.
 	*	Add WORD_TAG_NX for english words
+	*	Add bg, mg, rg, ud, ug, uj, ul, uv, uz, yg based on existing POS tags in ICTCLAS dictionary.
 	*	Add WORD_TAG_UNKNOWN, WORD_TAG_BEGIN, WORD_TAG_END for system.
 	*
 	*  See reference:
@@ -95,6 +96,7 @@ namespace openclas {
 		WORD_TAG_AD,	//	副形词	直接作状语的形容词。形容词代码a和副词代码d并在一起。
 		WORD_TAG_AN,	//	名形词	具有名词功能的形容词。形容词代码a和名词代码N并在一起。
 		WORD_TAG_B,	//	区别词	取汉字“别”的声母。
+		WORD_TAG_BG,
 		WORD_TAG_C,	//	连词		取英语连词conjunction的第1个字母。
 		WORD_TAG_DG,	//	副语素	副词性语素。副词代码为d，语素代码g前面置以d。
 		WORD_TAG_D,	//	副词		取adverb的第2个字母，因其第1个字母已用于形容词。
@@ -107,6 +109,7 @@ namespace openclas {
 		WORD_TAG_K,	//	后接成分
 		WORD_TAG_L,	//	习用语	习用语尚未成为成语，有点“临时性”，取“临”的声母。
 		WORD_TAG_M,	//	数词		取英语numeral的第3个字母，n，u已有他用。
+		WORD_TAG_MG,
 		WORD_TAG_NG,	//	名语素	名词性语素。名词代码为n，语素代码g前面置以n。
 		WORD_TAG_N,	//	名词		取英语名词noun的第1个字母。
 		WORD_TAG_NR,	//	人名		名词代码n和“人(ren)”的声母并在一起。
@@ -118,10 +121,17 @@ namespace openclas {
 		WORD_TAG_P,	//	介词		取英语介词prepositional的第1个字母。
 		WORD_TAG_Q,	//	量词		取英语quantity的第1个字母。
 		WORD_TAG_R,	//	代词		取英语代词pronoun的第2个字母,因p已用于介词。
+		WORD_TAG_RG,
 		WORD_TAG_S,	//	处所词	取英语space的第1个字母。
 		WORD_TAG_TG,	//	时语素	时间词性语素。时间词代码为t,在语素的代码g前面置以t。
 		WORD_TAG_T,	//	时间词	取英语time的第1个字母。
 		WORD_TAG_U,	//	助词		取英语助词auxiliary 的第2个字母,因a已用于形容词。
+		WORD_TAG_UD,
+		WORD_TAG_UG,
+		WORD_TAG_UJ,
+		WORD_TAG_UL,
+		WORD_TAG_UV,
+		WORD_TAG_UZ,
 		WORD_TAG_VG,	//	动语素	动词性语素。动词代码为v。在语素的代码g前面置以v。
 		WORD_TAG_V,	//	动词		取英语动词verb的第一个字母。
 		WORD_TAG_VD,	//	副动词	直接作状语的动词。动词和副词的代码并在一起。
@@ -129,6 +139,7 @@ namespace openclas {
 		WORD_TAG_W,	//	标点符号
 		WORD_TAG_X,	//	非语素字	非语素字只是一个符号，字母x通常用于代表未知数、符号。
 		WORD_TAG_Y,	//	语气词	取汉字“语”的声母。
+		WORD_TAG_YG,
 		WORD_TAG_Z,	//	状态词	取汉字“状”的声母的前一个字母。
 
 		WORD_TAG_BEGIN,	//	句子开始(特殊标记)
@@ -141,6 +152,7 @@ namespace openclas {
 	*
 	*  Use PKU Tag definition with minor modification.
 	*	Add L"nx"(WORD_TAG_NX) for english words
+	*	Add bg, mg, rg, ud, ug, uj, ul, uv, uz, yg based on existing POS tags in ICTCLAS dictionary.
 	*	Add L""(WORD_TAG_UNKNOWN), L"BEGIN"(WORD_TAG_BEGIN), L"END"(WORD_TAG_END) for system.
 	*
 	*  See reference:
@@ -155,6 +167,7 @@ namespace openclas {
 		L"ad",	//	副形词	直接作状语的形容词。形容词代码a和副词代码d并在一起。
 		L"an",	//	名形词	具有名词功能的形容词。形容词代码a和名词代码n并在一起。
 		L"b",	//	区别词	取汉字“别”的声母。
+		L"bg",
 		L"c",	//	连词		取英语连词conjunction的第1个字母。
 		L"dg",	//	副语素	副词性语素。副词代码为d，语素代码g前面置以D。
 		L"d",	//	副词		取adverb的第2个字母，因其第1个字母已用于形容词。
@@ -167,6 +180,7 @@ namespace openclas {
 		L"k",	//	后接成分
 		L"l",	//	习用语	习用语尚未成为成语，有点“临时性”，取“临”的声母。
 		L"m",	//	数词		取英语numeral的第3个字母，n，u已有他用。
+		L"mg",
 		L"ng",	//	名语素	名词性语素。名词代码为n，语素代码ｇ前面置以N。
 		L"n",	//	名词		取英语名词noun的第1个字母。
 		L"nr",	//	人名		名词代码n和“人(ren)”的声母并在一起。
@@ -178,10 +192,17 @@ namespace openclas {
 		L"p",	//	介词		取英语介词prepositional的第1个字母。
 		L"q",	//	量词		取英语quantity的第1个字母。
 		L"r",	//	代词		取英语代词pronoun的第2个字母,因p已用于介词。
+		L"rg",
 		L"s",	//	处所词	取英语space的第1个字母。
 		L"tg",	//	时语素	时间词性语素。时间词代码为t,在语素的代码g前面置以T。
 		L"t",	//	时间词	取英语time的第1个字母。
 		L"u",	//	助词		取英语助词auxiliary 的第2个字母,因a已用于形容词。
+		L"ud",
+		L"ug",
+		L"uj",
+		L"ul",
+		L"uv",
+		L"uz",
 		L"vg",	//	动语素	动词性语素。动词代码为v。在语素的代码g前面置以V。
 		L"v",	//	动词		取英语动词verb的第一个字母。
 		L"vd",	//	副动词	直接作状语的动词。动词和副词的代码并在一起。
@@ -189,6 +210,7 @@ namespace openclas {
 		L"w",	//	标点符号
 		L"x",	//	非语素字	非语素字只是一个符号，字母x通常用于代表未知数、符号。
 		L"y",	//	语气词	取汉字“语”的声母。
+		L"yg",
 		L"z",	//	状态词	取汉字“状”的声母的前一个字母。
 
 		L"BEGIN",	//	句子开始
