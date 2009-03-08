@@ -1,3 +1,12 @@
+2009-03-09  Tao Wang  <dancefire@gmail.com>
+
+	* cpp/include/openclas/serialization.hpp:
+		get_tag_from_pos() add recognition for WORD_TAG_BEGIN, WORD_TAG_END.
+		load_tags_from_ctx() add symbol_table handling.
+		Add save_to_txt_file() and load_from_txt_file().
+	* cpp/include/openclas/utility.hpp:
+		Add bg, mg, rg, ud, ug, uj, ul, uv, uz, yg based on existing POS tags in ICTCLAS dictionary.
+
 2009-03-06  Tao Wang  <dancefire@gmail.com>
 
 	* cpp/include/openclas/dictionary.hpp: Add longest_word_length() and tag_total_weight().
