@@ -61,44 +61,6 @@ BOOST_AUTO_TEST_SUITE( segment )
 
 using namespace openclas;
 
-static const wchar_t* sample[] = {
-	L"",
-	L"English Words",
-	L"他说的确实在理。",
-	L"19９5年底ｇoｏgｌｅ在1月份大会上说的确实在理。",
-	L"这个门的把手坏了好几天了",
-	L"你把手抬高一点儿",
-	L"这个动作的要领其实很简单",
-	L"下午我要领工资，恐怕赶不回去",
-	L"办独生子女证，一对夫妻一次性交一百元钱",
-	L"我知道你不知道我知道你不知道我知道你不知道",
-	L"已经分房和尚未分房的同志",
-	L"馆内陈列着周恩来和邓颖超生前使用过的物品",
-	L"张华平喜欢看书",
-	L"舒展喜欢看书"
-};
-
-const int sample_count = 14;
-
-
-DictEntry* dict_add_word(Dictionary& dict, const std::wstring& word, int tag, int weight)
-{
-	DictEntry* entry = dict.add_word(word);
-	entry->add(tag, weight);
-	return entry;
-}
-
-void dict_add_word_transit(Dictionary& dict, const std::wstring& word, const std::wstring& word_next, int weight)
-{
-	DictEntry* entry = dict.add_word(word);
-	entry->forward[word_next] = weight;
-}
-
-void dict_add_special_word(Dictionary& dict, enum WordTag tag, int weight)
-{
-	dict_add_word(dict, get_special_word_string(tag), tag, weight);
-}
-
 void test_segment(std::wofstream& out, Dictionary& dict, int k, const std::wstring& text)
 {
 	std::vector<Segment::segment_type> segs = Segment::segment(text, dict, k);
@@ -111,164 +73,10 @@ void test_segment(std::wofstream& out, Dictionary& dict, int k, const std::wstri
 	out << std::endl;
 }
 
-void construct_dictionary(Dictionary& dict)
-{
-	dict_add_special_word(dict, WORD_TAG_BEGIN, 50610);
-	dict_add_special_word(dict, WORD_TAG_END,	50610);
-	dict_add_special_word(dict, WORD_TAG_W,	50610);	//	Punctuation as Terminal of each segment
-	dict_add_special_word(dict, WORD_TAG_NX, 459);	//	String
-	dict_add_special_word(dict, WORD_TAG_NS, 964);	//	Place
-	dict_add_special_word(dict, WORD_TAG_NR, 16294);	//	Person Name
-	dict_add_special_word(dict, WORD_TAG_T, 9716);	//	Date/Time
-	dict_add_special_word(dict, WORD_TAG_M, 17316);	//	Number
-	dict_add_special_word(dict, WORD_TAG_N, 4537);	//	Item name
-	dict_add_special_word(dict, WORD_TAG_NT, 285);	//	Organization Name
-	dict_add_special_word(dict, WORD_TAG_NZ, 804);	//	Terminology
-
-	DictEntry* entry;
-
-	entry = dict.add_word(L"年");
-	entry->add(WORD_TAG_A, 0);
-	entry->add(WORD_TAG_F, 0);
-	entry->add(WORD_TAG_M, 0);
-	entry->add(WORD_TAG_N, 95);
-	entry->add(WORD_TAG_NG, 0);
-	entry->add(WORD_TAG_NR, 0);
-	entry->add(WORD_TAG_Q, 2421);
-	entry->add(WORD_TAG_T, 0);
-
-	entry = dict.add_word(L"年底");
-	entry->add(WORD_TAG_F, 0);
-	entry->add(WORD_TAG_T, 46);
-
-	entry = dict.add_word(L"底");
-	entry->add(WORD_TAG_F, 149);
-	entry->add(WORD_TAG_N, 5);
-	entry->add(WORD_TAG_NG, 0);
-	entry->add(WORD_TAG_U, 0);
-
-	entry = dict.add_word(L"在");
-	entry->add(WORD_TAG_C, 0);
-	entry->add(WORD_TAG_D, 284);
-	entry->add(WORD_TAG_F, 0);
-	entry->add(WORD_TAG_P, 11481);
-	entry->add(WORD_TAG_R, 0);
-	entry->add(WORD_TAG_V, 257);
-
-	entry = dict.add_word(L"月");
-	entry->add(WORD_TAG_N, 295);
-	entry->add(WORD_TAG_NR, 0);
-
-	entry = dict.add_word(L"月份");
-	entry->add(WORD_TAG_N, 0);
-
-	entry = dict.add_word(L"份");
-	entry->add(WORD_TAG_NG, 1);
-	entry->add(WORD_TAG_Q, 157);
-
-	entry = dict.add_word(L"大");
-	entry->add(WORD_TAG_A, 2071);
-	entry->add(WORD_TAG_AD, 0);
-	entry->add(WORD_TAG_AN, 2);
-	entry->add(WORD_TAG_D, 158);
-	entry->add(WORD_TAG_J, 5);
-	entry->add(WORD_TAG_N, 0);
-	entry->add(WORD_TAG_NG, 8);
-	entry->add(WORD_TAG_V, 0);
-
-	entry = dict.add_word(L"大会");
-	entry->add(WORD_TAG_N, 100);
-
-	entry = dict.add_word(L"会");
-	entry->add(WORD_TAG_N, 12);
-	entry->add(WORD_TAG_V, 864);
-	entry->add(WORD_TAG_VN, 0);
-	entry->forward[L"上"] = 1;
-
-	entry = dict.add_word(L"会上");
-	entry->add(WORD_TAG_S, 0);
-	entry->add(WORD_TAG_T, 66);
-
-	entry = dict.add_word(L"上");
-	entry->add(WORD_TAG_F, 3049);
-	entry->add(WORD_TAG_J, 1);
-	entry->add(WORD_TAG_N, 0);
-	entry->add(WORD_TAG_NG, 1);
-	entry->add(WORD_TAG_NR, 0);
-	entry->add(WORD_TAG_U, 0);
-	entry->add(WORD_TAG_V, 745);
-	entry->forward[L"说"] = 64;
-
-	entry = dict.add_word(L"他");
-	entry->add(WORD_TAG_N, 2);
-	entry->add(WORD_TAG_R, 2823);
-	entry->add(WORD_TAG_V, 0);
-	entry->forward[L"说"] = 355;
-
-	entry = dict.add_word(L"说");
-	entry->add(WORD_TAG_N, 1);
-	entry->add(WORD_TAG_NG, 6);
-	entry->add(WORD_TAG_V, 2549);
-	entry->add(WORD_TAG_VN, 0);
-	entry->forward[L"的"] = 43;
-
-	entry = dict.add_word(L"的");
-	entry->add(WORD_TAG_B, 0);
-	entry->add(WORD_TAG_D, 0);
-	entry->add(WORD_TAG_F, 0);
-	entry->add(WORD_TAG_N, 0);
-	entry->add(WORD_TAG_NG, 0);
-	entry->add(WORD_TAG_P, 0);
-	entry->add(WORD_TAG_R, 0);
-	entry->add(WORD_TAG_V, 0);
-	entry->add(WORD_TAG_W, 0);
-	entry->forward[L"确实"] = 1;
-
-	entry = dict.add_word(L"的确");
-	entry->add(WORD_TAG_D, 27);
-
-	entry = dict.add_word(L"确");
-	entry->add(WORD_TAG_AG, 0);
-	entry->add(WORD_TAG_D, 26);
-
-	entry = dict.add_word(L"确实");
-	entry->add(WORD_TAG_A, 8);
-	entry->add(WORD_TAG_AD, 39);
-	entry->add(WORD_TAG_D, 6);
-
-	entry = dict.add_word(L"实");
-	entry->add(WORD_TAG_A, 16);
-	entry->add(WORD_TAG_AD, 10);
-	entry->add(WORD_TAG_AN, 1);
-	entry->add(WORD_TAG_DG, 0);
-	entry->add(WORD_TAG_NG, 4);
-
-	entry = dict.add_word(L"实在");
-	entry->add(WORD_TAG_A, 7);
-	entry->add(WORD_TAG_AN, 0);
-	entry->add(WORD_TAG_D, 27);
-
-	entry = dict.add_word(L"在");
-	entry->add(WORD_TAG_C, 0);
-	entry->add(WORD_TAG_D, 284);
-	entry->add(WORD_TAG_F, 0);
-	entry->add(WORD_TAG_P, 11481);
-	entry->add(WORD_TAG_R, 0);
-	entry->add(WORD_TAG_V, 257);
-
-	entry = dict.add_word(L"在理");
-	entry->add(WORD_TAG_A, 1);
-
-	entry = dict.add_word(L"理");
-	entry->add(WORD_TAG_J, 1);
-	entry->add(WORD_TAG_N, 14);
-	entry->add(WORD_TAG_V, 13);
-}
-
 BOOST_AUTO_TEST_CASE( test_Segment_create_empty )
 {
     Dictionary dict;
-	construct_dictionary(dict);
+	load_from_txt_file(dict, mini_dict_base_name, true);
 
 	const wchar_t* empty_text = L"";
 	Segment::graph_list_type empty_graph_list = Segment::create_graphs(empty_text, dict);
@@ -278,7 +86,7 @@ BOOST_AUTO_TEST_CASE( test_Segment_create_empty )
 BOOST_AUTO_TEST_CASE( test_Segment_create_english_string )
 {
     Dictionary dict;
-	construct_dictionary(dict);
+	load_from_txt_file(dict, mini_dict_base_name, true);
 
 	const wchar_t* text = L"English Words";
 	Segment::graph_list_type graph_list = Segment::create_graphs(text, dict);
@@ -305,7 +113,7 @@ BOOST_AUTO_TEST_CASE( test_Segment_create_english_string )
 BOOST_AUTO_TEST_CASE( test_Segment_create_single_sentence )
 {
     Dictionary dict;
-	construct_dictionary(dict);
+	load_from_txt_file(dict, mini_dict_base_name, true);
 
 	const wchar_t* text = L"19９5年底ｇoｏgｌｅ在1月份大会上说的确实在理。";
 	property_map<WordGraph, vertex_desc_t>::type vprop_map;
@@ -402,10 +210,9 @@ BOOST_AUTO_TEST_CASE( test_Segment_segment_single_sentence )
 {
     Dictionary dict;
 	
-	construct_dictionary(dict);
-	load_from_ocd_file(dict, "data/core.ocd");
+	load_from_txt_file(dict, mini_dict_base_name, true);
 
-	std::wofstream out("Segment.txt");
+	std::wofstream out("data/segment_test.txt");
 	out.imbue(locale_utf8);
 
 	for (int i = 0; i < sample_count; ++i)

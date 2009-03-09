@@ -199,6 +199,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\unit_test_longtime.hpp"
+				>
+			</File>
+			<File
 				RelativePath=".\unit_test_segment.hpp"
 				>
 			</File>

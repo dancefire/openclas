@@ -58,10 +58,18 @@ SUCH DAMAGE.
 #include <fstream>
 #include <iostream>
 
-//#include <boost/iostreams/filtering_stream.hpp>
-//#include <boost/iostreams/filter/gzip.hpp>
+#include <boost/iostreams/filtering_stream.hpp>
+#include <boost/iostreams/copy.hpp>
+#include <boost/iostreams/filter/gzip.hpp>
 
 namespace openclas {
+
+	static std::string concat_error_message(const std::string& message, const std::string& filename)
+	{
+		std::ostringstream oss;
+		oss << message << "[" << filename << "]";
+		return oss.str();
+	}
 
 	namespace ict {
 
@@ -174,6 +182,8 @@ namespace openclas {
 		static void load_from_dct(Dictionary& dict, const char* filename, bool is_transit)
 		{
 			std::ifstream in(filename, std::ios_base::in | std::ios_base::binary);
+			if (in.fail())
+				throw std::runtime_error(concat_error_message("Cannot open file", filename));
 
 			shared_array<wchar_t> GB2312_ARRAY = get_gb2312_array();
 
@@ -316,8 +326,8 @@ namespace openclas {
 		static void load_tags_from_ctx(Dictionary& dict, const char* filename)
 		{
 			std::ifstream in(filename, ios_base::in | ios_base::binary);
-			if (in.bad())
-				throw std::runtime_error("Cannot open .ctx file.");
+			if (in.fail())
+				throw std::runtime_error(concat_error_message("Cannot open file", filename));
 
 			int symbol_count = 0;
 			in.read(reinterpret_cast<char*>(&symbol_count), sizeof(int));
@@ -359,12 +369,19 @@ namespace openclas {
 			for (int i = 0; i < symbol_count; ++i)
 			{
 				enum WordTag tag = get_tag_from_pos(symbol_table[i]);
-				std::cout << "[" << i << "] " << symbol_table[i] << " : " << narrow(WORD_TAG_NAME[tag], locale_gbk) << std::endl;
+				//std::cout << "[" << i << "] " << symbol_table[i] << " : " << narrow(WORD_TAG_NAME[tag], locale_gbk) << std::endl;
 				tags_index[i] = tag;
 			}
 
 			//	Fill in the dictionary
-			dict.init_tag_dict(symbol_count);
+			if (symbol_count > 20)
+			{
+				//	core dictionary's tag
+				dict.init_tag_dict(WORD_TAG_SIZE);
+			}else{
+				dict.init_tag_dict(symbol_count);
+			}
+
 			dict.set_tag_total_weight(total_frequency);
 			for (int i = 0; i < symbol_count; ++i)
 			{
@@ -497,6 +514,8 @@ namespace openclas {
 	static void load_from_ocd_file(Dictionary& dict, const char* filename)
 	{
 		std::ifstream in(filename, std::ios_base::in | std::ios_base::binary);
+		if (in.fail())
+			throw std::runtime_error(concat_error_message("Cannot open file", filename));
 
 		//	Read Dictionary Header
 		DictHeader header;
@@ -567,7 +586,7 @@ namespace openclas {
 			{
 				if (i != 0)
 					tag_out << " ";
-				tag_out << static_cast<int>(dict.get_tag_weight(i));
+				tag_out << static_cast<int>(dict.get_tag_weight(static_cast<int>(i)));
 			}
 			tag_out << std::endl;
 			//	bigram tag weight
@@ -577,7 +596,7 @@ namespace openclas {
 				{
 					if (j != 0)
 						tag_out << " ";
-					tag_out << static_cast<int>(dict.get_tag_transit_weight(i, j));
+					tag_out << static_cast<int>(dict.get_tag_transit_weight(static_cast<int>(i), static_cast<int>(j)));
 				}
 				tag_out << std::endl;
 			}
@@ -617,7 +636,7 @@ namespace openclas {
 			{
 				int weight;
 				tag_in >> weight;
-				dict.add_tag_weight(i, weight);
+				dict.add_tag_weight(static_cast<int>(i), weight);
 			}
 			//	bigram tag weight
 			for (size_t i = 0; i < tag_count; ++i)
@@ -626,7 +645,7 @@ namespace openclas {
 				{
 					int weight;
 					tag_in >> weight;
-					dict.add_tag_transit_weight(i, j, weight);
+					dict.add_tag_transit_weight(static_cast<int>(i), static_cast<int>(j), weight);
 				}
 			}
 		}
@@ -642,8 +661,10 @@ namespace openclas {
 				unigram_in >> tag;
 				unigram_in >> weight;
 
-				DictEntry* entry = dict.add_word(word);
-				entry->add(tag, weight);
+				if (!word.empty()) {
+					DictEntry* entry = dict.add_word(word);
+					entry->add(tag, weight);
+				}
 			}
 		}
 		if (load_bigram) {
@@ -657,8 +678,10 @@ namespace openclas {
 				bigram_in >> word2;
 				bigram_in >> weight;
 
-				DictEntry* entry = dict.add_word(word1);
-				entry->forward[word2] = weight;
+				if (!word1.empty()) {
+					DictEntry* entry = dict.add_word(word1);
+					entry->forward[word2] = weight;
+				}
 			}
 		}
 	}
@@ -698,6 +721,8 @@ namespace openclas {
 			oss << base_name << tag_type_name << text_ext_name;
 			tag_in.open(oss.str().c_str(), ios::in);
 			tag_in.imbue(locale_utf8);
+			if (tag_in.fail())
+				throw std::runtime_error(concat_error_message("Cannot open file", oss.str()));
 		}
 		std::wifstream unigram_in;
 		{
@@ -705,6 +730,8 @@ namespace openclas {
 			oss << base_name << unigram_type_name << text_ext_name;
 			unigram_in.open(oss.str().c_str(), ios::in);
 			unigram_in.imbue(locale_utf8);
+			if (unigram_in.fail())
+				throw std::runtime_error(concat_error_message("Cannot open file", oss.str()));
 		}
 		std::wifstream bigram_in;
 		if (load_bigram) {
@@ -712,79 +739,76 @@ namespace openclas {
 			oss << base_name << bigram_type_name << text_ext_name;
 			bigram_in.open(oss.str().c_str(), ios::in);
 			bigram_in.imbue(locale_utf8);
+			if (bigram_in.fail())
+				throw std::runtime_error(concat_error_message("Cannot open file", oss.str()));
 		}
 
 		load_from_txt_stream (dict, tag_in, unigram_in, bigram_in, load_bigram);
 	}
 
-	//static void save_to_gz_file(const Dictionary& dict, std::string base_name, bool save_bigram = true)
-	//{
-	//	using namespace boost::iostreams;
+	inline std::string concat(const std::string& base, const std::string& type, const std::string& ext)
+	{
+		std::ostringstream oss;
+		oss << base << type << ext;
+		return oss.str();
+	}
 
-	//	std::string tag_filename;
-	//	std::string unigram_filename;
-	//	std::string bigram_filename;
-	//	{
-	//		std::ostringstream oss;
-	//		oss << base_name << tag_type_name << text_ext_name;
-	//		tag_filename = oss.str();
-	//		oss.clear();
-	//		oss << base_name << unigram_type_name << text_ext_name;
-	//		unigram_filename = oss.str();
-	//		oss << base_name << bigram_type_name << text_ext_name;
-	//		bigram_filename = oss.str();
-	//	}
+	inline void save_to_gz_file(const std::string& filename, const std::wstring& wide_string)
+	{
+		using namespace boost::iostreams;
+		
+		std::ofstream file(filename.c_str(), ios::out | ios::binary);
+		filtering_ostream fos;
+		fos.push(gzip_compressor());
+		fos.push(file);
+		fos << narrow(wide_string, locale_utf8);
+	}
 
-	//	std::ofstream tag_file(tag_filename.c_str(), ios::out | ios::binary);
-	//	filtering_ostream tag_out;
-	//	//tag_out.imbue(locale_utf8);
-	//	tag_out.push(gzip_compressor());
-	//	tag_out.push(tag_file);
+	inline std::wstring load_from_gz_file(const std::string& filename)
+	{
+		using namespace boost::iostreams;
 
-	//	std::wofstream unigram_file(unigram_filename.c_str(), ios::out | ios::binary);
-	//	filtering_wostream unigram_out;
-	//	unigram_out.imbue(locale_utf8);
-	//	unigram_out.push(gzip_compressor());
-	//	unigram_out.push(unigram_file);
-	//
-	//	std::wofstream bigram_file(bigram_filename.c_str(), ios::out | ios::binary);
-	//	filtering_wostream bigram_out;
-	//	bigram_out.imbue(locale_utf8);
-	//	bigram_out.push(gzip_compressor());
-	//	bigram_out.push(bigram_file);
-	//
-	//	save_to_txt_stream(dict, tag_out, unigram_out, bigram_out, save_bigram);
+		std::ifstream file(filename.c_str(), ios::in | ios::binary);
+		if (file.fail())
+			throw std::runtime_error(concat_error_message("Cannot open file", filename));
 
-	//}
+		filtering_istream fis;
+		fis.push(gzip_decompressor());
+		fis.push(file);
+		std::ostringstream oss;
+		boost::iostreams::copy(fis, oss);
+		return widen(oss.str(), locale_utf8);
+	}
 
-	//static void load_from_gz_file(Dictionary& dict, const char* base_name, bool load_bigram = true)
-	//{
-	//	using namespace boost::iostreams;
+	static void save_to_gz_file(const Dictionary& dict, std::string base_name, bool save_bigram = true)
+	{
+		std::wostringstream tag_out;
+		std::wostringstream unigram_out;
+		std::wostringstream bigram_out;
 
-	//	std::wifstream tag_in;
-	//	{
-	//		std::ostringstream oss;
-	//		oss << base_name << tag_type_name << text_ext_name;
-	//		tag_in.open(oss.str().c_str(), ios::in);
-	//		tag_in.imbue(locale_utf8);
-	//	}
-	//	std::wifstream unigram_in;
-	//	{
-	//		std::ostringstream oss;
-	//		oss << base_name << unigram_type_name << text_ext_name;
-	//		unigram_in.open(oss.str().c_str(), ios::in);
-	//		unigram_in.imbue(locale_utf8);
-	//	}
-	//	std::wifstream bigram_in;
-	//	if (load_bigram) {
-	//		std::ostringstream oss;
-	//		oss << base_name << bigram_type_name << text_ext_name;
-	//		bigram_in.open(oss.str().c_str(), ios::in);
-	//		bigram_in.imbue(locale_utf8);
-	//	}
+		save_to_txt_stream(dict, tag_out, unigram_out, bigram_out, save_bigram);
 
-	//	load_from_txt_stream (dict, tag_in, unigram_in, bigram_in, load_bigram);
-	//}
+		std::string tag_filename = concat(base_name, tag_type_name, gzip_ext_name);
+		std::string unigram_filename = concat(base_name, unigram_type_name, gzip_ext_name);
+		std::string bigram_filename = concat(base_name, bigram_type_name, gzip_ext_name);
+
+		save_to_gz_file(tag_filename, tag_out.str());
+		save_to_gz_file(unigram_filename, unigram_out.str());
+		save_to_gz_file(bigram_filename, bigram_out.str());
+	}
+
+	static void load_from_gz_file(Dictionary& dict, const char* base_name, bool load_bigram = true)
+	{
+		std::string tag_filename = concat(base_name, tag_type_name, gzip_ext_name);
+		std::string unigram_filename = concat(base_name, unigram_type_name, gzip_ext_name);
+		std::string bigram_filename = concat(base_name, bigram_type_name, gzip_ext_name);
+
+		std::wistringstream tag_in(load_from_gz_file(tag_filename));
+		std::wistringstream unigram_in(load_from_gz_file(unigram_filename));
+		std::wistringstream bigram_in(load_from_gz_file(bigram_filename));
+
+		load_from_txt_stream(dict, tag_in, unigram_in, bigram_in, load_bigram);
+	}
 
 }	//	namespace openclas
 
