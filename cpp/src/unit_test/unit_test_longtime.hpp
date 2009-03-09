@@ -101,6 +101,10 @@ void construct_dict_subset(Dictionary& dict, Dictionary& mini_dict, const std::w
 	}
 }
 
+int ms(clock_t tick)
+{
+	return static_cast<int>( (clock()-tick) * 1000. / CLOCKS_PER_SEC );
+}
 
 BOOST_AUTO_TEST_CASE( test_Serialization_dct_ocd_txt_gz )
 {
@@ -112,7 +116,7 @@ BOOST_AUTO_TEST_CASE( test_Serialization_dct_ocd_txt_gz )
 	
 	tick = clock();
 	load_words_from_dct(dict, core_dict_name);
-	std::cout << "Load " << core_dict_name << " : \t" << (clock() - tick) << " ms" << std::endl;
+	std::cout << "Load " << core_dict_name << " : \t" << ms(tick) << " ms" << std::endl;
 
 	BOOST_CHECK_EQUAL( dict.words().size(), 85604 );
 	//	count tags
@@ -127,7 +131,7 @@ BOOST_AUTO_TEST_CASE( test_Serialization_dct_ocd_txt_gz )
 
 	tick = clock();
 	load_words_transit_from_dct(dict, bigram_dict_name);
-	std::cout << "Load " << bigram_dict_name << " : \t" << (clock() - tick) << " ms" << std::endl;
+	std::cout << "Load " << bigram_dict_name << " : \t" << ms(tick) << " ms" << std::endl;
 
 	//	count word transit
 	size_t transit_count = 0;
@@ -140,7 +144,7 @@ BOOST_AUTO_TEST_CASE( test_Serialization_dct_ocd_txt_gz )
 	//	load from .ctx
 	tick = clock();
 	load_tags_from_ctx(dict, core_tag_name);
-	std::cout << "Load " << core_tag_name << " : \t" << (clock() - tick) << " ms" << std::endl;
+	std::cout << "Load " << core_tag_name << " : \t" << ms(tick) << " ms" << std::endl;
 
 
 	/******************************************
@@ -150,13 +154,13 @@ BOOST_AUTO_TEST_CASE( test_Serialization_dct_ocd_txt_gz )
 
 	tick = clock();
 	save_to_ocd_file(dict, core_name);
-	std::cout << "Save " << core_name << " : \t" << (clock() - tick) << " ms" << std::endl;
+	std::cout << "Save " << core_name << " : \t" << ms(tick) << " ms" << std::endl;
 
 	Dictionary dict_ocd;
 
 	tick = clock();
 	load_from_ocd_file(dict_ocd, core_name);
-	std::cout << "Load " << core_name << " : \t" << (clock() - tick) << " ms" << std::endl;
+	std::cout << "Load " << core_name << " : \t" << ms(tick) << " ms" << std::endl;
 
 	BOOST_CHECK_EQUAL( dict_ocd.words().size(), 85604 );
 	word_tag_count = 0;
@@ -181,13 +185,13 @@ BOOST_AUTO_TEST_CASE( test_Serialization_dct_ocd_txt_gz )
 
 	tick = clock();
 	save_to_txt_file(dict, core_base_name, true);
-	std::cout << "Save " << core_base_name << ".{tag, unigram, bigram}.txt : \t" << (clock() - tick) << " ms" << std::endl;
+	std::cout << "Save " << core_base_name << ".{tag, unigram, bigram}.txt : \t" << ms(tick) << " ms" << std::endl;
 
 	Dictionary dict_txt;
 
 	tick = clock();
 	load_from_txt_file(dict_txt, core_base_name, true);
-	std::cout << "Load " << core_base_name << ".{tag, unigram, bigram}.txt : \t" << (clock() - tick) << " ms" << std::endl;
+	std::cout << "Load " << core_base_name << ".{tag, unigram, bigram}.txt : \t" << ms(tick) << " ms" << std::endl;
 
 	BOOST_CHECK_EQUAL( dict_txt.words().size(), 85604 );
 	word_tag_count = 0;
@@ -210,13 +214,13 @@ BOOST_AUTO_TEST_CASE( test_Serialization_dct_ocd_txt_gz )
 
 	tick = clock();
 	save_to_gz_file(dict, core_base_name, true);
-	std::cout << "Save " << core_base_name << ".{tag, unigram, bigram}.gz : \t" << (clock() - tick) << " ms" << std::endl;
+	std::cout << "Save " << core_base_name << ".{tag, unigram, bigram}.gz : \t" << ms(tick) << " ms" << std::endl;
 
 	Dictionary dict_gz;
 
 	tick = clock();
 	load_from_gz_file(dict_gz, core_base_name, true);
-	std::cout << "Load " << core_base_name << ".{tag, unigram, bigram}.gz : \t" << (clock() - tick) << " ms" << std::endl;
+	std::cout << "Load " << core_base_name << ".{tag, unigram, bigram}.gz : \t" << ms(tick) << " ms" << std::endl;
 
 	BOOST_CHECK_EQUAL( dict_gz.words().size(), 85604 );
 	word_tag_count = 0;
@@ -265,7 +269,7 @@ BOOST_AUTO_TEST_CASE( test_Serialization_dct_ocd_txt_gz )
 
 	tick = clock();
 	save_to_txt_file(mini_dict, mini_dict_base_name, true);
-	std::cout << "Save " << mini_dict_base_name << ".{tag, unigram, bigram}.txt : \t" << (clock() - tick) << " ms" << std::endl;
+	std::cout << "Save " << mini_dict_base_name << ".{tag, unigram, bigram}.txt : \t" << ms(tick) << " ms" << std::endl;
 }
 
 

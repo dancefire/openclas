@@ -1,4 +1,16 @@
 2009-03-09  Tao Wang  <dancefire@gmail.com>
+	* cpp/include/openclas/serialization.hpp:
+	* cpp/include/openclas/segment.hpp:
+	* cpp/include/openclas/utility.hpp:
+	* cpp/src/unit_test/unit_test_segment.hpp:
+		Add locale_platform for output to console under different platform.
+		Replace corresponding locale_* to locale_platform.
+	* cpp/src/unit_test/unit_test_longtime.hpp:
+		Add function ms(clock_t tick), which output the time span in 'ms' since 'tick'.
+	* cpp/src/unit_test/CMakeLists.txt:
+		Add link flag for boost_iostreams under Linux.
+
+2009-03-09  Tao Wang  <dancefire@gmail.com>
 
 	* cpp/include/openclas/serialization.hpp:
 		Add code to rasie exception if file cannot open.
