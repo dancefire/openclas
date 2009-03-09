@@ -143,72 +143,25 @@ BOOST_AUTO_TEST_CASE( test_Serialization_ICT_get_gb2312_array )
 	GB2312_ARRAY[0] = L'啊';
 }
 
-BOOST_AUTO_TEST_CASE( test_Serialization_ICT_load_from_dct )
+
+
+BOOST_AUTO_TEST_CASE( test_Serialization_load_tags_from_ctx )
 {
-	Dictionary dict;
+	const char* tag_name = "data/lexical.ctx";
+	Dictionary dict_core;
+	load_tags_from_ctx(dict_core, tag_name);
+	BOOST_CHECK_EQUAL( dict_core.tags().size(), WORD_TAG_SIZE );
 
-	test_file_existence(core_dict_name);
-	BOOST_CHECK_EQUAL( dict.words().size(), 0 );
-	load_words_from_dct(dict, core_dict_name);
-	BOOST_CHECK_EQUAL( dict.words().size(), 85604 );
-	//	count tags
-	size_t word_tag_count = 0;
-	for (Dictionary::word_dict_type::const_iterator iter = dict.words().begin(); iter != dict.words().end(); ++iter)
-	{
-		word_tag_count += (*iter)->tags.size();
-	}
-	BOOST_CHECK_EQUAL( word_tag_count, 104413 );	//	104455
+	//const char* nr_name = "data/nr.ctx";
+	//Dictionary dict_nr;
+	//load_tags_from_ctx(dict_nr, nr_name);
+	//BOOST_CHECK_EQUAL( dict_nr.tags().size(), 15 );
 
-	test_file_existence(bigram_dict_name);
-	load_words_transit_from_dct(dict, bigram_dict_name);
-	//	count word transit
-	size_t transit_count = 0;
-	for (Dictionary::word_dict_type::const_iterator iter = dict.words().begin(); iter != dict.words().end(); ++iter)
-	{
-		transit_count += (*iter)->forward.size();
-	}
-	BOOST_CHECK_EQUAL( transit_count, 408960 );
-
-	//	load from .ctx
-	load_tags_from_ctx(dict, core_tag_name);
-
-
-	/*
-	 *		Test .ocd format (save and load)
-	 */
-	const char* core_name = "data/core.ocd";
-	save_to_ocd_file(dict, core_name);
-
-	Dictionary dict_ocd;
-	load_from_ocd_file(dict_ocd, core_name);
-	BOOST_CHECK_EQUAL( dict_ocd.words().size(), 85604 );
-	word_tag_count = 0;
-	for (Dictionary::word_dict_type::const_iterator iter = dict_ocd.words().begin(); iter != dict_ocd.words().end(); ++iter)
-	{
-		word_tag_count += (*iter)->tags.size();
-	}
-	BOOST_CHECK_EQUAL( word_tag_count, 104413 );	//	104455
-
-	transit_count = 0;
-	for (Dictionary::word_dict_type::const_iterator iter = dict_ocd.words().begin(); iter != dict_ocd.words().end(); ++iter)
-	{
-		transit_count += (*iter)->forward.size();
-	}
-	BOOST_CHECK_EQUAL( transit_count, 408960 );
-
-	//	output part of the dictionary.
-	std::wofstream out("data/part_dict.txt");
-	out.imbue(locale_utf8);
-	output_part_dict(out, dict, L"19９5年底ｇoｏgｌｅ在1月份大会上说的确实在理。");
-	//output_part_dict(out, dict, L"下午我要领工资，恐怕赶不回去。");
-	//output_part_dict(out, dict, L"办独生子女证，一对夫妻一次性交一百元钱");
+	//const char* ns_name = "data/ns.ctx";
+	//Dictionary dict_ns;
+	//load_tags_from_ctx(dict_ns, ns_name);
+	//BOOST_CHECK_EQUAL( dict_ns.tags().size(), 9 );
 }
-
-//
-//BOOST_AUTO_TEST_CASE( test_Serialization_ICT_load_tags_from_ctx )
-//{
-//    BOOST_FAIL( "Test is not ready yet" );
-//}
 
 //BOOST_AUTO_TEST_CASE( test_Serialization_ICT_load_from_file )
 //{

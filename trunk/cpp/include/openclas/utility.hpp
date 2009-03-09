@@ -143,7 +143,8 @@ namespace openclas {
 		WORD_TAG_Z,	//	状态词	取汉字“状”的声母的前一个字母。
 
 		WORD_TAG_BEGIN,	//	句子开始(特殊标记)
-		WORD_TAG_END	//	句子结束(特殊标记)
+		WORD_TAG_END,	//	句子结束(特殊标记)
+		WORD_TAG_SIZE
 	};
 
 	const size_t WORD_TAG_COUNT = static_cast<size_t>(WORD_TAG_Z + 1);	//	Get the count of WordTag
