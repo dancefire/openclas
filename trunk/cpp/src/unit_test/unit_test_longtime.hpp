@@ -54,6 +54,7 @@ SUCH DAMAGE.
 #define _OPENCLAS_UNIT_TEST_LONGTIME_HPP_
 
 #include <openclas/serialization.hpp>
+#include <openclas/segment.hpp>
 #include <fstream>
 #include <ctime>
 
@@ -272,6 +273,65 @@ BOOST_AUTO_TEST_CASE( test_Serialization_dct_ocd_txt_gz )
 	std::cout << "Save " << mini_dict_base_name << ".{tag, unigram, bigram}.txt : \t" << ms(tick) << " ms" << std::endl;
 }
 
+BOOST_AUTO_TEST_CASE( test_Segment_performance )
+{
+	Dictionary dict;
+
+	clock_t tick;
+	const char* core_name = "data/core.ocd";
+	test_file_existence(core_name);
+
+	std::cout << "Loading dictionary ... ";
+	tick = clock();
+	load_from_ocd_file(dict, core_name);
+	std::cout << "OK (" << ms(tick) << " ms)" << std::endl;
+
+	//	Punctuation as Terminal of each segment
+	DictEntry* entry_w = dict.add_word(get_special_word_string(WORD_TAG_W));
+	if (entry_w->tags.size() == 0)
+	{
+		DictEntry* entry_begin = dict.get_word(get_special_word_string(WORD_TAG_BEGIN));
+		entry_w->add(WORD_TAG_W, entry_begin->tags.front().weight);
+	}
+
+	tick = clock();
+	std::cout << "Generating 1MB text ... ";
+	std::wostringstream oss;
+	int i = 0;
+	size_t length = 0;
+	while (length < 1024*1024 / sizeof(wchar_t) )
+	{
+		i = (i++) % sample_count;
+		length += wcslen(sample[i]) + 1;
+		oss << sample[i] << L"，";
+	}
+	std::wstring content(oss.str());
+	std::cout << "OK (" << ms(tick) << " ms)" << std::endl;
+
+	tick = clock();
+	std::cout << "Writing content to file ... ";
+	std::wofstream content_out("data/content.txt", ios::out);
+	content_out.imbue(locale_utf8);
+	content_out << content;
+	content_out.close();
+	std::cout << "OK (" << ms(tick) << " ms)" << std::endl;
+
+	tick = clock();
+	std::cout << "Segmenting 1MB text ... ";
+	std::vector<Segment::segment_type> segs = Segment::segment(content, dict, 1);
+	int time_cost = ms(tick);
+	std::cout << "OK (" << time_cost << " ms)" << std::endl;
+	std::cout << "Segmented " << (content.size() * sizeof(wchar_t)) << " bytes in " << time_cost << " ms" << std::endl;
+	std::cout << "Speed = " << ((content.size() * sizeof(wchar_t) / 1024.) / (time_cost / 1000.)) << " KB/s" << std::endl;
+
+	tick = clock();
+	std::cout << "Convert segs array to graph, and writing segment result to file ... ";
+	std::wofstream segment_out("data/content_segment.txt", ios::out);
+	segment_out.imbue(locale_utf8);
+	segment_out << Segment::segment_to_string(content, segs.at(0));
+	segment_out.close();
+	std::cout << "OK (" << ms(tick) << " ms)" << std::endl;
+}
 
 BOOST_AUTO_TEST_SUITE_END()
 
