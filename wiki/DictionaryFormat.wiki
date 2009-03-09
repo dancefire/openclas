@@ -1,0 +1,16 @@
+#summary 词典格式
+#labels Featured,Phase-Design,Phase-Implementation
+
+= 简介 =
+
+在OpenCLAS中实现了4种词典格式，分别是，FreeICTCLAS所使用的{.dct, .ctx}的格式、新设计的OpenCLAS的.ocd格式、纯文本的.{tag, unigram, bigram}.txt格式、经过gzip压缩的.{tag, unigram, bigram}.gz格式。
+
+= 性能测试 =
+
+粗略的测试了一下不同词典的格式，在测试时，暂没有实现{.dct, .ctx}保存功能，因此没有测试该类格式的保存性能。
+
+|| *格式* || *文件大小* || *保存时间* || *加载时间* ||
+||FreeICTCLAS||9,120,345|| - ||6,556 ms||
+|| *OpenCLAS* ||7,253,466|| *1,343 ms* || *2,320 ms* ||
+||Text||7,954,511||11,851 ms ||8,962 ms||
+||Text + Gzip|| *2,426,611* ||4,949 ms||5,452 ms||
