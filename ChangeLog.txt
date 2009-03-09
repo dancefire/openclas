@@ -1,3 +1,8 @@
+2009-03-10  Tao Wang  <dancefire@gmail.com>
+
+	* cpp/src/unit_test/unit_test_longtime.hpp:
+		Add testcase test_Segment_performance() for performance evaluation.
+	
 2009-03-09  Tao Wang  <dancefire@gmail.com>
 	* cpp/include/openclas/serialization.hpp:
 	* cpp/include/openclas/segment.hpp:
