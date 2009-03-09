@@ -330,7 +330,7 @@ namespace openclas {
 						out_table[atom.offset].at(0).entry = entry;
 					}else{
 						std::ostringstream out;
-						out << "Dictionary does not contain the entry for special word \"" << narrow(special_word, locale_utf8) << "\"";
+						out << "Dictionary does not contain the entry for special word \"" << narrow(special_word, locale_platform) << "\"";
 						throw std::logic_error(out.str());
 					}
 				}

@@ -145,7 +145,7 @@ namespace openclas {
 				return WORD_TAG_END;
 
 			std::string pos_name = get_name_from_pos(pos);
-			std::wstring tag_string(widen(pos_name, locale_gbk));
+			std::wstring tag_string(widen(pos_name, locale_platform));
 			for (size_t i = 0; i < WORD_TAG_COUNT; ++i)
 			{
 				if (tag_string == WORD_TAG_NAME[i]){
@@ -283,7 +283,7 @@ namespace openclas {
 								entry->add(tag, header.weight);
 							}else{
 								//	Found unknown POS
-								std::cerr << "Found unknown POS tag(" << tag << ", " << header.weight << ") from dictionary entry [" << narrow(entry->word, locale_gbk) << "]" << std::endl;
+								std::cerr << "Found unknown POS tag(" << tag << ", " << header.weight << ") from dictionary entry [" << narrow(entry->word, locale_platform) << "]" << std::endl;
 #ifdef _DEBUG
 								if (data[header.pos].pos == 0)
 								{
@@ -306,7 +306,7 @@ namespace openclas {
 				{
 					if (it != iter->second.wordlist.begin())
 						std::cerr << ",";
-					std::cerr << narrow(*it, locale_gbk);
+					std::cerr << narrow(*it, locale_platform);
 				}
 				std::cerr << "}" << std::endl;
 			}
@@ -369,7 +369,7 @@ namespace openclas {
 			for (int i = 0; i < symbol_count; ++i)
 			{
 				enum WordTag tag = get_tag_from_pos(symbol_table[i]);
-				//std::cout << "[" << i << "] " << symbol_table[i] << " : " << narrow(WORD_TAG_NAME[tag], locale_gbk) << std::endl;
+				//std::cout << "[" << i << "] " << symbol_table[i] << " : " << narrow(WORD_TAG_NAME[tag], locale_platform) << std::endl;
 				tags_index[i] = tag;
 			}
 

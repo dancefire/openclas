@@ -287,6 +287,12 @@ namespace openclas {
 
 	const std::locale locale_gbk(CharsetName[CHARSET_GBK]);
 
+#ifdef _MSC_VER
+#	define locale_platform locale_gbk
+#else
+#	define locale_platform locale_utf8
+#endif
+
 	typedef std::codecvt<wchar_t, char, mbstate_t> codecvt_t;
 
 
