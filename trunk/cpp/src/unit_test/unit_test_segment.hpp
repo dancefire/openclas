@@ -197,13 +197,12 @@ BOOST_AUTO_TEST_CASE( test_Segment_create_single_sentence )
 	BOOST_CHECK( Segment::segment_to_string(text, segs[2]) ==
 		L"19９5/m 年底/ ｇoｏgｌｅ/nx 在/ 1/m 月份/n 大会/n 上/ 说/ 的确/d 实/ 在理/a 。/w" );
 
-	wcout.imbue(locale_platform);
-	wcout << "Original text: " << text << std::endl;
+	std::cout << "Original text: " << narrow(text, locale_platform) << std::endl;
 	for (size_t i = 0; i < segs.size(); ++i)
 	{
-		wcout << "[" << i << "] Segment text : " << Segment::segment_to_string(text, segs[i]) << "\t(" << segs[i].weight << ")" << std::endl;
+		std::cout << "[" << i << "] Segment text : " << narrow(Segment::segment_to_string(text, segs[i]), locale_platform) << "\t(" << segs[i].weight << ")" << std::endl;
 	}
-	wcout << std::endl;
+	std::cout << std::endl;
 }
 
 BOOST_AUTO_TEST_CASE( test_Segment_segment_single_sentence )

@@ -67,15 +67,6 @@ BOOST_AUTO_TEST_SUITE( serialization )
 using namespace openclas;
 using namespace openclas::ict;
 
-static const char* core_dict_name = "data/coreDict.dct";
-static const char* bigram_dict_name = "data/BigramDict.dct";
-static const char* core_tag_name = "data/lexical.ctx";
-//static const char* people_dict_basename = "data/nr";
-//static const char* place_dict_basename = "data/ns";
-//static const char* org_dict_basename = "data/tr";
-//static const char* dict_ext = ".dct";
-//static const char* tag_ext = ".ctx";
-
 void test_file_existence(const char* filename)
 {
 	//	Test file existence
@@ -171,12 +162,20 @@ BOOST_AUTO_TEST_CASE( test_Serialization_load_tags_from_ctx )
 //	ict::load_from_file(dict, core_tag_name, core_dict_name, bigram_dict_name);
 //	BOOST_CHECK_NE( dict.words().size(), 0 );
 //}
-//
-//BOOST_AUTO_TEST_CASE( test_Serialization_ICT_save_words_to_dct )
-//{
-//    BOOST_FAIL( "Test is not ready yet" );
-//}
-//
+
+BOOST_AUTO_TEST_CASE( test_Serialization_ICT_unused )
+{
+    BOOST_FAIL( "Test is not ready yet" );
+    if (false) {
+        Dictionary dict;
+        save_to_txt_file(dict, "not_exist");
+        save_to_gz_file(dict, "not_exist");
+        load_from_gz_file(dict, "not_exist");
+        load_from_ict_file(dict, "not_exist", "not_exist", "not_exist");
+        save_to_ict_file(dict, "not_exist", "not_exist", "not_exist");
+    }
+}
+
 //BOOST_AUTO_TEST_CASE( test_Serialization_ICT_save_words_transit_to_dct )
 //{
 //    BOOST_FAIL( "Test is not ready yet" );
