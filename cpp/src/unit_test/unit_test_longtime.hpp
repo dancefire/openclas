@@ -301,7 +301,7 @@ BOOST_AUTO_TEST_CASE( test_Segment_performance )
 	size_t length = 0;
 	while (length < 1024*1024 / sizeof(wchar_t) )
 	{
-		i = (i++) % sample_count;
+		i = (i+1) % sample_count;
 		length += wcslen(sample[i]) + 1;
 		oss << sample[i] << L"，";
 	}
