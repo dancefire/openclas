@@ -24,19 +24,19 @@
 || `Utility` || `"utility.h"` || *Done* ||
 
   * ~~重新组织目录结构，使之更接近标准项目~~  [*Done*]
-  * 对已经实现的所有功能，添加test cases，确保Milestone 1的程序正常工作。  [_Working ..._]
+  * ~~对已经实现的所有功能，添加test cases，确保Milestone 1的程序正常工作。~~  [*Done*]
 
 == Milestone 2 ==
 
   * 继续未完成的任务，将ICTCLAS剩下的内容完整实现出来。
 
 || *Class* || *Status* ||
-|| `ContextStat` || Waiting ||
+|| `ContextStat` || *Done* ||
 || `Dictionary` || *Done* ||
 || `DynamicArray` || *Done* ||
 || `NShortestPath` || *Done* ||
 || `Queue` || - ||
-|| `Result` || Waiting ||
+|| `Result` || *Done*||
 || `SegGraph` || *Done* ||
 || `Segment` || *Done* ||
 || `Span` || Waiting ||
@@ -65,4 +65,4 @@
 = 1.x =
 
   * 改进算法
-  * 看需求是不是开设一个open dictionary的项目(?)
+  * ~~看需求是不是开设一个open dictionary的项目(?)~~，可以考虑使用搜狗发起的[http://pinyin.sogou.com/dict/index.php 细胞词典]
