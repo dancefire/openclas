@@ -141,7 +141,7 @@ BOOST_AUTO_TEST_CASE( test_Serialization_load_tags_from_ctx )
 	const char* tag_name = "data/lexical.ctx";
 	Dictionary dict_core;
 	load_tags_from_ctx(dict_core, tag_name);
-	BOOST_CHECK_EQUAL( dict_core.tags().size(), WORD_TAG_SIZE );
+	BOOST_CHECK_EQUAL( dict_core.tags().size(), static_cast<size_t>(WORD_TAG_SIZE) );
 
 	//const char* nr_name = "data/nr.ctx";
 	//Dictionary dict_nr;
