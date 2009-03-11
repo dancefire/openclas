@@ -182,27 +182,22 @@ BOOST_AUTO_TEST_CASE( test_Segment_create_single_sentence )
 	 *		Test segment(graphs, k) and segment_to_string()
 	 *
 	 ***************************************************************/
-	std::vector<Segment::segment_type> segs = Segment::segment(graph_list, 3);
+	std::vector<Segment::segment_type> segs = Segment::segment(text, dict, 3);
 	BOOST_REQUIRE_EQUAL( segs.size(), 3 );
 
-	BOOST_CHECK_CLOSE( segs[0].weight, 0., 0.00001 );
-	BOOST_CHECK( Segment::segment_to_string(text, segs[0]) ==
-		L"19９5/m 年底/ ｇoｏgｌｅ/nx 在/ 1/m 月份/n 大会/n 上/ 说/ 的确/d 实在/ 理/ 。/w" );
+	const double weights[] = {136420, 136427, 136429};
+	const wchar_t* seg_correct[] = {
+		L"19９5/m 年底/ ｇoｏgｌｅ/nx 在/ 1/m 月份/n 大会/n 上/ 说/ 的/ 确实/ 在理/a 。/w",
+		L"19９5/m 年底/ ｇoｏgｌｅ/nx 在/ 1/m 月份/n 大/ 会上/ 说/ 的/ 确实/ 在理/a 。/w",
+		L"19９5/m 年底/ ｇoｏgｌｅ/nx 在/ 1/m 月/ 份/ 大会/n 上/ 说/ 的/ 确实/ 在理/a 。/w"
+	};
 
-	BOOST_CHECK_CLOSE( segs[1].weight, 0., 0.00001 );
-	BOOST_CHECK( Segment::segment_to_string(text, segs[1]) ==
-		L"19９5/m 年底/ ｇoｏgｌｅ/nx 在/ 1/m 月份/n 大会/n 上/ 说/ 的/ 确实/ 在理/a 。/w" );
-
-	BOOST_CHECK_CLOSE( segs[2].weight, 0., 0.00001 );
-	BOOST_CHECK( Segment::segment_to_string(text, segs[2]) ==
-		L"19９5/m 年底/ ｇoｏgｌｅ/nx 在/ 1/m 月份/n 大会/n 上/ 说/ 的确/d 实/ 在理/a 。/w" );
-
-	std::cout << "Original text: " << narrow(text, locale_platform) << std::endl;
-	for (size_t i = 0; i < segs.size(); ++i)
+	for (size_t i = 0; i < 3; ++i)
 	{
-		std::cout << "[" << i << "] Segment text : " << narrow(Segment::segment_to_string(text, segs[i]), locale_platform) << "\t(" << segs[i].weight << ")" << std::endl;
+		BOOST_CHECK_CLOSE( segs[i].weight, weights[i], 0.001 );
+		std::wstring seg_text = Segment::segment_to_string(text, segs[i]);
+		BOOST_CHECK( seg_text == seg_correct[i] );
 	}
-	std::cout << std::endl;
 }
 
 BOOST_AUTO_TEST_CASE( test_Segment_segment_single_sentence )

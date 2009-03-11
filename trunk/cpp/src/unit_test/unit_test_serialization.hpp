@@ -165,7 +165,6 @@ BOOST_AUTO_TEST_CASE( test_Serialization_load_tags_from_ctx )
 
 BOOST_AUTO_TEST_CASE( test_Serialization_ICT_unused )
 {
-    BOOST_FAIL( "Test is not ready yet" );
     if (false) {
         Dictionary dict;
         save_to_txt_file(dict, "not_exist");

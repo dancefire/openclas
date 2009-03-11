@@ -125,13 +125,16 @@ namespace openclas {
 		static std::wstring segment_to_string(const std::wstring& text, segment_type& seg)
 		{
 			std::wostringstream oss;
+			bool empty = true;
 			for(std::vector<WordInformation>::iterator iSeg = seg.words.begin(); iSeg != seg.words.end(); ++iSeg)
 			{
-				if (iSeg != seg.words.begin())
+				if (!empty)
 					oss << " ";
+
 				if (iSeg->tag != WORD_TAG_BEGIN && iSeg->tag != WORD_TAG_END) {
 					std::wstring word(text.begin() + iSeg->offset, text.begin() + iSeg->offset + iSeg->length);
 					oss << word << "/" << WORD_TAG_NAME[iSeg->tag];
+					empty = false;
 				}
 			}
 			return oss.str();
@@ -142,7 +145,6 @@ namespace openclas {
 		{
 			//	create sub-graphs based on given text.
 			graph_list_type graphs = create_graphs(text, dict);
-
 			return segment(graphs, k);
 		}
 
@@ -152,7 +154,6 @@ namespace openclas {
 			std::vector<std::vector<path_type> > subgraph_path_lists(graphs.size());
 			for (size_t i = 0; i < graphs.size(); ++i)
 			{
-				std::vector<path_type>& segments_list = subgraph_path_lists[i];
 				WordGraph& graph = *graphs[i];
 				//	get the k best path
 				graph_property<WordGraph, graph_terminal_t>::type
@@ -161,10 +162,12 @@ namespace openclas {
 				dag_k_shortest_paths(graph, gterminal.first, gterminal.second, results, k);
 
 				//	Get words for each result
+				std::vector<path_type>& segments_list = subgraph_path_lists[i];
 				for (std::vector<path_type>::iterator iPath = results.begin(); iPath != results.end(); ++iPath)
 				{
 					segments_list.push_back(*iPath);
 				}
+
 			}
 
 			//	construct overall k-shortest paths.
@@ -264,6 +267,23 @@ namespace openclas {
 			//	get_continue_case_1(): 	([0-9０-９]+[年月])/([末内中底前间初])
 		}
 
+		static void get_special_word_info(const Dictionary& dict, WordInformation& item)
+		{
+			std::wstring special_word = get_special_word_string(item.tag);
+			const DictEntry* entry = dict.get_word(special_word);
+			if (entry)
+			{
+				item.entry = entry;
+				item.weight = 0;
+				for (std::vector<TagEntry>::const_iterator iTag = entry->tags.begin(); iTag != entry->tags.end(); ++iTag)
+					item.weight += iTag->weight;
+			}else{
+				std::ostringstream out;
+				out << "Dictionary does not contain the entry for special word \"" << narrow(special_word, locale_platform) << "\"";
+				throw std::logic_error(out.str());
+			}
+		}
+
 		///	Input:	text, dict, atoms
 		///	Output:	out_table_type
 		static void create_out_table(const wstring& text, const Dictionary& dict, const std::vector<WordInformation>& atoms, out_table_type& out_table)
@@ -287,24 +307,20 @@ namespace openclas {
 					{
 						//	find the word list of the given offset.
 						size_t word_length = (*iter)->word.length();
+						//	make sure the found word will ended at the offset which is a begin of one of atoms.
 						out_table_type::iterator it = out_table.find(atom.offset + word_length);
 						if (word_length >= atom.length && it != out_table.end())
 						{
 							//	Construct the word
-							WordInformation new_word;
-							WordInformation& item = new_word;
-
-							//	replace the reference to the atom, if the atom exists.
-							if (word_length == atom.length)
-								item = it->second.at(0);	//	The first is the atom.
+							WordInformation item;
 
 							//	attach the Dictionary entry
 							item.entry = *iter;
 							//	calculate the weight
 							item.weight = 0;
 							//	sum all tags weights as the item's weight
-							for(size_t i = 0; i < (*iter)->tags.size(); ++i)
-								item.weight += (*iter)->tags[i].weight;
+							for (std::vector<TagEntry>::iterator iTag = (*iter)->tags.begin(); iTag != (*iter)->tags.end(); ++iTag)
+								item.weight += iTag->weight;
 
 							//	use the tag if the word has the only tag
 							if ((*iter)->tags.size() == 1)
@@ -314,8 +330,11 @@ namespace openclas {
 							item.offset = atom.offset;
 							item.length = word_length;
 
-							if (item.length != atom.length)
+							if (item.length == atom.length)
 							{
+								//	refine the atom.
+								out_table[atom.offset].at(0) = item;
+							}else{
 								//	add new word to both offset array and wordlist
 								out_table[atom.offset].push_back(item);
 							}
@@ -323,16 +342,7 @@ namespace openclas {
 					}
 				}else{
 					//	not recorded
-					std::wstring special_word = get_special_word_string(atom.tag);
-					const DictEntry* entry = dict.get_word(special_word);
-					if (entry)
-					{
-						out_table[atom.offset].at(0).entry = entry;
-					}else{
-						std::ostringstream out;
-						out << "Dictionary does not contain the entry for special word \"" << narrow(special_word, locale_platform) << "\"";
-						throw std::logic_error(out.str());
-					}
+					get_special_word_info(dict, out_table[atom.offset].at(0));
 				}
 			}
 		}
@@ -409,6 +419,7 @@ namespace openclas {
 				//	the index of other nodes should increase one, since [Begin] is insert into the first one.
 				word_begin.index = current_index++;
 				word_begin.entry = 0;
+				get_special_word_info(dict, word_begin);
 				vprop_map[word_begin.index] = word_begin;
 			}
 			//		Internal node
@@ -430,6 +441,7 @@ namespace openclas {
 				word_end.index = current_index++;
 				word_end.offset = text.size();
 				word_end.entry = 0;
+				get_special_word_info(dict, word_end);
 				vprop_map[word_end.index] = word_end;
 			}else{
 				//	put 'end' to graph as the last node.
@@ -491,6 +503,11 @@ namespace openclas {
 				adjacency_weight = prop.entry->get_forward_weight(next_word);
 
 			double weight = calculate_transit_weight(prop.weight, adjacency_weight);
+			
+			if (!prop.is_recorded)
+			{
+				weight += prop.weight;
+			}
 
 			//	add the edge with weight
 			add_edge(prop.index, prop_next.index, weight, graph);
@@ -523,28 +540,26 @@ namespace openclas {
 			if (type != SYMBOL_TYPE_CHINESE)
 			{
 				word.weight = 0;
+				word.is_recorded = false;
 				switch(type){
-	case SYMBOL_TYPE_INDEX:
-	case SYMBOL_TYPE_NUMBER:
-		//	number
-		word.tag = WORD_TAG_M;
-		word.is_recorded = false;
-		break;
-	case SYMBOL_TYPE_LETTER:
-	case SYMBOL_TYPE_SINGLE:
-		//	nouns of english, or etc.
-		word.tag = WORD_TAG_NX;
-		word.is_recorded = false;
-		break;
-	case SYMBOL_TYPE_PUNCTUATION:
-		//	punctuation
-		word.tag = WORD_TAG_W;
-		word.is_recorded = false;
-		word.weight = std::numeric_limits<double>::max();
-		break;
-	default:
-		word.tag = WORD_TAG_UNKNOWN;
-		break;
+					case SYMBOL_TYPE_INDEX:
+					case SYMBOL_TYPE_NUMBER:
+						//	number
+						word.tag = WORD_TAG_M;
+						break;
+					case SYMBOL_TYPE_LETTER:
+					case SYMBOL_TYPE_SINGLE:
+						//	nouns of english, or etc.
+						word.tag = WORD_TAG_NX;
+						break;
+					case SYMBOL_TYPE_PUNCTUATION:
+						//	punctuation
+						word.tag = WORD_TAG_W;
+						break;
+					default:
+						word.tag = WORD_TAG_UNKNOWN;
+						word.is_recorded = true;
+						break;
 				}
 			}
 			return word;

@@ -1,3 +1,15 @@
+2009-03-12  Tao Wang  <dancefire@gmail.com>
+
+	* cpp/include/openclas/segment.hpp:
+		Fixed several bugs relative to weight and generating strings.
+	* cpp/src/unit_test/OpenClas_VS2005.vcproj:
+	* cpp/src/unit_test/OpenClas_VS2008.vcproj:
+		Change optimization options.
+	* cpp/src/unit_test/unit_test_segment.hpp:
+		Minor bug fixed.
+	* cpp/src/unit_test/unit_test_serialization.hpp:
+		Remove unused BOOST_FAIL().
+
 2009-03-10  Tao Wang  <dancefire@gmail.com>
 
 	* cpp/src/unit_test/unit_test_serialization.hpp:
