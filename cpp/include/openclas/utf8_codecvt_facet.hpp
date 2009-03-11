@@ -157,7 +157,7 @@ public:
 protected:
 	// Translate incoming UTF-8 into UCS-4
 	virtual std::codecvt_base::result do_in(
-		std::mbstate_t& state, 
+		std::mbstate_t& /*state*/, 
 		const char * from,
 		const char * from_end, 
 		const char * & from_next,
@@ -234,7 +234,7 @@ protected:
 	}
 
 	virtual std::codecvt_base::result do_out(
-		std::mbstate_t & state, const wchar_t * from,
+		std::mbstate_t & /*state*/, const wchar_t * from,
 		const wchar_t * from_end, const wchar_t*  & from_next,
 		char * to, char * to_end, char * & to_next
 		) const

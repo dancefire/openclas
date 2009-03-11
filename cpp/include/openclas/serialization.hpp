@@ -405,15 +405,15 @@ namespace openclas {
 			load_tags_from_ctx(dict, tag_filename);
 		}
 
-		static void save_words_to_dct(Dictionary& dict, const char* filename)
+		static void save_words_to_dct(Dictionary& /*dict*/, const char* /*filename*/)
 		{
 		}
 
-		static void save_words_transit_to_dct(Dictionary& dict, const char* filename)
+		static void save_words_transit_to_dct(Dictionary& /*dict*/, const char* /*filename*/)
 		{
 		}
 
-		static void save_tags_to_ctx(Dictionary& dict, const char* filename)
+		static void save_tags_to_ctx(Dictionary& /*dict*/, const char* /*filename*/)
 		{
 		}
 

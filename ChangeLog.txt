@@ -1,5 +1,13 @@
 2009-03-12  Tao Wang  <dancefire@gmail.com>
 
+	* cpp/include/openclas/serialization.hpp:
+	* cpp/include/openclas/utf8_codecvt_facet.hpp:
+	* cpp/src/unit_test/unit_test_serialization.hpp:
+		Commented unused arguments.
+		Add casting from enum to size_t.
+
+2009-03-12  Tao Wang  <dancefire@gmail.com>
+
 	* cpp/include/openclas/segment.hpp:
 		Fixed several bugs relative to weight and generating strings.
 	* cpp/src/unit_test/OpenClas_VS2005.vcproj:
