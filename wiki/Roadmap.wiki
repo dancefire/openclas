@@ -4,7 +4,7 @@
 = The way to 1.0 =
 
 == Milestone 1 ==
-  * ~~重写旧版本rev37中的所有类，凡是涉及不合理的，进行重构。所有重写的代码放至namespace openclas下。~~  [*Done*]
+  * ~~重写旧版本rev37中的所有类，凡是涉及不合理的，进行重构。所有重写的代码放至namespace openclas下。~~  (*Done*)
 
 || *namespace ictclas* || *namespace openclas* || *status* ||
 || `Edge<T>` || `Edge<EdgeValueType>` || *Done* ||
@@ -23,8 +23,8 @@
 || `OpenClasSerializer` || `"serialization.h"` || *Done* ||
 || `Utility` || `"utility.h"` || *Done* ||
 
-  * ~~重新组织目录结构，使之更接近标准项目~~  [*Done*]
-  * ~~对已经实现的所有功能，添加test cases，确保Milestone 1的程序正常工作。~~  [*Done*]
+  * ~~重新组织目录结构，使之更接近标准项目~~  (*Done*)
+  * ~~对已经实现的所有功能，添加test cases，确保Milestone 1的程序正常工作。~~  (*Done*)
 
 == Milestone 2 ==
 
