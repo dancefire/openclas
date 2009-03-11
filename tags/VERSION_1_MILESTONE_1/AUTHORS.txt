@@ -1,0 +1,4 @@
+Please use the google group (http://groups.google.com/group/ictclas) instead of emailing developers directly.
+See the ChangeLog for up-to-date information.
+
+Tao Wang <dancefire@gmail.com>
