@@ -1,3 +1,11 @@
+2009-03-19  Tao Wang  <dancefire@gmail.com>
+
+	* Add CMakeLists.txt, cpp/CMakeLists.txt
+	* cpp/src/unit_text/CMakeLists.txt:
+		Add prebuild and postbuild action for removing/appending UTF-8 BOM in CMakeLists.txt.
+	* cpp/script/bom.py:
+		Add option to specify the top directory to be processed.
+		
 2009-03-12  Tao Wang  <dancefire@gmail.com>
 
 	* cpp/include/openclas/serialization.hpp:

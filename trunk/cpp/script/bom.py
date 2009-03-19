@@ -30,15 +30,25 @@ def main(prog, *args):
 		usage(prog)
 
 	encoding = "utf-8-sig"
+	op_cmd = "Append"
 	for o, a  in opts:
 		if o in ("-a", "--append"):
 			encoding = "utf-8-sig"
+			op_cmd = "Append"
 		elif o in ("-r", "--remove"):
 			encoding = "utf-8"
+			op_cmd = "Remove"
 		else:
 			assert False, "unhandled option"
 
-	for root, dirs, files in os.walk('.'):
+	if len(args) == 1:
+		op_dir = args[0]
+	else:
+		op_dir = "."
+
+	print op_cmd, "UTF8 BOM from top directory (", os.path.abspath(op_dir), ") ..."
+
+	for root, dirs, files in os.walk(op_dir):
 		for name in files:
 			base, ext = os.path.splitext(name)
 			if ext in (".h", ".hpp", ".hxx", ".c", ".cpp", ".cxx"):

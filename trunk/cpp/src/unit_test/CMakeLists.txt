@@ -23,3 +23,20 @@ endif (UNIX)
 add_executable (unit_test ${UNIT_TEST_SRCS})
 target_link_libraries (unit_test ${Boost_LIBRARY_DIRS})
 
+if (UNIX)
+add_custom_target(
+	prebuild_action
+	COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/../../script/bom.py -r
+	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../../
+	COMMENT "Prebuild action (Removing UTF-8 BOM)"
+)
+add_dependencies(unit_test prebuild_action)
+add_custom_command(
+	TARGET unit_test
+	POST_BUILD
+	COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/../../script/bom.py -a
+	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../../
+	COMMENT "Postbuild action (Appending UTF-8 BOM)"
+)
+endif (UNIX)
+
