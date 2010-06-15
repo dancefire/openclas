@@ -1,3 +1,24 @@
+2010-06-15  Tao Wang  <dancefire@gmail.com>
+	Update License file and shorten the license announcement in the program.
+	* cpp/include/openclas/common.hpp
+	* cpp/include/openclas/dictionary.hpp
+	* cpp/include/openclas/k_shortest_path.hpp
+	* cpp/include/openclas/segment.hpp
+	* cpp/include/openclas/serialization.hpp
+	* cpp/include/openclas/utility.hpp
+	* cpp/include/openclas/viterbi.hpp
+	* cpp/src/unit_test/unit_test.cpp
+	* cpp/src/unit_test/unit_test_dictionary.hpp
+	* cpp/src/unit_test/unit_test_k_shortest_path.hpp
+	* cpp/src/unit_test/unit_test_longtime.hpp
+	* cpp/src/unit_test/unit_test_segment.hpp
+	* cpp/src/unit_test/unit_test_serialization.hpp
+	* cpp/src/unit_test/unit_test_utility.hpp
+	* cpp/src/unit_test/unit_test_viterbi.hpp
+		Replace the license announcement with the pointer to LICENSE.txt
+	* LICENSE.txt
+		Update the year to 2010
+
 2009-03-19  Tao Wang  <dancefire@gmail.com>
 
 	* Add CMakeLists.txt, cpp/CMakeLists.txt
